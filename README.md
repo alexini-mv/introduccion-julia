@@ -5,6 +5,8 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
 
 ## Índice
 * [Instalación](#instalacion)
+
+* [Referencias](#referencias)
 ***
 
 <div id="instalacion">
@@ -40,3 +42,10 @@ Listo, tenemos Julia instalado. Podemos verificar la instalación, reabriendo la
 $ julia
 ```
 el cual, nos permitirá abrir el interprete de Julia.
+
+
+<div id="referencias">
+
+## Referencias 
+
+* Curso de [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/) impartido por el MIT, version del 2021.
