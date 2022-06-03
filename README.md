@@ -1,16 +1,18 @@
-# Notas de Introducción al lenguaje de programación Julia
+# Introducción al lenguaje de programación Julia
 
 El propósito de estas notas es tener una guía de estudio y referencia para el interesado en aprender en español el lenguaje de programación Julia. No es un curso formal, ni pretende serlo. La mayoria de la información proviene de la documentación oficial de [Julia](https://docs.julialang.org/en/v1/).
 ***
 
 ## Índice
-* [Instalación](#instalacion)
-* [Ejecutando Hola Mundo](#holamundo)
+* [Instalación](#instalación)
+* [Ejecutando Hola Mundo](#ejecutando-hola-mundo)
+* [Julia Esencial](#julia-esencial)
+    * [Variables](#variables)
+    * [Tipos de datos](#tipos-de-datos)
+        * [Números enteros y de punto flotante](#números-enteros-y-de-punto-flotante)
 
 * [Referencias](#referencias)
 ***
-
-<div id="instalacion">
 
 ## Instalación
 Para instalar el intérprete de Julia en nuestra computadora, debemos descargarlo directamente de los [repositorios](https://julialang.org/downloads/) oficiales. Elegimos la versión deseada, dependiendo del sistema operativo y arquitectura donde vamos a trabajar.
@@ -43,8 +45,7 @@ Listo, tenemos Julia instalado. Podemos verificar la instalación, reabriendo la
 $ julia
 ```
 el cual, nos permitirá abrir el interprete de Julia.
-
-<div id="holamundo">
+***
 
 ## Ejecutando Hola Mundo
 Para ejecutar código en Julia, se pueden utilizar varias opciones. La más fácil es usando el intérprete de Julia, también conocido como **REPL**. Lo abrímos en una terminal ejecutando `$ julia`. Una vez dentro del REPL, ejecutaremos el hola mundo, con esta sencilla instrucción para imprimir en pantalla:
@@ -67,9 +68,50 @@ $ julia script.jl
 Hola Mundo
 ```
 Listo, hemos ejecutado un nuevo 'Hola Mundo'. 😄 
+***
 
-<div id="referencias">
+## Julia Esencial
+
+### Variables
+En Julia, una variable es un nombre asociado a un valor, útil para almacenar ese valor en memoria para su uso posterior. Para declarar variables en Julia, se usa la asignación directa:
+
+```julia
+variable = 1 + 2
+nombre = "Juan"
+mensaje = "Hola Mundo"
+```
+Las variables son sensibles a mayúsculas y minúsculas, pero estás diferencias no tienen significado semántico, es decir, si tienen propiedades diferentes si se escriben en una forma u otra.
+
+El nombre de las variables pueden usar cualquier carácter de UTF-8, por ejemplo:
+
+```julia
+δ = 0.001
+```
+En el REPL de Julia u otros editores, se pueden escribir carácteres especiales de LaTeX presionando el backslash \\ y el nombre del carácter, seguido de un TAB. Por ejemplo, \alpha + TAB = α.
+
+Los nombres de las variables en Julia por convención deben iniciar por una letra (A-Z ó a-z), guiones bajos o carácteres especiales Unicode, ya sea letras o simbolos matemáticos. En estos últimos, se debe tener precaución ya que algunos se podría confundir con los operadores matemáticos que usa Julia.
+
+Los nombres para variables no validos son aquellas dentro de la lista de *palabras reservadas* del lenguaje. Por ejemplo: *begin, break, function, do, if*, etc.
+
+Julia impone pocas restricciones al asignar nombre a las variables, se recomienda las siguientes **convenciones de estilo**:
+
+1. El nombre de las variables son escritas en minúsculas. 
+2. La separación de palabras puede ser indicada por el guión bajo, pero se desaconseja a menos de que el nombre sea díficil de leer en otro caso.
+3. El nombre de **Type**s y **Module**s deben empezar por una letra mayúscula y se debe utilizar *CamelCase* entre palabras de nombres compuestos, en lugar de guiones bajos.
+4. El nombre de **function**s y **macro**s deben escribirse siempre en minúsculas y sin guiones bajos.
+5. Las funciones que modifican o escriben en sus argumentos en lugar de simplemente devolver un resultado, por convención sus nombres siempre finalizan con **!**. Este tipo de funciones se les conoce como "mutantes" (*mutating*) o (*in-place*).
+
+Para más ver más recomendaciones, por favor revise la [guía de estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
+
+### Tipos de Datos
+
+#### Números Enteros y de Punto Flotante
+
+
+***
 
 ## Referencias 
 
 * Curso de [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/) impartido por el MIT, version del 2021.
+* [Documentación Oficial](https://docs.julialang.org/en/v1/) de Julia.
+* [Guía de Estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
