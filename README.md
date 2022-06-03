@@ -5,6 +5,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
 
 ## Índice
 * [Instalación](#instalacion)
+* [Ejecutando Hola Mundo](#holamundo)
 
 * [Referencias](#referencias)
 ***
@@ -43,6 +44,29 @@ $ julia
 ```
 el cual, nos permitirá abrir el interprete de Julia.
 
+<div id="holamundo">
+
+## Ejecutando Hola Mundo
+Para ejecutar código en Julia, se pueden utilizar varias opciones. La más fácil es usando el intérprete de Julia, también conocido como **REPL**. Lo abrímos en una terminal ejecutando `$ julia`. Una vez dentro del REPL, ejecutaremos el hola mundo, con esta sencilla instrucción para imprimir en pantalla:
+
+```julia
+julia> println("Hola Mundo")
+Hola Mundo  
+```
+Listo, tenemos nuestro 'Hola Mundo'. 😄 
+
+Otra forma para ejecutar código, es escribiendo el código dentro archivos con extensión `.jl`, por ejemplo, en un archivo `script.jl` como sigue:
+
+```julia
+println("Hola Mundo")
+```
+y ejecutar el script en la terminal:
+
+```console
+$ julia script.jl
+Hola Mundo
+```
+Listo, hemos ejecutado un nuevo 'Hola Mundo'. 😄 
 
 <div id="referencias">
 
