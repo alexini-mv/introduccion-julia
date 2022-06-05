@@ -104,9 +104,188 @@ Julia impone pocas restricciones al asignar nombre a las variables, se recomiend
 Para más ver más recomendaciones, por favor revise la [guía de estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
 
 ### Tipos de Datos
+Una de las fortalezas de Julia es su amplia variedad de tipo de datos. Además, cada tipo de dato es muy especifico a las necesidades que requiere la tarea.
+
+A diferencia de otros lenguajes de programación como Javascript donde se tienen solo unos tipos de datos genéricos, por ejemplo, "number" para cualquier dato númerico, en Julia se tiene que ser muy especifico, es especial sí se quiere tener un buen desempeño del lenguaje. Esto, aunque a primera vista podría parecer engorroso, nos dará ventajas que veremos más adelante.
+
+Empecemos a ver los diferentes tipos de datos que nos ofrece Julia. 
 
 #### Números Enteros y de Punto Flotante
+Julia proporciona una amplia gama de tipos numéricos primitivos, y sobre ellos se define un conjunto completo de operadores aritméticos y bit a bit, así como funciones matemáticas estándar.
 
+En la parte de números enteros, Julia nos proporciona los siguientes tipos numéricos primitivos:
+
+|Tipo|Signo|Número de bits|Valor mínimo|Valor máximo|
+|--|--|--|--|--|
+|Int8|✓|8|-2^7|2^7 - 1|
+|UInt8|	|8|0|2^8 - 1|
+|Int16|✓|16|-2^15|2^15 - 1|
+|UInt16| |16|0|2^16 - 1|
+|Int32|✓|32|-2^31|2^31 - 1|
+|UInt32| |32|0|2^32 - 1|
+|Int64|✓|64|-2^63|2^63 - 1|
+|UInt64| |64|0|2^64 - 1|
+|Int128|✓|128|-2^127|2^127 - 1|
+|UInt128| |128|0|2^128 - 1|
+|Bool|N/A|8|false (0)|true (1)
+
+Y para datos de números de punto flotante, tiene los siguiente tipos primitivos:
+
+|Tipo|Precisión|Número de bits|
+|--|--|--|
+|Float16|half|16|
+|Float32|single|32|
+|Float64|double|64|
+
+Por defecto, el tipo de dato que usa Julia depende de la arquitectura del sistema donde se ejecuta, si se trata de 32-bits o de 64-bits.
+
+Para saber el tipo de dato con el que se está trabajando algún literal, podemos usar la instrucción:
+
+```julia
+julia> typeof(25)
+Int64
+
+julia> typeof(3.1416)
+Float64
+```
+
+Existe un truco muy útil al trabajar con números muy grandes, se pueden separar los cifras con guiones bajos, y Julia los omitira internamente:
+
+```julia
+julia> a = 1_234_567
+1234567
+
+julia> b = 0.000_000_000_5
+5.0e-10
+```
+
+Los números UInt se representan el prefijo *0x* seguido del número en hexadecimal (digitos 0-9a-f). El tamaño del valor UInt es determinado por el número hexadecimal.
+
+```julia
+julia> x = 0x1
+0x01
+
+julia> typeof(x)
+UInt8
+
+julia> x = 0x12f
+0x012f
+
+julia> typeof(x)
+UInt16
+```
+
+También es soportado la representación binaria u octal de los literales númericos, usando los prefijos *0b* y *0o* respectivamente.
+
+```julia
+julia> x = 0b101
+0x05
+
+julia> typeof(x)
+UInt8
+
+julia> x = 0o217
+0x8f
+
+julia> typeof(x)
+UInt8
+```
+
+Se puede revisar los valores mínimos y máximos que puede representar los diferentes tipos de datos númericos con la siguientes instrucciones:
+
+```julia
+julia> typemin(Int32)
+-2147483648
+
+julia> typemax(Int32)
+2147483647
+```
+
+Se pueden convertir los tipos de datos simplemente indicando el nuevo tipo de dato.
+
+```julia
+julia> Float64(2)
+2.0
+julia> Int64(3.0)
+3
+```
+
+Los números de punto flotante se pueden declarar usando las estandars representaciones, incluyendo la notación E-exponencial:
+
+```julia
+julia> 2.
+2.0
+
+julia> 2.5e-4
+0.00025
+
+julia> 3.5f-4
+0.00035f0
+```
+
+Y aunque, el literal 3.5, Julia lo interpreta como de tipo Float64, se puede declarar como de tipo Float32 agregandole al final el sufijo *f0*
+
+```julia
+julia> typeof(3.5)
+Float64
+
+julia> typeof(3.5f0)
+Float32
+```
+
+En los tipos de punto flotante, existen **dos ceros**, el cero positivo y el cero negativo. Aunque son iguales el uno del otro, pero tienen diferente representación binaria.
+
+```julia
+julia> 0.0 == -0.0
+true
+```
+Existe tres valores especificos de números de punto flotante, los cuales no se corresponden a ningún punto en la recta real;
+
+|Nombre|Float16|Float32|Float64|Descripción|
+|--|--|--|--|--|
+|Infinito positivo|Inf16|Inf32|Inf|Un valor más grande que cualquier número de punto flotante finito|
+|Infinito negativo|-Inf16|-Inf32|-Inf|Un valor menor que cualquier número de punto flotante finito|
+|No es un número|NaN16|NaN32|NaN|Un valor que no es igual (==) a ningún número de punto flotante, incluyendo a el mismo|
+
+Existe un tipo de número, entero y flotante, que sirve para trabajar con números de precisión arbitraria, aún de los límites por tipo. Estos son **BigInt** y **BigFloat**.
+
+La síntaxis de Julia nos permite tener literales numéricos como coeficientes de expresiones o fórmulas. De está forma, podemos tener expresiones claras, ya que un literal que precede a una variable es interpretado como una multiplicación:
+
+```julia
+julia> x = 3
+3
+
+julia> 2x^2 - 3x + 1
+10
+
+julia> 1.5x^2 - .5x + 1
+13.0
+```
+
+Aunque hay que tener cierto cuidado al interpretar esta última regla, ya que Julia parseara, por ejemplo 2^3x como 2^(3x) y 2x^3 será interpretado como 2*(x^3).
+
+También los coeficiente númericos funciona con expresiones entre paréntesis:
+
+```julia
+julia> 2(x-1)^2 - 3(x-1) + 1
+3
+```
+
+Julia proporciona funciones para retornar cero o uno del tipo especifico del argumento dado:
+
+```julia
+julia> zero(Float32)
+0.0f0
+
+julia> zero(1.0)
+0.0
+
+julia> one(Int32)
+1
+
+julia> one(BigFloat)
+1.0
+```
 
 ***
 
