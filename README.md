@@ -385,3 +385,5 @@ julia> complex(a, b)
 * Curso de [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/) impartido por el MIT, version del 2021.
 * [Documentación Oficial](https://docs.julialang.org/en/v1/) de Julia.
 * [Guía de Estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
+* Ebook open-source para el [Aprendizaje de Julia](https://riptutorial.com/Download/julia-language-es.pdf) en español.
+* [Blog tutorial](https://www.analyticslane.com/2020/07/14/hola-julia/) en español muy amigable sobre Julia.
