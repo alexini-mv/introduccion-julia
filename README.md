@@ -10,6 +10,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Variables](#variables)
     * [Tipos de datos](#tipos-de-datos)
         * [Números enteros y de punto flotante](#números-enteros-y-de-punto-flotante)
+        * [Números racionales y complejos](#números-racionales-y-complejos)
 
 * [Referencias](#referencias)
 ***
@@ -285,6 +286,96 @@ julia> one(Int32)
 
 julia> one(BigFloat)
 1.0
+```
+#### Números racionales y complejos
+Julia incluye nativamente los tipos de datos de números racionales (aquellos que se pueden escribir como una fracción de enteros) y números complejos (aquellos con parte real y parte imaginaria).
+
+Los **números racionales** son construidos usando el operador **//** como sigue:
+
+```julia
+julia> typeof(2//3)
+Rational{Int64}
+```
+Si el numerador y el denominador tienen factores comúnes, la fracción será reducida a su mínima expresión:
+
+```julia
+julia> 5//10
+1//2
+```
+
+Como está normalización es única, ambos números son iguales, y se pueden comparar directamente con cualquier operador de comparación valido:
+
+```julia
+julia> 1//2 == 5//10
+true
+
+julia> 3//4 < 2//3
+false
+```
+
+Sin problemas se puede convertir un racional en tipo de punto flotante como:
+
+```julia
+julia> float(3//4)
+0.75
+```
+
+La promoción de tipo nos ayuda a que un racional pueda operar con cualquier otro tipo de dato númerico directamente.
+
+Para el tipo de datos **numéricos complejos**, Julia implementa la constante global **im** ligada a la unidad imaginaria matemática $i$, que representa la $\sqrt{-1}$. Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
+
+```julia
+julia> typeof(1 + 2im)
+Complex{Int64}
+```
+Y pueden realizarse cualquier tipo de operación matemática entre números complejos, e inclusive, por promoción de tipo, puede operar con otros tipos de datos númericos sin problema:
+
+```julia
+julia> (1 + 2im) * (2 + 3.im)
+-4 + 7im
+
+julia> 3(1 + 2im)^2.0
+-9.0 + 12.0im
+```
+
+Tenga cuidado cuando los coeficientes de la parte imaginaria son fracciones, ya que puede presentarse confusiones en expresiones de este estilo: $3/4im == 3/(4*im) == -(3/4)*im$.
+
+Julia provee de funciones estandar básicas para la manipulación de números complejos:
+
+```julia
+julia> z = 1 + 2im
+1 + 2im
+
+julia> real(z) # Parte real de z
+1
+
+julia> imag(z) # Parte imaginaria de z
+2
+
+julia> conj(z) # Complejo conjugado z
+1 - 2im
+
+julia> abs(z) # Norma o valor absoluto de z
+2.23606797749979
+
+julia> abs2(z) # Norma cuadrada o valor absoluto cuadrado de z
+5
+
+julia> angle(z) # Ángulo o fase de z
+1.1071487177940904
+```
+Si bien es posible construir complejos a partir de variables númericas que representen sus coeficientes:
+
+```julia
+julia> a = 1; b = 2;
+julia> a + b*im
+1 + 2im
+```
+es recomendable y más eficiente construirlo a partir de la función *complex*, donde directamente lo construye pasando la parte real e imaginaria del complejo:
+
+```julia
+julia> complex(a, b)
+1 + 2im
 ```
 
 ***
