@@ -11,6 +11,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Tipos de datos](#tipos-de-datos)
         * [Números enteros y de punto flotante](#números-enteros-y-de-punto-flotante)
         * [Números racionales y complejos](#números-racionales-y-complejos)
+        * [Strings](#strings)
 
 * [Referencias](#referencias)
 ***
@@ -376,6 +377,70 @@ es recomendable y más eficiente construirlo a partir de la función *complex*, 
 ```julia
 julia> complex(a, b)
 1 + 2im
+```
+
+#### Strings
+Los literales tipo string son cadenas finitas de carácteres. Cada carácter es un elemento de tipo Char. Julia puede aceptar, en términos sencillos, cualquier carácter UTF-8. 
+
+Se puede definir los strings entre comillas dobles o entre dos pares de comillas triples, como el siguiente ejemplo:
+
+```julia
+julia> str1 = "Hola \
+mundo"
+"Hola mundo"
+julia> str2 = """Hola, estoy escribiendo en un párrafo.
+Ahora estoy escribiendo en la segunda línea,
+pero finalizaré aquí."""
+"Hola, estoy escribiendo en un párrafo. \nAhora estoy escribiendo en la segunda línea, \npero finalizaré aquí."
+```
+
+donde se puede posponer la escritura del string mediante `\`, además de que dentro del string se pueden agregar los carácteres especiales de salto de línea y tabulador.
+
+Los strings con objetos iterables, y puedes obtener los carácteres que lo integran de la siguiente forma:
+
+```julia
+julia> str1[1]
+'H': ASCII/Unicode U+0048 (category Lu: Letter, uppercase)
+
+julia> str1[4]
+'a': ASCII/Unicode U+0061 (category Ll: Letter, lowercase)
+```
+**Nota**: aúnque esto es cierto en la mayoria de casos, Julia indexa los string realmente por la cantidad de bytes que ocupa el carácter para ser codificado. UTF-8 incluye carácteres de longitud en byte variable. El índice arriba indicado, se refiere a la posición de byte que observa para retornar el carácter, en lugar de referirse a la posición relativa del carácter dentro del string. Esto es algo para tener en cuenta y cuidado a la hora de trabajar con strings. Para revisar más detalles al respecto, [aquí](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8).
+
+Para usar símbolos o carácteres Unicode, sólo se tienen que declarar como:
+
+```julia
+julia> s = "\u2200 x \u2203 y"
+"∀ x ∃ y"
+```
+
+Para realizar la **concatenación** de dos o más strings, se puede realizar de manera sencilla de dos formas, la primera es usando la función *string*, la cual toma dos o más strings, y crea uno nuevo:
+
+```julia
+julia> str1 = "Hola "; str2 = "Mundo";
+
+julia> string(str1, str2)
+"Hola Mundo"
+```
+
+Las segunda forma es utilizando el operador **\*** (de multiplicación). 
+```julia
+julia> str1 * str2
+"Hola Mundo"
+```
+Si bien, en otros lenguajes utilizan el operador **+** para realizar la acción de concatenación de strings, sintacticamente es un poco incorrecto, ya que la operación de concatenación es no-conmutativo. De hecho, matemáticamente, el conjunto de todos los strings de longitud finita **S** junto con el operador de concatenación **\*** forma un monoide libre $(S,*)$, que no es conmutativo. Y es común representar la operación concatenación con el símbolo $*$, por lo que Julia es coherente con esa notación.
+
+Para utilizar el valor de variables con literales strings dentro de nuevos string, Julia utiliza la interpolación mediante el simbolo **$**, de la siguiente forma:
+
+```julia
+julia> "$str1 a todos, hoy salió el sol para todo el $str2"
+"Hola a todos, hoy salió el sol para todo el Mundo"
+```
+De hecho se pueden evaluar expresiones y retornarlas dentro del string con el mismo simbolo como sigue:
+
+```julia
+julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
+"El resultado de sumar 1 y 2 es 3"
 ```
 
 ***
