@@ -12,6 +12,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Números enteros y de punto flotante](#números-enteros-y-de-punto-flotante)
         * [Números racionales y complejos](#números-racionales-y-complejos)
         * [Strings](#strings)
+    * [Operadores matemáticos y funciones elementales](#operadores-matemáticos-y-funciones-elementales)
 
 * [Referencias](#referencias)
 ***
@@ -428,7 +429,7 @@ Las segunda forma es utilizando el operador **\*** (de multiplicación).
 julia> str1 * str2
 "Hola Mundo"
 ```
-Si bien, en otros lenguajes utilizan el operador **+** para realizar la acción de concatenación de strings, sintacticamente es un poco incorrecto, ya que la operación de concatenación es no-conmutativo. De hecho, matemáticamente, el conjunto de todos los strings de longitud finita **S** junto con el operador de concatenación **\*** forma un monoide libre $(S,*)$, que no es conmutativo. Y es común representar la operación concatenación con el símbolo $*$, por lo que Julia es coherente con esa notación.
+Si bien, en otros lenguajes utilizan el operador **+** para realizar la acción de concatenación de strings, sintacticamente es un poco incorrecto, ya que la operación de concatenación es no-conmutativo. De hecho, matemáticamente, el conjunto de todos los strings de longitud finita **S** junto con el operador de concatenación **\*** forma un monoide libre $(S,*)$, que no es conmutativo. Y es común representar la operación concatenación con el símbolo **\***, por lo que Julia es coherente con esa notación.
 
 Para utilizar el valor de variables con literales strings dentro de nuevos string, Julia utiliza la interpolación mediante el simbolo **$**, de la siguiente forma:
 
@@ -443,6 +444,7 @@ julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
 "El resultado de sumar 1 y 2 es 3"
 ```
 
+### Operadores matemáticos y funciones elementales
 ***
 
 ## Referencias 
