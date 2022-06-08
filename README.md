@@ -445,6 +445,110 @@ julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
 ```
 
 ### Operadores matemáticos y funciones elementales
+
+Julia provee con un colección completa de operadores aritméticos y bit a bit en todos los tipos de primitivos. Así como una colección de funciones matemáticas éstandar implementadas eficientemente.
+
+En la siguiente tabla, se muestran los **operadores aritméticos** básicos:
+
+|Expresión|Descripción|
+|---|---|
+|x **+** y|Suma o adición|
+|x **-** y|Resta o sustracción|
+|x **\*** y|Multiplicación|
+|x **/** y|División|
+|x **÷** y|División truncada al entero|
+|x **\\** y|División invertida equivalente a y/x|
+|x **^** y|Potencia|
+|x **%** y|Residuo|
+
+En la siguiente tabla, se muestra los **operadores booleanos**:
+
+|Expresión|Descripción|
+|---|---|
+|**!** x|Negación lógica|
+|x **&&** y|Operador AND|
+|x **\|\|** y|Operador OR|
+
+Todos los operadores aritméticos tienen su correspondiente **operador de actualización**, esto es, toma el valor de una variable, ejecuta la operación y guarda el resultado en la misma variable. Por ejemplo, x **+=** 1 equivale a x = x **+** 1. Los operadores son:
+```julia
++=   -=   *=   /=   \=   ÷=   ^=   %=
+```
+
+Los siguientes son los **operadores de comparación**:
+
+|Expresión|Descripción|
+|---|---|
+|==|Igualdad|
+|!=,   ≠|Desigualdad o diferente|
+|<|Menor que|
+|>|Mayor que|
+|<=,  ≤|Menor o igual que|
+|>=,  ≥|Mayor o igual que|
+
+Al igual que Python, Julia acepta cadena de comparaciones de la siguiente forma:
+
+```julia
+julia> -21 < 1 < x <= 4 < 10 
+true
+```
+
+Las siguientes son las **funciones de redondeo**:
+|Función|Descripción|
+|---|---|
+|round(x)|Redondea al entero más cercano|
+|floor(x)|Redondea al entero más cercano en dirección a **-∞**|
+|ceil(x)|Redondea al entero más cercano en dirección a **+∞**|
+|trunc(x)|Redonde al entero más cercano en dirección a cero|
+
+Algunas funciones de **valor absoluto y signo**:
+
+|Función|Descripción|
+|---|---|
+|abs(x)|Valor absoluto o magnitud de un número, según corresponda|
+|abs2(x)|Cuadrado del valor absoluto o de la magnitud del número|
+|sign(x)|Regresa el signo del valor, ya sea -1, 0 ó 1. Para el caso de un número complejo, lo regresa normalizado|
+
+La siguiente tabla contienen las principales **funciones potencia, raíces y logaritmos*:
+|Función|Descripción|
+|---|---|
+|sqrt(x),   √x|Raíz cuadrada|
+|cbrt(x),   ∛x|Raíz cúbica|
+|hypot(x, y)|Hipótenusa de un triángulo rectángulo cuyos cátetos miden x e y|
+|exp(x)|Función exponencial de x|
+|log(x)|Logaritmo natural de x|
+|log(b, x)|Logaritmo base b de x|
+|log2(x)|Logaritmo base 2 de x|
+|log10(x)|Logaritmo base 10 de x|
+
+También, Julia incluye las funciones **trigonométricas** estandar:
+```
+sin     asin     sinh   asinh
+cos     acos     cosh   acosh
+tan     atan     tanh   atanh
+cot     acot     coth   acoth
+sec     asec     sech   asech
+csc     acsc     csch   acsch
+```
+Adicionalmente, ya ofrece en el repertorio funciones **sinpi(x)** y **cospi(x)** que son versiones mejor implementadas y optimizadas para calcular **sin(π\*x)** y  **cos(π\*x)**.
+De manera paralela, se incluyen funciones trigonométricas que hacen los cálculos en grados en lugar de radianes, agregandole una *d* al nombre de la función: sind(x), cosd(x), tand(x) ...
+
+Todas las funciones y operadores tienen su versión **vectorizada**, eso es, que aplicadas a un arreglo o vector, las funciones actuan sobre cada uno de los elementos (*elementwise*), mediante el *operador punto (.)*. Por ejemplo, si tenemos la instrucción [1, 2, 3]^2, dicha instrucción no está definida en la base estandar. En cambio, utilizando el operador punto como [1, 2, 3] **.^** 2, ahora sí, la operación potencia se aplicada a cada elemento del vector [1^2, 2^2, 3^2]. Este operador puede ser aplicado a cualquier operador básico. Por convención y para evitar confusiones con los literales exponentes, se recomienda siempre dejar un espacio blanco en cada lado de los operadores.
+
+Las **funciones básicas vectorizadas** tambien se pueden aplicar elemento a elemento agregando un punto al final del nombre de la función. Por ejemplo, **sin.(x)** aplicará la función **sin** a cada elemento del vector x. 
+
+```julia
+julia> vec = [1, 2, 3, 4, 5, 6];
+
+julia> sqrt.(vec)
+6-element Vector{Float64}:
+ 1.0
+ 1.4142135623730951
+ 1.7320508075688772
+ 2.0
+ 2.23606797749979
+ 2.449489742783178
+
+```
 ***
 
 ## Referencias 
