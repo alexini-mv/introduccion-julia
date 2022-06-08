@@ -13,6 +13,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Números racionales y complejos](#números-racionales-y-complejos)
         * [Strings](#strings)
     * [Operadores matemáticos y funciones elementales](#operadores-matemáticos-y-funciones-elementales)
+    * [Funciones](#funciones)
 
 * [Referencias](#referencias)
 ***
@@ -547,8 +548,10 @@ julia> sqrt.(vec)
  2.0
  2.23606797749979
  2.449489742783178
-
 ```
+
+### Funciones
+
 ***
 
 ## Referencias 
