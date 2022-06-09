@@ -551,6 +551,118 @@ julia> sqrt.(vec)
 ```
 
 ### Funciones
+Las funciones en Julia son objetos que toman una tupla de valores y retornan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
+
+La síntaxis básica para declarar funciones en Julia es la siguientes:
+
+```julia
+julia>  function f(x, y)
+            x + y
+        end
+```
+La definición de la función comienza con la palabra reservada ***function*** seguida por el nombre de la función y sus argumentos. Siempre se debe finalizar el bloque de definción de la función con la palabra reservada ***end***. 
+
+Por default, las funciones regresan siempre el valor de la última instrucción de su definición. Sin embargo, también existe la palabra reservada ***return*** que explicitamente indica el valor que la función retornará. Toda instrucción después de la línea de *return* será ignorada. 
+
+Personalmente, recomiendo siempre incluir explicitamente el return en la definición de las funciones:
+
+```julia
+julia>  function f(x, y)
+            return x^2 - 2x + y
+        end
+```
+
+Existe otra síntaxis para declarar funciones más compacta, llamada "por asignación", ideal cuando la definición de la función se puede hacer en una sola expresión:
+
+```julia
+julia> f(x, y) = x^2 - 2x + y
+```
+
+Al igual que con el nombre de las variables, se pueden usar carácteres Unicode para el nombre de las funciones:
+
+```julia
+julia> ∑(x, y) = x + y
+
+julia> ∑(2, 7)
+9
+```
+
+Existe una tercera síntaxis para declarar funciones, las llamadas funciones anónimas (equivalentes a las lambda-functions de Python o las Arrow function de JavaScript), que principalmente se utilizaban como argumentos de otras funciones y que no necesariamente se requieren conservar después de su ejecución. Las dos formas equivalenes para declararlas es como sigue:
+
+```julia
+julia> x -> x^2 - 2x + 1            # En una sola línea
+
+julia>  function (x)                # Sin incluir un nombre a la función
+            x^2 - 2x + 1
+        end
+```
+
+Las funciones anónimas pueden aceptar múltiples argumentos, con la siguiente síntaxis:
+
+```julia
+julia> (x, y) -> x^2 - 2x + y
+```
+
+Se pueden incluir **keyword arguments** en las funciones (al igual que en Python), separandolos de los argumentos posicionales con **;** de la siguiente forma:
+
+```julia
+julia>  function f(x, y; radio=1.0, eje=1.0)
+            return x + y * radio / eje
+        end
+```
+
+Es posible indicar el tipo de dato de los argumentos (tanto de los argumentos posicionales como los keyword argumentos), así como el tipo de dato que regresa la función. Si bien, no da ninguna ventaja en el desempeño del código, será sumamente útil más adelante para aplicaciones más avanzadas de Julia (Veáse el Multiple Dispatch). 
+
+La síntaxis para declarar el tipo de dato se realiza con los cuadripuntos **::** (similares a Fortran), de la siguiente forma:
+
+```julia
+julia>  function prediccion(x::Float64; n::Int64 = 5, p::Float64 = 0.5)::Float64
+            return (n * x) ^ p 
+        end
+```
+Julia se asegurará de convertir el resultado al tipo de dato que declara como salida de la función.
+
+Una de las implementaciones más interesantes en Julia incluida en sus sistema base, es la implementación vectorizada (elemento a elemento) de las funciones al ser aplicadas a arreglos, vectores o matrices. Para conseguirlo, usamos la síntaxis punto (*dot syntax*) que ya vimos anteriormente con las funciones elementales, pero esta vez a nuestras funciones:
+
+```julia
+julia> A = [1.0, 1.5, 2.0, 3.0, 5.0]
+
+julia> prediccion.(A, n=5, p=0.5)       # Si se ejecuta la función sin el punto, salta un error
+5-element Vector{Float64}:
+ 2.23606797749979
+ 2.7386127875258306
+ 3.1622776601683795
+ 3.872983346207417
+ 5.0
+```
+**Nota**: La síntaxis punto es azucar sintáctica de la función `broadcast` que justamente realiza la operación de aplicar la función a cada uno de los elementos de los arreglos.
+
+Otra curiosidad de Julia, es que se puede realizar de manera sencilla **composición de funciones**, esto es, aplicar una función sobre el resultado de otra función (algo muy natural en matemáticas). Esto se logra con el operador de composicion **∘** esto es, `(f ∘ g)(args...)` es lo mismo que `f(g(args...))`. Dentro del REPL, el operador composición se obtiene escribiendo \circ + TAB.
+
+Otra implementación de la composición de funciones es utilizando el operador *pipe* `|>` (algo más común entre los programadores). Realiza exactamente lo mismo, la salida de una función pasa como argumento de la siguiente:
+
+```julia
+julia> x = [1, 2, 3, 4, 5]
+
+julia> sqrt(sum(x))         # Composición de funciones normal
+3.872983346207417
+
+julia> (sqrt ∘ sum)(x)      # Al estilo matemático
+3.872983346207417
+
+julia> x |> sum |> sqrt     # Utilizando pipe al estilo programador
+3.872983346207417
+```
+
+Finalmente, las funciones que no regresan algún valor y sólo realizan cambios, por convención se retorna la expresión ***nothing*** como sigue:
+
+```julia
+julia>  function imprime(nombre)
+            println("Buenos días, $nombre")
+            return nothing
+        end
+```
+
 
 ***
 
