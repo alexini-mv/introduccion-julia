@@ -14,6 +14,14 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Strings](#strings)
     * [Operadores matemáticos y funciones elementales](#operadores-matemáticos-y-funciones-elementales)
     * [Funciones](#funciones)
+    * [Bloques de control de flujo](#bloques-de-control-de-flujo-condicionales-ciclos-y-otros)
+        * [Condicionales](#condicionales)
+        * [Ciclos while y for](#ciclos-while-y-for)
+        * [Bloque de expresiones compuestas](#bloque-de-expresiones-compuestas)
+    * [Estructura de datos](#estructura-de-datos)
+        * [Vectores y arreglos](#vectores-y-arreglos)
+        * [Tuplas](#tuplas)
+        * [Diccionarios](#diccionarios)
 
 * [Referencias](#referencias)
 ***
@@ -663,6 +671,123 @@ julia>  function imprime(nombre)
         end
 ```
 
+### Bloques de Control de Flujo: Condicionales, Ciclos y Otros
+#### Condicionales
+
+Los bloques condicionales permiten evaluar porciones de código dependiendo si se cumple o no cierta expresión booleana. La estructura condicional sigue el siguiente patrón `if-elseif-else`:
+
+```julia
+julia>  if condición_1
+            # Bloque de código 1
+        elseif condición_2
+            # Bloque de código 2
+        else
+            # Bloque de código 3
+        end
+```
+El bloque condicional no introduce un alcance local de las variables, lo que significa que variables definidas o modificadas dentro del bloque, pueden ser accedidas fuera de él después de la ejecución del bloque condicional.
+
+Existe otra síntaxis para evaluar condicionales, principalmente cuando se pueden escribir en una sóla expresión, el llamado ***operador ternario*** **? :** que tiene la siguiente estructura sintáctica:
+
+```julia
+julia> condición ? código_1 : código_2
+```
+La expresión condicional se pone antes del signo **?** . Si la ***condición*** es verdadera, se ejecuta el ***código_1***. En caso contrario, si la ***condición*** es falsa, se ejecuta ***código_2***.
+
+#### Evaluación Short-Circuit 
+Al evaluar dos o más condiciones lógicas, Julia utiliza tanto **&&** como **||** como operadores lógicos AND y OR respectivamente. Sin embargo, estos operadores tienen una propiedad adicional, la evaluación ***short-circuit*** o de cortocircuito, el cual consiste en no evaluar necesariamente el segundo argumento. En una serie de expresiones booleanas conectadas con estos operadores, sólo el mínimo de expresiones necesarias son evaluadas para determinar el valor del booleano final. En otras palabras, tenemos estas dos condiciones:
+
+1. En la expresión `A && B`, la subexpresión ***B*** es evaluada solamente si la expresión ***A*** es **verdadera**.
+2. En la expresión `A || B`, la subexpresión ***B*** es evaluada solamente si la expresión ***A*** es **falsa**.
+
+La razón de estas dos condiciones es la siguiente: 
+
+1. Si ***A*** es falsa, entonce la expresión `A && B` debe ser falsa, independientemente del valor que tenga ***B***.
+2. Si ***A*** es verdadera, entonces las expresión `A || B` debe ser verdadera, independientemente del valor que tenga ***B***.
+
+La evaluación *short-circuit* de los operadores **&&** y **||** se realiza de izquierda a derecha, teniendo la preferencia la evaluación de **&&** sobre **||**. 
+
+Si se desea hacer la evaluación explicita de las dos subexpresiones **A** y **B**, entonces se puede usar los operadores lógicos bit a bit **&** y **|**.
+
+La evaluación *short-circuit* frecuentemente es utilizado en Julia como un truco para hacer evaluaciones `if <condición> <expresión> end`. Por ejemplo, los siguiente ejemplos son equivalentes:
+
+```julia
+julia>  if condición
+            # expresión
+        end
+
+julia> condición && # expresion
+```
+
+```julia
+julia>  if ! condición                                      # Negación de la condición
+            # expresión
+        end
+
+julia> condición || # expresion
+```
+
+#### Ciclos While y For
+El primer bloque para realizar ciclo de repeticiones es el **while**, el cual evalua una expresión condicional. En el caso de que la expresión condicional sea verdadera, el ciclo se ejecutará, hasta que se deje de cumplir la expresión. La estructura sintáctica del ciclo while es el siguiente:
+
+```julia
+julia>  while condición
+            # Bloque de código
+        end
+```
+
+El otro bloque para realizar repeticiones es el ciclo **for**, el cual recorre sobre algún objeto iterable (por ejemplo, objetos de **rango**) repitiendo la ejecución del bloque de código, hasta que se alcance el final del objeto iterable. La estructura sintáctica del ciclo for es el siguiente:
+
+```julia
+julia>  for i in objeto_iterable        # Forma pythonica de pertenencia
+            # Bloque de código
+        end
+
+julia>  for i ∈ objeto_iterable         # Forma matemática de pertenencia
+            # Bloque de código
+        end
+```
+Se puede utilizar la palabra clave **in** o el símbolo ∈ (\in + TAB) para índicar la pertenencia del índice mudo a cada elemento del objeto iterable.
+
+Las objetos **range** son los más frecuentemente utilizados para iterar sobre un rango de valores numéricos. Hay dos formas equivalente de declarar rangos en Julia:
+
+```julia
+julia> range(inicio, final, step=n)         # Declaración de rango como en Python, pero es incluyente.
+
+julia> inicio:step:final                    # Declaración preferida en Julia.
+```
+
+Para ciclos for anidados, se puede hacer de la forma tradicional, escribiendo dentro de un primer ciclo for el segundo ciclo for. Sin embargo, para muchos casos, puede ser conveniente y posible sustituir el anidamiento en un solo ciclo for como sigue:
+
+```julia
+julia>  for i in [1, 2], j in [3, 4]
+            println((i, j))
+        end
+(1, 3)
+(1, 4)
+(2, 3)
+(2, 4)
+```
+Hay que tener cuidado, ya que a diferencia del ciclo for anidado tradicional, donde recorre uno por uno los elementos de cada índice, en este último ciclo for hace el producto cartesiano de los elementos de los iterables, e itera sobre esos nuevos elementos. Para la mayoría de casos, ambos ciclos son equivalentes, pero se debe tener cuidado al trabajar con ellos dependiendo que la tarea que se quiera realizar.
+
+#### Bloque de Expresiones Compuestas
+Muchas veces es conveniente y útil tener un sola expresión que evalue varias subexpresiones y que únicamente devuelva el valor de la última subexpresión. Hay dos formas equivalentes de hacer esto en Julia, la primera es con el ***bloque begin*** y la segunda es con cadenas ***;*** como sigue:
+
+```julia
+julia>  suma =  begin
+                    x = 3
+                    y = 5
+                    x + y
+                end
+
+julia>  suma = (x = 3; y = 5; x + y)
+```
+En ambos casos, el valor que se guarda en la variable siempre será el resultado de la última instrucción. Aunque típicamente esta es la forma de utilizar las cadenas ***;*** y el bloque ***begin***, nada restringe la posibilida de tener un bloque begin en una línea, y una cadena ; multilínea.
+
+### Estructura de Datos
+#### Vectores y Arreglos
+#### Tuplas
+#### Diccionarios
 
 ***
 
