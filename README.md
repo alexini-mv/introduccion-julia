@@ -16,6 +16,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Funciones](#funciones)
     * [Bloques de control de flujo](#bloques-de-control-de-flujo-condicionales-ciclos-y-otros)
         * [Condicionales](#condicionales)
+        * [Evaluación short-circuit](#evaluación-short-circuit)
         * [Ciclos while y for](#ciclos-while-y-for)
         * [Bloque de expresiones compuestas](#bloque-de-expresiones-compuestas)
     * [Estructura de datos](#estructura-de-datos)
