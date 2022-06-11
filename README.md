@@ -23,7 +23,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Vectores y arreglos](#vectores-y-arreglos)
         * [Tuplas](#tuplas)
         * [Diccionarios](#diccionarios)
-
+* [Julia Intermedio](#julia-intermedio)
 * [Referencias](#referencias)
 ***
 
@@ -691,9 +691,9 @@ El bloque condicional no introduce un alcance local de las variables, lo que sig
 Existe otra síntaxis para evaluar condicionales, principalmente cuando se pueden escribir en una sóla expresión, el llamado ***operador ternario*** **? :** que tiene la siguiente estructura sintáctica:
 
 ```julia
-julia> condición ? código_1 : código_2
+julia> condición ? expresión_1 : expresión_2
 ```
-La expresión condicional se pone antes del signo **?** . Si la ***condición*** es verdadera, se ejecuta el ***código_1***. En caso contrario, si la ***condición*** es falsa, se ejecuta ***código_2***.
+La expresión condicional se pone antes del signo **?** . Si la ***condición*** es verdadera, se ejecuta el ***expresión_1***. En caso contrario, si la ***condición*** es falsa, se ejecuta ***expresión_2***.
 
 #### Evaluación Short-Circuit 
 Al evaluar dos o más condiciones lógicas, Julia utiliza tanto **&&** como **||** como operadores lógicos AND y OR respectivamente. Sin embargo, estos operadores tienen una propiedad adicional, la evaluación ***short-circuit*** o de cortocircuito, el cual consiste en no evaluar necesariamente el segundo argumento. En una serie de expresiones booleanas conectadas con estos operadores, sólo el mínimo de expresiones necesarias son evaluadas para determinar el valor del booleano final. En otras palabras, tenemos estas dos condiciones:
@@ -787,8 +787,179 @@ En ambos casos, el valor que se guarda en la variable siempre será el resultado
 
 ### Estructura de Datos
 #### Vectores y Arreglos
+Los vectores son colecciones de elementos ordenados, los cuales pueden estar duplicados y ser de diferente tipo de dato cada uno. Los vectores son mutables, esto es, pueden agregarse elementos y eliminarlos. Es un objeto iterable y se puede acceder a sus elementos mediante indexación. Es muy similar a las listas en Python.
+
+Hay varias formas de declarar un vector:
+
+```julia
+julia> a = [valor1, valor2, valor3, etc]
+
+julia> b = Vector{T}([valor1, valor2, valor3, etc])
+
+julia> c = Array{T, 1}([valor1, valor2, valor3, etc])
+```
+La primera forma es la forma más directa, donde Julia identifica el mejor tipo de vector que se definirá dependiendo del tipo de dato de los elementos.
+
+La segunda forma, se define el objeto ***Vector***, donde *T* es el tipo de dato de los elementos que contendrá la lista. En este caso, los elementos futuros no pueden tener un tipo de dato distinto al declarado, por lo que hay que tener precaución.
+
+La tercerda forma, se define al vector como un objeto ***Array*** de una dimensión. De la misma forma que el caso anterios, *T* es el tipo de dato de los elementos del vector. Realmente en el fondo, *Vector* es un alias de *Array* de una dimensión.
+
+
+Como se mencionó con anterioridad, se pueden acceder a los valores de los vectores mediante la indexización usando los ***[]***. Se puede pasar el índice, número natural, o un rango, siempre y cuando tenga sentido. Julia es un lenguaje **1-indexado**, lo que significa que el índice del primer elemento es uno, a diferencia de lenguajes de programación como Python o JavaScript, que son 0-indexados, su primer elemento se indexa  a partir del cero.
+
+```julia
+julia> a = ["Hola", "¿Cómo estás?", "Muy bien", "Igualmente", "Adiós"]
+5-element Vector{String}:
+ "Hola"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+
+ julia> a[1]                                    # Accediendo al primer elemento
+ "Hola"
+
+ julia> a[2:4]                                  # Accediendo con un rango de índices
+ 3-element Vector{String}:
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+
+julia> a[end]                                   # Accediendo al último elemento
+"Adiós"
+```
+
+Las vectores se pueden modificar sobrescribiendo sobre algun elemento con un determinado índice:
+
+```julia
+julia> a[1] = "Buenos días"                     # Se sobreescribe directamente en el primer elemento
+
+julia> a
+5-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+```
+También se pueden agregar o quitar elementos al final del vector, de la siguiente forma:
+```julia
+julia> push!(a, "Postdata")                     # Agrega un elemento al final del vector
+6-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+ "Postdata"
+
+julia> pop!(a)                                  # Elimina el último elemento del vector
+5-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+```
+O se puede agregar o quitar elementos al principio del vector como sigue:
+```julia
+julia> pushfirst!(a, "Antes que nada")          # Agrega un elemento al principio del vector
+6-element Vector{String}:
+ "Antes que nada"
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+
+julia> popfirts!(a)                             # Elimina el primer elemento del vector
+5-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+```
+
+También se pueden agregar los elementos de una lista a otra ya existente con la función **append** como sigue:
+
+```julia
+julia> append!(a, ["Buenas tardes", "Buenas noches"])
+7-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+ "Buenas tardes"
+ "Buenas noches"
+```
+
+Como se mencionó anteriormente, los *vectores* son un caso particular de los *Array*, de una dimensión. Ahora, los *Array* de dos dimensiones, en Julia se le llama ***Matrices***, ya que representan datos ordenados en filas y columnas. Para definir las matrices o arreglos de dos dimensiones, los elementos de una misma fila se separan solo por espacio en blanco, mientras que para separar las filas se usa ; de la siguiente forma:
+
+```julia
+julia> b = [1 2 3; 4 5 6]
+2×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+```
+Para acceder a los elementos de la matriz, tenemos que usar dos índices, el primero para la fila, el segundo para la columna:
+
+```julia
+julia> b[1, 2]
+2
+julia> b[2, 1]
+4
+```
+
+Para agregar nuevos datos al final de la matrix, y modificando así su dimensión matricial, se realiza de la siguiente forma
+```julia
+julia> c = [b; [7 8 9]]                             # Se agrega como una nueva fila
+3×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+ 7  8  9
+
+julia> c = vcat(b, [7 8 9])                         # Se agrega como una fila al final
+3×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+ 7  8  9
+
+julia> c = hcat(b, [7; 8])                          # Se agrega como una nueva columna al final
+2×4 Matrix{Int64}:
+ 1  2  3  7
+ 4  5  6  8
+```
+
+Los arreglos 3-dimensional, son arreglos de arreglos que se extienden una dimensión más. Para crearlos, se requiere usar la función ***cat*** o ***reshape*** de la siguiente forma:
+
+```julia
+julia> d = cat([1 2; 3 4], [5 6; 7 8], dims=3)
+2×2×2 Array{Int64, 3}:
+[:, :, 1] =
+ 1  2
+ 3  4
+
+[:, :, 2] =
+ 5  6
+ 7  8
+```
+Para acceder a sus elementos, se requieren tres índices:
+
+```julia
+julia> d[1,2,2]
+6
+
+julia> d[2,1,1]
+3
+```
+
 #### Tuplas
 #### Diccionarios
+***
+
+## Julia Intermedio
 
 ***
 
