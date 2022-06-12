@@ -1093,7 +1093,7 @@ Dict{Any, Any} with 4 entries:
   :Δ         => "Hola"
 ```
 
-Se pueden unir dos o más diccionarios mediante la función ***merge()***, esto crea un nuevo diccionario, o se puede modificar el primer diccionario con ***merge!***, como sigue
+Se pueden unir dos o más diccionarios mediante la función ***merge()***. Esto crea un nuevo diccionario, o se puede modificar el primer diccionario con ***merge!***, como sigue:
 
 ```julia
 julia> domicilio = Dict("ciudad" => "Guadalajara", "estado" => "Jalisco", "pais" => "México")
