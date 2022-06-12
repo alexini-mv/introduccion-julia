@@ -956,7 +956,163 @@ julia> d[2,1,1]
 ```
 
 #### Tuplas
+Otra estructura de datos son las ***tuplas***, los cuales son contenedores de longitud fija y cuyos valores no se pueden modificar (son inmutables). Pero al igual que los vectores, sus valores se pueden acceder via índices. Las tuplas se definen con paréntesis y comas, como sigue:
+
+```julia
+julia> (1,)
+(1,)
+
+julia> (1, 1 + 1)
+(1, 2)
+
+julia> a = (2, "Hola", 3.0)
+(2, "Hola", 3.0)
+
+julia> typeof(a)
+Tuple{Int64, String, Float64}
+
+julia> a[2]
+"Hola"
+```
+Note que para la tupla unidimensional, se requiere definirlo como $(1,)$ y no como $(1)$ ya que este último significa simplemente el valor 1 entre paréntesis.
+
+Opcionalmente, los elementos de las tuplas se pueden nombrar, en tal caso, el objeto se llamará ***tupla nombrada***, y se construye como sigue:
+
+```julia
+julia> b = (nombre="Juan", apellido="Pérez", edad=15)
+(nombre="Juan", apellido="Pérez", edad=15)
+
+julia>  for element in b
+            println(element)
+        end
+Juan
+Pérez
+15
+
+julia> b.nombre                     # Accediendo al valor por su nombre mediante la notación punto
+"Juan"
+
+julia> b.edad
+15
+```
+
 #### Diccionarios
+Los diccionarios en Julia, al igual que en Python, son colecciones de pares clave-valor (key-value), donde cada valor puede ser accedido por su clave, en lugar de índices, ya que en general, los diccionarios son desordenados. Cada diccionario debe tener claves diferentes, preferentemente deben ser strings, enteros o simbolos (:*simbolo*), mientras que en los valores no hay restricciones.
+
+Un diccionario es definido mediante un constructor ya incluido **Dict()**, y separando la clave con el valor mediante el símbolo **=>** siguiendo la siguiente estructura y síntaxis:
+
+```julia
+julia> a = Dict("nombre" => "Juan", "apellido" => "Pérez", "edad" => 15, :Δ => "Hola")
+Dict{Any, Any} with 4 entries:
+  "edad"     => 15
+  "nombre"   => "Juan"
+  "apellido" => "Pérez"
+  :Δ => "símbolo"
+
+julia> a["nombre"]
+Juan
+
+julia> a["edad"]
+15
+
+julia> a[:Δ]
+"Hola"
+```
+
+Julia provee una función muy útil definida de base **get(diccionario, clave, default)**, que nos ayuda a traer el valor asociado a una clave, y en caso de no existir, lanzar un valor o mensaje por default:
+
+```julia
+julia> get(a, "nombre", "Beto")
+"Juan"
+
+julia> get(a, "domicilio", "Domicilio no registrado")
+"Domicilio no registrado"
+```
+
+Al igual que en Python, existen funciones para obtener todas las claves o valores de un diccionario en un objeto iterable . Estas son **keys()** y **values** con la siguiente síntaxis:
+
+```julia
+julia> claves = keys(a)
+KeySet for a Dict{Any, Any} with 4 entries. Keys:
+  "edad"
+  "nombre"
+  "apellido"
+  :Δ
+
+julia> collect(claves)
+4-element Vector{Any}:
+ "edad"
+ "nombre"
+ "apellido"
+ :Δ
+
+julia> valores = values(a)
+ValueIterator for a Dict{Any, Any} with 4 entries. Values:
+  15
+  "Juan"
+  "Pérez"
+  "Hola"
+
+julia> collect(valores)
+4-element Vector{Any}:
+ 15
+ "Juan"
+ "Pérez"
+ "Hola"
+```
+
+Tanto los objetos regresados por las funciones *keys()* y *values()* pueden ser utilizados como iterables en ciclos *for*, se puede acceder a dichos elementos clave-valor directamente (como en Python con el método .items()) con la siguiente síntaxis:
+
+```julia
+julia>  for (clave, valor) in a
+            println(clave, " => ", valor)
+        end
+edad => 15
+nombre => Juan
+apellido => Pérez
+Δ => Hola
+```
+
+Los diccionarios se pueden modificar. Las tres principales modificicaciones son: Agregar nuevos elementos clave-valor, actualizar el valor de claves ya existentes, y borrar claves-valor.
+
+```julia
+julia> a["ciudad"] = "Monterrey"                # Agregando un nuevo par clave - valor
+"Monterrey"
+
+julia> a["ciudad"] = "Guadalajara"              # Actualizamos el valor de una clave
+"Guadalajara"
+
+julia> println(a)
+Dict{Any, Any}("ciudad" => "Guadalajara", "edad" => 15, "nombre" => "Juan", "apellido" => "Pérez", :Δ => "Hola")
+
+julia> delete!(a, "ciudad")
+Dict{Any, Any} with 4 entries:
+  "edad"     => 15
+  "nombre"   => "Juan"
+  "apellido" => "Pérez"
+  :Δ         => "Hola"
+```
+
+Se pueden unir dos o más diccionarios mediante la función ***merge()***, esto crea un nuevo diccionario, o se puede modificar el primer diccionario con ***merge!***, como sigue
+
+```julia
+julia> domicilio = Dict("ciudad" => "Guadalajara", "estado" => "Jalisco", "pais" => "México")
+Dict{String, String} with 3 entries:
+  "ciudad" => "Guadalajara"
+  "pais"   => "México"
+  "estado" => "Jalisco"
+
+julia> merge(a, domicilio)
+Dict{Any, Any} with 7 entries:
+  "ciudad"   => "Guadalajara"
+  "edad"     => 15
+  "pais"     => "México"
+  "nombre"   => "Juan"
+  "apellido" => "Pérez"
+  "estado"   => "Jalisco"
+  :Δ         => "Hola"
+```
+
 ***
 
 ## Julia Intermedio
