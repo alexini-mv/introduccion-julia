@@ -10,9 +10,17 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Variables](#variables)
     * [Tipos de datos](#tipos-de-datos)
         * [Números enteros y de punto flotante](#números-enteros-y-de-punto-flotante)
-        * [Números racionales y complejos](#números-racionales-y-complejos)
+        * [Literales numéricos como coeficientes](#literales-numéricos-como-coeficientes)
+        * [Números racionales](#números-racionales)
+        * [Números complejos](#números-complejos)
         * [Strings](#strings)
     * [Operadores matemáticos y funciones elementales](#operadores-matemáticos-y-funciones-elementales)
+        * [Operadores aritméticos](#operadores-aritméticos)
+        * [Operadores booleanos](#operadores-booleanos)
+        * [Operadores de actualización](#operadores-de-actualización)
+        * [Operadores de comparación](#operadores-de-comparación)
+        * [Funciones matemáticas básicas](#funciones-matemáticas-básicas)
+        * [Funciones vectorizadas](#funciones-vectorizadas)
     * [Funciones](#funciones)
     * [Bloques de control de flujo](#bloques-de-control-de-flujo-condicionales-ciclos-y-otros)
         * [Condicionales](#condicionales)
@@ -262,6 +270,7 @@ Existe tres valores especificos de números de punto flotante, los cuales no se 
 
 Existe un tipo de número, entero y flotante, que sirve para trabajar con números de precisión arbitraria, aún de los límites por tipo. Estos son **BigInt** y **BigFloat**.
 
+#### Literales numéricos como coeficientes
 La síntaxis de Julia nos permite tener literales numéricos como coeficientes de expresiones o fórmulas. De está forma, podemos tener expresiones claras, ya que un literal que precede a una variable es interpretado como una multiplicación:
 
 ```julia
@@ -299,7 +308,7 @@ julia> one(Int32)
 julia> one(BigFloat)
 1.0
 ```
-#### Números racionales y complejos
+#### Números racionales
 Julia incluye nativamente los tipos de datos de números racionales (aquellos que se pueden escribir como una fracción de enteros) y números complejos (aquellos con parte real y parte imaginaria).
 
 Los **números racionales** son construidos usando el operador **//** como sigue:
@@ -334,6 +343,7 @@ julia> float(3//4)
 
 La promoción de tipo nos ayuda a que un racional pueda operar con cualquier otro tipo de dato númerico directamente.
 
+#### Números complejos
 Para el tipo de datos **numéricos complejos**, Julia implementa la constante global **im** ligada a la unidad imaginaria matemática $i$, que representa la $\sqrt{-1}$. Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
 
 ```julia
@@ -458,6 +468,7 @@ julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
 
 Julia provee con un colección completa de operadores aritméticos y bit a bit en todos los tipos de primitivos. Así como una colección de funciones matemáticas éstandar implementadas eficientemente.
 
+#### Operadores aritméticos
 En la siguiente tabla, se muestran los **operadores aritméticos** básicos:
 
 |Expresión|Descripción|
@@ -471,6 +482,7 @@ En la siguiente tabla, se muestran los **operadores aritméticos** básicos:
 |x **^** y|Potencia|
 |x **%** y|Residuo|
 
+#### Operadores booleanos
 En la siguiente tabla, se muestra los **operadores booleanos**:
 
 |Expresión|Descripción|
@@ -479,11 +491,13 @@ En la siguiente tabla, se muestra los **operadores booleanos**:
 |x **&&** y|Operador AND|
 |x **\|\|** y|Operador OR|
 
+#### Operadores de actualización
 Todos los operadores aritméticos tienen su correspondiente **operador de actualización**, esto es, toma el valor de una variable, ejecuta la operación y guarda el resultado en la misma variable. Por ejemplo, x **+=** 1 equivale a x = x **+** 1. Los operadores son:
 ```julia
 +=   -=   *=   /=   \=   ÷=   ^=   %=
 ```
 
+#### Operadores de comparación
 Los siguientes son los **operadores de comparación**:
 
 |Expresión|Descripción|
@@ -501,7 +515,7 @@ Al igual que Python, Julia acepta cadena de comparaciones de la siguiente forma:
 julia> -21 < 1 < x <= 4 < 10 
 true
 ```
-
+#### Funciones matemáticas básicas
 Las siguientes son las **funciones de redondeo**:
 |Función|Descripción|
 |---|---|
@@ -542,6 +556,7 @@ csc     acsc     csch   acsch
 Adicionalmente, ya ofrece en el repertorio funciones **sinpi(x)** y **cospi(x)** que son versiones mejor implementadas y optimizadas para calcular **sin(π\*x)** y  **cos(π\*x)**.
 De manera paralela, se incluyen funciones trigonométricas que hacen los cálculos en grados en lugar de radianes, agregandole una *d* al nombre de la función: sind(x), cosd(x), tand(x) ...
 
+#### Funciones vectorizadas
 Todas las funciones y operadores tienen su versión **vectorizada**, eso es, que aplicadas a un arreglo o vector, las funciones actuan sobre cada uno de los elementos (*elementwise*), mediante el *operador punto (.)*. Por ejemplo, si tenemos la instrucción [1, 2, 3]^2, dicha instrucción no está definida en la base estandar. En cambio, utilizando el operador punto como [1, 2, 3] **.^** 2, ahora sí, la operación potencia se aplicada a cada elemento del vector [1^2, 2^2, 3^2]. Este operador puede ser aplicado a cualquier operador básico. Por convención y para evitar confusiones con los literales exponentes, se recomienda siempre dejar un espacio blanco en cada lado de los operadores.
 
 Las **funciones básicas vectorizadas** tambien se pueden aplicar elemento a elemento agregando un punto al final del nombre de la función. Por ejemplo, **sin.(x)** aplicará la función **sin** a cada elemento del vector x. 
