@@ -1085,7 +1085,7 @@ julia> a["ciudad"] = "Guadalajara"              # Actualizamos el valor de una c
 julia> println(a)
 Dict{Any, Any}("ciudad" => "Guadalajara", "edad" => 15, "nombre" => "Juan", "apellido" => "Pérez", :Δ => "Hola")
 
-julia> delete!(a, "ciudad")
+julia> delete!(a, "ciudad")                     # Borrar un par clave - valor
 Dict{Any, Any} with 4 entries:
   "edad"     => 15
   "nombre"   => "Juan"
