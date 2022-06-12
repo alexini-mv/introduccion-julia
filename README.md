@@ -1073,7 +1073,7 @@ apellido => Pérez
 Δ => Hola
 ```
 
-Los diccionarios se pueden modificar. Las tres principales modificicaciones son: Agregar nuevos elementos clave-valor, actualizar el valor de claves ya existentes, y borrar claves-valor.
+Los diccionarios se pueden modificar. Las tres principales modificaciones son: Agregar nuevos elementos clave-valor, actualizar el valor de claves ya existentes, y borrar claves-valor.
 
 ```julia
 julia> a["ciudad"] = "Monterrey"                # Agregando un nuevo par clave - valor
