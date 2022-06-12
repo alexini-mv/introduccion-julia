@@ -1007,7 +1007,7 @@ Dict{Any, Any} with 4 entries:
   "edad"     => 15
   "nombre"   => "Juan"
   "apellido" => "Pérez"
-  :Δ => "símbolo"
+  :Δ => "Hola"
 
 julia> a["nombre"]
 Juan
