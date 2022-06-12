@@ -93,7 +93,7 @@ Listo, hemos ejecutado un nuevo 'Hola Mundo'. 😄
 
 ## Julia Esencial
 
-### Variables
+## Variables
 En Julia, una variable es un nombre asociado a un valor, útil para almacenar ese valor en memoria para su uso posterior. Para declarar variables en Julia, se usa la asignación directa:
 
 ```julia
@@ -124,14 +124,14 @@ Julia impone pocas restricciones al asignar nombre a las variables, se recomiend
 
 Para más ver más recomendaciones, por favor revise la [guía de estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
 
-### Tipos de Datos
+## Tipos de Datos
 Una de las fortalezas de Julia es su amplia variedad de tipo de datos. Además, cada tipo de dato es muy especifico a las necesidades que requiere la tarea.
 
 A diferencia de otros lenguajes de programación como Javascript donde se tienen solo unos tipos de datos genéricos, por ejemplo, "number" para cualquier dato númerico, en Julia se tiene que ser muy especifico, es especial sí se quiere tener un buen desempeño del lenguaje. Esto, aunque a primera vista podría parecer engorroso, nos dará ventajas que veremos más adelante.
 
 Empecemos a ver los diferentes tipos de datos que nos ofrece Julia. 
 
-#### Números Enteros y de Punto Flotante
+### Números Enteros y de Punto Flotante
 Julia proporciona una amplia gama de tipos numéricos primitivos, y sobre ellos se define un conjunto completo de operadores aritméticos y bit a bit, así como funciones matemáticas estándar.
 
 En la parte de números enteros, Julia nos proporciona los siguientes tipos numéricos primitivos:
@@ -270,7 +270,7 @@ Existe tres valores especificos de números de punto flotante, los cuales no se 
 
 Existe un tipo de número, entero y flotante, que sirve para trabajar con números de precisión arbitraria, aún de los límites por tipo. Estos son **BigInt** y **BigFloat**.
 
-#### Literales numéricos como coeficientes
+### Literales numéricos como coeficientes
 La síntaxis de Julia nos permite tener literales numéricos como coeficientes de expresiones o fórmulas. De está forma, podemos tener expresiones claras, ya que un literal que precede a una variable es interpretado como una multiplicación:
 
 ```julia
@@ -308,7 +308,7 @@ julia> one(Int32)
 julia> one(BigFloat)
 1.0
 ```
-#### Números racionales
+### Números racionales
 Julia incluye nativamente los tipos de datos de números racionales (aquellos que se pueden escribir como una fracción de enteros) y números complejos (aquellos con parte real y parte imaginaria).
 
 Los **números racionales** son construidos usando el operador **//** como sigue:
@@ -343,7 +343,7 @@ julia> float(3//4)
 
 La promoción de tipo nos ayuda a que un racional pueda operar con cualquier otro tipo de dato númerico directamente.
 
-#### Números complejos
+### Números complejos
 Para el tipo de datos **numéricos complejos**, Julia implementa la constante global **im** ligada a la unidad imaginaria matemática $i$, que representa la $\sqrt{-1}$. Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
 
 ```julia
@@ -400,7 +400,7 @@ julia> complex(a, b)
 1 + 2im
 ```
 
-#### Strings
+### Strings
 Los literales tipo string son cadenas finitas de carácteres. Cada carácter es un elemento de tipo Char. Julia puede aceptar, en términos sencillos, cualquier carácter UTF-8. 
 
 Se puede definir los strings entre comillas dobles o entre dos pares de comillas triples, como el siguiente ejemplo:
@@ -464,11 +464,11 @@ julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
 "El resultado de sumar 1 y 2 es 3"
 ```
 
-### Operadores matemáticos y funciones elementales
+## Operadores matemáticos y funciones elementales
 
 Julia provee con un colección completa de operadores aritméticos y bit a bit en todos los tipos de primitivos. Así como una colección de funciones matemáticas éstandar implementadas eficientemente.
 
-#### Operadores aritméticos
+### Operadores aritméticos
 En la siguiente tabla, se muestran los **operadores aritméticos** básicos:
 
 |Expresión|Descripción|
@@ -482,7 +482,7 @@ En la siguiente tabla, se muestran los **operadores aritméticos** básicos:
 |x **^** y|Potencia|
 |x **%** y|Residuo|
 
-#### Operadores booleanos
+### Operadores booleanos
 En la siguiente tabla, se muestra los **operadores booleanos**:
 
 |Expresión|Descripción|
@@ -491,13 +491,13 @@ En la siguiente tabla, se muestra los **operadores booleanos**:
 |x **&&** y|Operador AND|
 |x **\|\|** y|Operador OR|
 
-#### Operadores de actualización
+### Operadores de actualización
 Todos los operadores aritméticos tienen su correspondiente **operador de actualización**, esto es, toma el valor de una variable, ejecuta la operación y guarda el resultado en la misma variable. Por ejemplo, x **+=** 1 equivale a x = x **+** 1. Los operadores son:
 ```julia
 +=   -=   *=   /=   \=   ÷=   ^=   %=
 ```
 
-#### Operadores de comparación
+### Operadores de comparación
 Los siguientes son los **operadores de comparación**:
 
 |Expresión|Descripción|
@@ -515,7 +515,7 @@ Al igual que Python, Julia acepta cadena de comparaciones de la siguiente forma:
 julia> -21 < 1 < x <= 4 < 10 
 true
 ```
-#### Funciones matemáticas básicas
+### Funciones matemáticas básicas
 Las siguientes son las **funciones de redondeo**:
 |Función|Descripción|
 |---|---|
@@ -556,7 +556,7 @@ csc     acsc     csch   acsch
 Adicionalmente, ya ofrece en el repertorio funciones **sinpi(x)** y **cospi(x)** que son versiones mejor implementadas y optimizadas para calcular **sin(π\*x)** y  **cos(π\*x)**.
 De manera paralela, se incluyen funciones trigonométricas que hacen los cálculos en grados en lugar de radianes, agregandole una *d* al nombre de la función: sind(x), cosd(x), tand(x) ...
 
-#### Funciones vectorizadas
+### Funciones vectorizadas
 Todas las funciones y operadores tienen su versión **vectorizada**, eso es, que aplicadas a un arreglo o vector, las funciones actuan sobre cada uno de los elementos (*elementwise*), mediante el *operador punto (.)*. Por ejemplo, si tenemos la instrucción [1, 2, 3]^2, dicha instrucción no está definida en la base estandar. En cambio, utilizando el operador punto como [1, 2, 3] **.^** 2, ahora sí, la operación potencia se aplicada a cada elemento del vector [1^2, 2^2, 3^2]. Este operador puede ser aplicado a cualquier operador básico. Por convención y para evitar confusiones con los literales exponentes, se recomienda siempre dejar un espacio blanco en cada lado de los operadores.
 
 Las **funciones básicas vectorizadas** tambien se pueden aplicar elemento a elemento agregando un punto al final del nombre de la función. Por ejemplo, **sin.(x)** aplicará la función **sin** a cada elemento del vector x. 
@@ -574,7 +574,7 @@ julia> sqrt.(vec)
  2.449489742783178
 ```
 
-### Funciones
+## Funciones
 Las funciones en Julia son objetos que toman una tupla de valores y retornan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
 
 La síntaxis básica para declarar funciones en Julia es la siguientes:
@@ -687,8 +687,8 @@ julia>  function imprime(nombre)
         end
 ```
 
-### Bloques de Control de Flujo: Condicionales, Ciclos y Otros
-#### Condicionales
+## Bloques de Control de Flujo: Condicionales, Ciclos y Otros
+### Condicionales
 
 Los bloques condicionales permiten evaluar porciones de código dependiendo si se cumple o no cierta expresión booleana. La estructura condicional sigue el siguiente patrón `if-elseif-else`:
 
@@ -710,7 +710,7 @@ julia> condición ? expresión_1 : expresión_2
 ```
 La expresión condicional se pone antes del signo **?** . Si la ***condición*** es verdadera, se ejecuta el ***expresión_1***. En caso contrario, si la ***condición*** es falsa, se ejecuta ***expresión_2***.
 
-#### Evaluación Short-Circuit 
+### Evaluación Short-Circuit 
 Al evaluar dos o más condiciones lógicas, Julia utiliza tanto **&&** como **||** como operadores lógicos AND y OR respectivamente. Sin embargo, estos operadores tienen una propiedad adicional, la evaluación ***short-circuit*** o de cortocircuito, el cual consiste en no evaluar necesariamente el segundo argumento. En una serie de expresiones booleanas conectadas con estos operadores, sólo el mínimo de expresiones necesarias son evaluadas para determinar el valor del booleano final. En otras palabras, tenemos estas dos condiciones:
 
 1. En la expresión `A && B`, la subexpresión ***B*** es evaluada solamente si la expresión ***A*** es **verdadera**.
@@ -743,7 +743,7 @@ julia>  if ! condición                                      # Negación de la c
 julia> condición || # expresion
 ```
 
-#### Ciclos While y For
+### Ciclos While y For
 El primer bloque para realizar ciclo de repeticiones es el **while**, el cual evalua una expresión condicional. En el caso de que la expresión condicional sea verdadera, el ciclo se ejecutará, hasta que se deje de cumplir la expresión. La estructura sintáctica del ciclo while es el siguiente:
 
 ```julia
@@ -786,7 +786,7 @@ julia>  for i in [1, 2], j in [3, 4]
 ```
 Hay que tener cuidado, ya que a diferencia del ciclo for anidado tradicional, donde recorre uno por uno los elementos de cada índice, en este último ciclo for hace el producto cartesiano de los elementos de los iterables, e itera sobre esos nuevos elementos. Para la mayoría de casos, ambos ciclos son equivalentes, pero se debe tener cuidado al trabajar con ellos dependiendo que la tarea que se quiera realizar.
 
-#### Bloque de Expresiones Compuestas
+### Bloque de Expresiones Compuestas
 Muchas veces es conveniente y útil tener un sola expresión que evalue varias subexpresiones y que únicamente devuelva el valor de la última subexpresión. Hay dos formas equivalentes de hacer esto en Julia, la primera es con el ***bloque begin*** y la segunda es con cadenas ***;*** como sigue:
 
 ```julia
@@ -800,8 +800,8 @@ julia>  suma = (x = 3; y = 5; x + y)
 ```
 En ambos casos, el valor que se guarda en la variable siempre será el resultado de la última instrucción. Aunque típicamente esta es la forma de utilizar las cadenas ***;*** y el bloque ***begin***, nada restringe la posibilida de tener un bloque begin en una línea, y una cadena ; multilínea.
 
-### Estructura de Datos
-#### Vectores y Arreglos
+## Estructura de Datos
+### Vectores y Arreglos
 Los vectores son colecciones de elementos ordenados, los cuales pueden estar duplicados y ser de diferente tipo de dato cada uno. Los vectores son mutables, esto es, pueden agregarse elementos y eliminarlos. Es un objeto iterable y se puede acceder a sus elementos mediante indexación. Es muy similar a las listas en Python.
 
 Hay varias formas de declarar un vector:
@@ -970,7 +970,7 @@ julia> d[2,1,1]
 3
 ```
 
-#### Tuplas
+### Tuplas
 Otra estructura de datos son las ***tuplas***, los cuales son contenedores de longitud fija y cuyos valores no se pueden modificar (son inmutables). Pero al igual que los vectores, sus valores se pueden acceder via índices. Las tuplas se definen con paréntesis y comas, como sigue:
 
 ```julia
@@ -1011,7 +1011,7 @@ julia> b.edad
 15
 ```
 
-#### Diccionarios
+### Diccionarios
 Los diccionarios en Julia, al igual que en Python, son colecciones de pares clave-valor (key-value), donde cada valor puede ser accedido por su clave, en lugar de índices, ya que en general, los diccionarios son desordenados. Cada diccionario debe tener claves diferentes, preferentemente deben ser strings, enteros o simbolos (:*simbolo*), mientras que en los valores no hay restricciones.
 
 Un diccionario es definido mediante un constructor ya incluido **Dict()**, y separando la clave con el valor mediante el símbolo **=>** siguiendo la siguiente estructura y síntaxis:
@@ -1127,7 +1127,6 @@ Dict{Any, Any} with 7 entries:
   "estado"   => "Jalisco"
   :Δ         => "Hola"
 ```
-
 ***
 
 ## Julia Intermedio
