@@ -32,6 +32,18 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Tuplas](#tuplas)
         * [Diccionarios](#diccionarios)
 * [Julia Intermedio](#julia-intermedio)
+    * [Arreglos multidimensionales](#)
+    * [Abrir y modificar archivos](#)
+    * [Bloque Do](#)
+    * [Gestor de paquetes Pkg](#)
+    * [Manejo de ambientes virtuales en Julia](#)
+    * [Tipo de datos compuestos: Struct](#)
+    * [Métodos de funciones: Despacho multiple](#)
+    * [Constructores](#)
+    * [Módulos](#)
+    * [Documentación](#)
+* [Julia Avanzado](#)
+    * [Bloque try-catch-finally](#)
 * [Referencias](#referencias)
 ***
 
@@ -1140,3 +1152,4 @@ Dict{Any, Any} with 7 entries:
 * [Guía de Estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
 * Ebook open-source para el [Aprendizaje de Julia](https://riptutorial.com/Download/julia-language-es.pdf) en español.
 * [Blog tutorial](https://www.analyticslane.com/2020/07/14/hola-julia/) en español muy amigable sobre Julia.
+* [Breve introducción a Julia](https://mauriciotejada.com/programacionjulia/) en español.
