@@ -31,7 +31,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Vectores y arreglos](#vectores-y-arreglos)
         * [Tuplas](#tuplas)
         * [Diccionarios](#diccionarios)
-* [Julia Intermedio](#julia-intermedio)
+* [Julia Intermedio](#julia-intermedio) (Pendiente)
     * [Arreglos multidimensionales](#)
     * [Abrir y modificar archivos](#)
     * [Bloque Do](#)
@@ -42,7 +42,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Constructores](#)
     * [Módulos](#)
     * [Documentación](#)
-* [Julia Avanzado](#)
+* [Julia Avanzado](#) (Pendiente)
     * [Bloque try-catch-finally](#)
 * [Referencias](#referencias)
 ***
