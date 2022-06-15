@@ -31,9 +31,9 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Vectores y arreglos](#vectores-y-arreglos)
         * [Tuplas](#tuplas)
         * [Diccionarios](#diccionarios)
-* [Julia Intermedio](#julia-intermedio) (Pendiente)
-    * [Arreglos multidimensionales](#)
-    * [Abrir y modificar archivos](#)
+* [Julia Intermedio](#julia-intermedio) 
+    * [Arreglos multidimensionales](#arreglos-multidimensionales)
+    * [Abrir y modificar archivos](#)   **<-- Pendiente**
     * [Bloque Do](#)
     * [Gestor de paquetes Pkg](#)
     * [Manejo de ambientes virtuales en Julia](#)
@@ -1142,7 +1142,58 @@ Dict{Any, Any} with 7 entries:
 ***
 
 ## Julia Intermedio
+### Arreglos multidimensionales
+Julia provee de un implementación de alta calidad para el manejo de arreglos multidimensionales. Su biblioteca de arreglos está escrita enteramente en Julia y su eficiencia se debe enteramente al compilador. Es posible definir tipos personalizados de arreglos, gracias a la herencia del tipo AbstractArray.
 
+En el caso general, los arreglos pueden contener objetos del tipo `Any` (cualquiera, indistinto). Pero para la mayoria de propositos computacionales, los arreglos pueden contener objetos de tipos más especificos como `Int64` o `Float64`. Y para cuestiones cientificas, incluve tipos `Complex`.
+
+A diferencia de otros lenguajes de programación, Julia no espera que los programas sean escritos de forma "vectorizada" por mejorar su eficiencia. En cambio, el compilador de Julia utiliza la inferencia de tipos para generar código optimizado permitiendo que escribir el código con un estilo conveniente y legible, sin sacrificar el desempeño y memoria.
+
+#### Funciones Básicas para Arreglos
+Estas son algunas de las funciones básicas para obtener información de los arreglos:
+
+|Función|Descripción|
+|---|---|
+|**eltype(A)**|El tipo de dato de los elementos contenidos en A.|
+|**length(A)**|Número de elementos en A.|
+|**ndims(A)**|Números de dimensiones de A, p. ej. si A es un arreglo de **n** x **m**, el número de dimensiones es 2.|
+|**size(A)**|Tupla con la dimensión de A. p. ej. si A es un arreglo de **n** x **m**, su dimensión es (n, m).|
+|**size(A,n)**|Longitud de A a lo largo de la dimensión n.|
+|**axes(A)**|Tupla con los índices validos para cada dimensión de A.|
+|**axes(A,n)**|Un rango con los índices validos a lo largo de la dimensión n.|
+|**eachindex(A)**|Un eficiente iterador para visitar cada posición de A.|
+
+#### Construcción de arreglos e inicialización
+Existe muchas funciones para construir e inicializar arreglos. La siguiente lista contiene algunas de ellas, en las cuales, el argumento `dims...` son las dimensiones del arreglo y puede ser pasado ya sea como tupla con cada una de las dimensiones, o como una sucesion de argumentos númericos individuales. La mayoria de las funciones acepta como primer argumento el tipo de dato de los elementos del arreglo (***T***), que si se omite, por defecto será `Float64`.
+
+|Función|Descripción|
+|---|---|
+|**Array{T}(undef, dims...)**|Construye un arreglo sin inicializar.|
+|**zeros(T, dims...)**|Regresa un arreglo de todo ceros.|
+|**ones(T, dims...)**|Regresa un arreglo de todo unos.|
+|**trues(dims...)**|Regresa un arreglo binario con todos los valores true.|
+|**falses(dims...)**|Regresa un arreglo binario con todos los valores false.|
+|**reshape(A, dims..)**|Regresa un arreglo con todos los elementos de A pero de diferentes dimensiones.|
+|**copy(A)**|Regresa una copia superficial del arreglo A.|
+|**deepcopy(A)**|Regresa una copia profunda del arreglo A, esto es, recursiva a cada uno de sus elementos (en caso de tener arreglo de arreglos).|
+|**similar(A, T, dims...)**|Regresa un arreglo sin inicializado del mismo tipo de A, pero con tipo de dato de cada elemento y dimensión personalizada. Si los argumentos `T` y `dims` se omiten, se toman directamente de A.|
+|**rand(T, dims...)**|Arreglo con valores aleatorios uniformemente distribuidos sobre el intervalo abierto $[0,1)$.|
+|**randn(T, dims...)**|Arreglo con valores aleatorios normal y estandarmente distribuidos.|
+|**Matrix{T}(I, m, n)**|Matriz identidad de dimensión **m** x **n**. Requiere usar el paquete de `LinearAlgebra` para usar `I`.|
+|**range(start, stop, length=n)**|Rango de **n** elementos linealmente espaciados, empezando en `start` y finalizando en `stop`. Es similar a np.linspace de Python.|
+|**fill!(A, x)**|Llena el arreglo A con el valor x.|
+|**fill(x, dims...)**|Regresa un arrego llena con el valor x, con dimensiones `dims`.|  
+
+#### Arreglos literales
+Como vimos en secciones pasadas, se pueden definir arreglos especificando directamente sus elementos mediante parentesis cuadrados siguiendo la síntaxis `[a, b, c, ...]`, separando los elementos con comas. Esto genera un arreglo 1-dimensional (o vector columna). Con esta forma de declaración, el tipo del arreglo se determinará automáticamente a partir del tipo de dato de los elementos. Si el tipo de dato de los elementos es diferente, se determinará el tipo de dato común mediante la función de `promoción de tipo` (es decir, si tenemos enteros y flotantes, todos será promovidos a flotantes). En el caso de que los tipos de datos sean heterogéneos, entonces se definirá como tipo `Any`.
+
+```julia
+julia> [1, 2.3, 4//5]               # Cada elemento tiene un tipo de dato diferente 
+3-element Vector{Float64}:
+ 1.0
+ 2.3
+ 0.8
+ ```
 ***
 
 ## Referencias 
