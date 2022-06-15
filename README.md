@@ -33,6 +33,9 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Diccionarios](#diccionarios)
 * [Julia Intermedio](#julia-intermedio) 
     * [Arreglos multidimensionales](#arreglos-multidimensionales)
+        * [Funciones básicas para arreglos](#funciones-básicas-para-arreglos)
+        * [Construcción de arreglos e inicialización](#construcción-de-arreglos-e-inicialización)
+        * [Arreglos literales](#arreglos-literales)
     * [Abrir y modificar archivos](#)   **<-- Pendiente**
     * [Bloque Do](#)
     * [Gestor de paquetes Pkg](#)
@@ -1149,7 +1152,7 @@ En el caso general, los arreglos pueden contener objetos del tipo `Any` (cualqui
 
 A diferencia de otros lenguajes de programación, Julia no espera que los programas sean escritos de forma "vectorizada" por mejorar su eficiencia. En cambio, el compilador de Julia utiliza la inferencia de tipos para generar código optimizado permitiendo que escribir el código con un estilo conveniente y legible, sin sacrificar el desempeño y memoria.
 
-#### Funciones Básicas para Arreglos
+### Funciones Básicas para Arreglos
 Estas son algunas de las funciones básicas para obtener información de los arreglos:
 
 |Función|Descripción|
@@ -1163,7 +1166,7 @@ Estas son algunas de las funciones básicas para obtener información de los arr
 |**axes(A,n)**|Un rango con los índices validos a lo largo de la dimensión n.|
 |**eachindex(A)**|Un eficiente iterador para visitar cada posición de A.|
 
-#### Construcción de arreglos e inicialización
+### Construcción de arreglos e inicialización
 Existe muchas funciones para construir e inicializar arreglos. La siguiente lista contiene algunas de ellas, en las cuales, el argumento `dims...` son las dimensiones del arreglo y puede ser pasado ya sea como tupla con cada una de las dimensiones, o como una sucesion de argumentos númericos individuales. La mayoria de las funciones acepta como primer argumento el tipo de dato de los elementos del arreglo (***T***), que si se omite, por defecto será `Float64`.
 
 |Función|Descripción|
@@ -1184,7 +1187,7 @@ Existe muchas funciones para construir e inicializar arreglos. La siguiente list
 |**fill!(A, x)**|Llena el arreglo A con el valor x.|
 |**fill(x, dims...)**|Regresa un arrego llena con el valor x, con dimensiones `dims`.|  
 
-#### Arreglos literales
+### Arreglos literales
 Como vimos en secciones pasadas, se pueden definir arreglos especificando directamente sus elementos mediante parentesis cuadrados siguiendo la síntaxis `[a, b, c, ...]`, separando los elementos con comas. Esto genera un arreglo 1-dimensional (o vector columna). Con esta forma de declaración, el tipo del arreglo se determinará automáticamente a partir del tipo de dato de los elementos. Si el tipo de dato de los elementos es diferente, se determinará el tipo de dato común mediante la función de `promoción de tipo` (es decir, si tenemos enteros y flotantes, todos será promovidos a flotantes). En el caso de que los tipos de datos sean heterogéneos, entonces se definirá como tipo `Any`.
 
 ```julia
