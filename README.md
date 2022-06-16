@@ -36,6 +36,11 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Funciones básicas para arreglos](#funciones-básicas-para-arreglos)
         * [Construcción de arreglos e inicialización](#construcción-de-arreglos-e-inicialización)
         * [Arreglos literales](#arreglos-literales)
+        * [Concatenación](#concatenación)
+        * [Array comprehension](#array-comprehension)
+        * [Vistazo a los generadores](#vistazo-a-los-generadores)
+        * [Indexación](#indexación)
+        * [Broadcasting](#broadcasting)
     * [Abrir y modificar archivos](#)   **<-- Pendiente**
     * [Bloque Do](#)
     * [Gestor de paquetes Pkg](#)
@@ -777,8 +782,12 @@ julia>  for i in objeto_iterable        # Forma pythonica de pertenencia
 julia>  for i ∈ objeto_iterable         # Forma matemática de pertenencia
             # Bloque de código
         end
+
+julia>  for i = objeto_iterable         # Forma matemática o de Fortran de declarar el loop
+            # Bloque de código
+        end
 ```
-Se puede utilizar la palabra clave **in** o el símbolo ∈ (\in + TAB) para índicar la pertenencia del índice mudo a cada elemento del objeto iterable.
+Se puede utilizar la palabra clave **in** o el símbolo ∈ (\in + TAB) o el símbolo igual (=) para índicar la pertenencia del índice mudo a cada elemento del objeto iterable.
 
 Las objetos **range** son los más frecuentemente utilizados para iterar sobre un rango de valores numéricos. Hay dos formas equivalente de declarar rangos en Julia:
 
@@ -1197,13 +1206,159 @@ julia> [1, 2.3, 4//5]               # Cada elemento tiene un tipo de dato difere
  2.3
  0.8
  ```
+
+ ### Concatenación
+ Existen varias síntaxis para realizar la contatenación de arreglos.
+ 
+ * Si los arreglos dentro de los paréntesis cuadrados son separados por punto y coma (`;`) o por saltos de línea, en lugar de comas (`,`), entonces esos elementos se concatenan verticalmente, en lugar de que sean elementos en sí mismos.
+
+ ```julia
+ julia> [1:2, 3:4, 5:6]                         # Arreglos separados por coma. Cada arreglo será 
+ 3-element Vector{UnitRange{Int64}}:            # un elemento en sí mismo.
+ 1:2
+ 3:4
+ 5:6
+
+
+julia> [1:2; 3:4; 5:6]                         # Arreglos separados por punto y coma. Los elementos  
+6-element Vector{Int64}:                       # de los rangos se concatena verticalmente.
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+
+ julia> [1:2                                    # Arreglos separados por salto de línea. Los
+         3:4                                    # elementos de los rangos se concatena verticalmente.
+         5:6]
+6-element Vector{Int64}:
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ ```
+* Si los arreglos son separados por tabuladores, espacios vacíos, o dobles punto y coma (`;;`), entonces, los elementos son concatenados horizontalmente. *Nota: Recordemos que los arreglos unidimensionales se representan como vectores columna*.
+
+```julia
+julia> [1:3 4:6 7:9]                            # Arreglos separados por espacios vacios,
+3×3 Matrix{Int64}:                              # sus elementos se concatenan horizontalmente
+ 1  4  7
+ 2  5  8
+ 3  6  9
+
+julia> [[1, 2, 3] [4, 5, 6] [7, 8, 9]]
+3×3 Matrix{Int64}:
+ 1  4  7
+ 2  5  8
+ 3  6  9
+
+julia> [1 2 3]                                  # Arreglo de números concatenados horizontalmente.
+1×3 Matrix{Int64}:                              # El resultado es un vector renglón.
+ 1  2  3
+
+julia> [[1 2 3] [4 5 6] [7 8 9]]                # Se concatenan horizontalmente los elementos de los 
+1×9 Matrix{Int64}:                              # vectores renglón para formar un vector reglón mayor.
+ 1  2  3  4  5  6  7  8  9
+
+julia> [[1 2 3], [4 5 6], [7 8 9]]              # Se define un vector de vectores renglón. Realmente
+3-element Vector{Matrix{Int64}}:                # no se están concatenando los elementos.
+ [1 2 3]
+ [4 5 6]
+ [7 8 9]
+```
+
+* Los espacios vacíos, saltos de línea o punto y coma individual o doble se pueden combinar para hacer concatenaciones horizontales y verticales.
+
+```julia
+julia> [[1 2 3]; [4 5 6]; [7 8 9]]             # Se concatenan verticalmente los tres vectores renglón.
+3×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+ 7  8  9
+
+julia> [zeros(Int, 2, 2)    [1; 2]
+        [3 4]               5]
+3×3 Matrix{Int64}:
+ 0  0  1
+ 0  0  2
+ 3  4  5
+```
+Existe una jerarquía de orden al realizar las concatenaciones horizontales si se combinan simbolos para realizarlas:
+* Los espacios y los tabuladores tienen preferencia sobre los `;`, realizando primero las concatenaciones horizontal y después las verticales.
+* En cambio, si se utiliza punto y coma dobles `;;` para indicar la concatenación horizontal,  entonces las concatenaciones verticales tienen preferencia, y al finalizar se realizan las concatenaciones horizontales.
+
+En otras palabras, se resuelven las concatenaciones en este orden: **tabs o espacios → `;` →  `;;`→**...
+```julia
+julia> [1:2; 4;; 1; 3:4]
+3×2 Matrix{Int64}:
+ 1  1
+ 2  3
+ 4  4
+```
+Se puede realizar concatenaciones a más altas dimensiones, agregando triples, cuadruples,..., puntos y comas. El símbolo `;;;` significa una concatenación sobre una tercera dimensión, y así sucesivamente.
+```julia
+julia> [1; 2;; 3; 4;; 5; 6;;; 7; 8;; 9; 10;; 11; 12]
+2×3×2 Array{Int64, 3}:
+[:, :, 1] =
+ 1  3  5
+ 2  4  6
+
+[:, :, 2] =
+ 7   9  11
+ 8  10  12
+```
+Más en general, cada uno de las formas anteriores, son azucar sintáctica de la función `cat` o alguna de sus variaciones: `vcat`, `hcat`, `hvcat`, `hvncat`.
+
+### Array Comprehension
+Los array comprehension son muy similares a los list comprehension de Python. Son arreglos que se construyen a partir de la iteración sobre los elementos de objetos iterables. Su construcción es muy similar a la notación de la definición de conjuntos:
+```julia
+A = [f(x,y,...) for x in iterable1, y in iterable2]$$
+```
+donde $f(x,y,...)$ es un expresión que será evaluada por cada uno de los iterables y cuyo resultado se guardará en el nuevo arreglo. Al igual que en Python, los arrays comprehension pueden evaluar condicionales `if` durante su construcción.
+
+```julia
+julia> numeros = [2, 3, 4, 5, 6];
+
+julia> cuadrados = [x^2 for x in numeros]
+5-element Vector{Int64}:
+  4
+  9
+ 16
+ 25
+ 36
+
+julia> pares = [i for i in numeros if i % 2 == 0]
+3-element Vector{Int64}:
+ 2
+ 4
+ 6
+```
+### Vistazo a los Generadores
+A diferencia de los `array comprehension`, que se construyen completos a partir de las iteraciones y se guarda todo en memoria, en los `generadores` sólo se declara la expresión de su construcción y los elementos se van generando conforme se vayan necesitando, sin ser guardados en memoria.
+
+Los `generadores` se construyen casi igual que los `array comprehension`, pero en lugar de usar paréntesis cuadrados `[]`, se usan paréntesis normales `()`. Los generadores también aceptan la evaluación de condicionales `if` es su construcción.
+
+```julia
+julia> pares = (n for n in 1:1000 if n % 2 == 0)
+Base.Generator{Base.Iterators.Filter{var"#40#41", UnitRange{Int64}}, typeof(identity)}(identity, Base.Iterators.Filter{var"#40#41", UnitRange{Int64}}(var"#40#41"(), 1:1000))
+
+julia> sum(pares)
+250500
+```
+Se puede obtener los elementos de `generador` utilizando la función `iterate()`. Para mayor referencia a como recorrer un generador, por favor dirijase a la siguiente [documentación](https://docs.julialang.org/en/v1/base/collections/).
+
+### Indexación
+### Broadcasting
 ***
 
 ## Referencias 
 
-* Curso de [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/) impartido por el MIT, version del 2021.
+* [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/). Curso impartido por el MIT, versión del 2021.
 * [Documentación Oficial](https://docs.julialang.org/en/v1/) de Julia.
 * [Guía de Estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
-* Ebook open-source para el [Aprendizaje de Julia](https://riptutorial.com/Download/julia-language-es.pdf) en español.
+* [Aprendizaje de Julia](https://riptutorial.com/Download/julia-language-es.pdf). Ebook open-source en español en PDF.
 * [Blog tutorial](https://www.analyticslane.com/2020/07/14/hola-julia/) en español muy amigable sobre Julia.
 * [Breve introducción a Julia](https://mauriciotejada.com/programacionjulia/) en español.
