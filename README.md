@@ -41,17 +41,17 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Vistazo a los generadores](#vistazo-a-los-generadores)
         * [Indexación](#indexación)
         * [Broadcasting](#broadcasting)
-    * [Abrir y modificar archivos](#)   **<-- Pendiente**
+    * [Abrir y modificar archivos](#)           **↓ Pendiente ↓**
     * [Bloque Do](#)
     * [Gestor de paquetes Pkg](#)
     * [Manejo de ambientes virtuales en Julia](#)
+* [Julia Avanzado](#)                           **↓ Pendiente ↓**
+    * [Bloque try-catch-finally](#)
     * [Tipo de datos compuestos: Struct](#)
     * [Métodos de funciones: Despacho multiple](#)
     * [Constructores](#)
     * [Módulos](#)
     * [Documentación](#)
-* [Julia Avanzado](#) (Pendiente)
-    * [Bloque try-catch-finally](#)
 * [Referencias](#referencias)
 ***
 
