@@ -1351,6 +1351,136 @@ julia> sum(pares)
 Se puede obtener los elementos de `generador` utilizando la función `iterate()`. Para mayor referencia a como recorrer un generador, por favor dirijase a la siguiente [documentación](https://docs.julialang.org/en/v1/base/collections/).
 
 ### Indexación
+Para traer los elementos de los arreglos, se usan índices con la siguiente síntaxis general: 
+$$A[i_1, i_2, i_3, ..., i_n]$$
+donde cada $i_j$ puede ser un entero, un arreglo de enteros o un conjunto de índices soportados. Esto último incluye al símbolo (`:`) que selecciona todos los elementos indexados en la dimensión correspondiente. También incluye rangos del tipo *start:end*, *start:step:end*, o arreglo de booleanos donde se seleccionan los elementos con índice `true`.
+
+```julia
+julia> A = [ 1  2  3  4
+             5  6  7  8
+             9 10 11 12
+            13 14 15 16 ]
+4×4 Matrix{Int64}:
+  1   2   3   4
+  5   6   7   8
+  9  10  11  12
+ 13  14  15  16
+
+julia> A[2, 3]                          # Par de índices enteros. Retornan el valor de un elemento.
+7
+
+julia> A[[1, 3], [2, 4]]                # Par de vectores de índices.
+2×2 Matrix{Int64}:
+  2   4
+ 10  12
+
+julia> A[:, 3]                          # Uso de : para traer todos los elementos en la primera dimensión.
+4-element Vector{Int64}:
+  3
+  7
+ 11
+ 15
+
+julia> A[3, :]                          # Uso de : para traer todos los elementos en la segunda dimensión
+4-element Vector{Int64}:
+  9
+ 10
+ 11
+ 12
+
+julia> A[[1, 4], 1:2:4]                 # Uso de rangos para seleccionar una secuencia de elementos
+2×2 Matrix{Int64}:
+  1   3
+ 13  15
+```
+Dentro de los índices especiales soportados, existe la palabra `end` para indicar el último índice del arreglo, y su valor varía dependiendo de la dimensión y forma del arreglo.
+
+```julia
+julia> A[:, end]
+4-element Vector{Int64}:
+  4
+  8
+ 12
+ 16
+```
+
+Ahora, sí se pasa un arreglo bidimensional de índices `I`, entonces elemento $i_j$ de `I` corresponde al índice individual del elemento `a_j` de A. Esto es, a cada elemento $a_j$ de A, le corresponde un índice individual:
+
+```julia
+julia> for (indice, elemento) in enumerate(A)
+           println("A[$indice] = $elemento")
+       end
+A[1] = 1
+A[2] = 5
+A[3] = 9
+A[4] = 13
+A[5] = 2
+A[6] = 6
+A[7] = 10
+A[8] = 14
+A[9] = 3
+A[10] = 7
+A[11] = 11
+A[12] = 15
+A[13] = 4
+A[14] = 8
+A[15] = 12
+A[16] = 16
+```
+Así, si creamos una matrix B cuyos elementos son los índices de los elementos de A, retornara los valores de A que le corresponden a dichos indices, por ejemplo:
+
+```julia
+julia> B = [1 5; 9 13]                      # Matriz de índices
+2×2 Matrix{Int64}:
+ 1   5
+ 9  13
+
+julia> A[B]                                 # Retorna los valores correspondientes a los índices
+2×2 Matrix{Int64}:
+ 1  2
+ 3  4
+
+julia> B = [6 2 13; 9 5 1]                  # Las dimensiones de la matriz de índices será
+2×3 Matrix{Int64}:                          # la dimensión de la matriz resultado.
+ 6  2  13
+ 9  5   1
+
+julia> A[B]
+2×3 Matrix{Int64}:
+ 6  5  4
+ 3  2  1
+
+```
+Como se mencionó anteriormente, también se puede pasar un arreglo de valores booleanos, llamados *índices lógicos* o *máscara lógica*, donde solamente se seleccionan los elementos cuyo indice corresponde al valor `true`.
+
+```julia
+julia> logic = [false, true, true, false]
+4-element Vector{Bool}:
+ 0
+ 1
+ 1
+ 0
+
+julia> A[logic,:]
+2×4 Matrix{Int64}:
+ 5   6   7   8
+ 9  10  11  12
+
+julia> mascara = map(ispow2, A)
+4×4 Matrix{Bool}:
+ 1  1  0  1
+ 0  0  0  1
+ 0  0  0  0
+ 0  0  0  1
+
+julia> A[mascara]
+5-element Vector{Int64}:
+  1
+  2
+  4
+  8
+ 16
+```
 ### Broadcasting
 ***
 
