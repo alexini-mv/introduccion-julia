@@ -1482,6 +1482,42 @@ julia> A[mascara]
  16
 ```
 ### Broadcasting
+Anteriormente vimos que se puede aplicar operaciones o funciones elemento a elemento sobre vectores o arreglos. Pero en otras será útil realizar operaciones binarias sobre arreglos de diferentes dimensiones, como por ejemplo, sumar un vector a cada una de las columnas de una matriz. Una manera poco eficiente de realizarlo sería hace una matriz con multiples copias del vector, y después hacer la suma de matrices. Al trabajar con matrices de altas dimensiones, esta estrategía se vuelve laboriosa de manejar y causa un desperdicio de memoria.
+
+Es por eso que Julia provee de la función `broadcast`, que duplica un singletón para que coincidan con las dimensiones de la matriz correspondiente, creando una nueva matriz sin usar memoria adicional, y realizar la operación elemento a elemento. La función `broadcast` tiene la siguiente síntaxis `broadcast(f, args,...)`, donde `f` es la función que se quiere aplicar.
+
+```julia
+julia> a = [3, 5]
+2-element Vector{Int64}:
+ 3
+ 5
+
+julia> B = [1 2 3; 4 5 6]
+2×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+
+julia> broadcast(+, a, B)
+2×3 Matrix{Int64}:
+ 4   5   6
+ 9  10  11
+```
+La *notación punto* para operadores o funciones es azúcar sintáctica de la función `broadcast`, es decir, `f.(args, ...)` es equivalente a `broadcast(f, args, ...)`. Además el `broadcast` no está limitado a arreglos únicamente, sino también es posible aplicarlo a otros objetos como escalares (`Numbers`, `Strings`, `Symbols`, `Types`, `Functions`), tuplas u otra colección. Los siguiente ejemplos son equivalentes:
+
+```julia
+julia> broadcast(string, 1:3, ".- ", ["Primero", "Segundo", "Tercero"])
+3-element Vector{String}:
+ "1.- Primero"
+ "2.- Segundo"
+ "3.- Tercero"
+
+julia> string.(1:3, ".- ", ["Primero", "Segundo", "Tercero"])
+3-element Vector{String}:
+ "1.- Primero"
+ "2.- Segundo"
+ "3.- Tercero"
+```
+
 ***
 
 ## Referencias 
