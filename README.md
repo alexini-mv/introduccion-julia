@@ -41,8 +41,8 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Vistazo a los generadores](#vistazo-a-los-generadores)
         * [Indexación](#indexación)
         * [Broadcasting](#broadcasting)
-    * [Abrir y modificar archivos](#)           **↓ Pendiente ↓**
-    * [Bloque Do](#)
+    * [Abrir, leer y escribir en archivos](#abrir-leer-y-escribir-en-archivos)
+    * [Bloque Do](#)                            **↓ Pendiente ↓**
     * [Gestor de paquetes Pkg](#)
     * [Manejo de ambientes virtuales en Julia](#)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
@@ -108,6 +108,15 @@ y ejecutar el script en la terminal:
 $ julia script.jl
 Hola Mundo
 ```
+Podemos personalizar nuestro 'Hola, mundo', preguntando el nombre del usuario, con la siguiente línea:
+
+```julia
+println("¿Cuál es tu nombre?")
+nombre = readline()                   # Con esta instrucción podemos introducir datos desde la terminal.
+
+println("Hola, ", nombre)
+```
+
 Listo, hemos ejecutado un nuevo 'Hola Mundo'. 😄 
 ***
 
@@ -1516,6 +1525,67 @@ julia> string.(1:3, ".- ", ["Primero", "Segundo", "Tercero"])
  "1.- Primero"
  "2.- Segundo"
  "3.- Tercero"
+```
+### Abrir, leer y escribir en archivos
+Julia provee de dos funciones para leer y escribir datos sobre `stream`s (flujo de datos) `write`, `read`; en ambas, toman el `stream` como primer argumento:
+
+```julia
+julia> write(stdout, "Hola mundo");
+Hola mundo
+
+julia> read(stdin, Char)
+a
+'a': ASCII/Unicode U+0061 (category Ll: Letter, lowercase)
+```
+En particular, si se quiere leer una línea completa, se puede realizar con función más especifica: `readline` como sigue:
+
+```julia
+julia> readline(stdin)
+Hola a todos.
+"Hola a todos."
+```
+Ahora bien, para trabajar con datos dentro de un archivo de texto, Julia provee la función `open`, la cual toma el nombre del archivo y regresa un objeto tipo `IOStream`, que puede ser usado con `read` y `write` para leer y escribir en el archivo. Por ejemplo:
+
+```julia
+julia> file = open("hola.txt")
+IOStream(<file hola.txt>)
+
+julia> readlines(archivo)
+2-element Vector{String}:
+ "¡Hola a todo el mundo!"
+ "Sean felices :D"
+
+julia> close(f)
+```
+O si lo que se desea es escribir sobre el archivo, se debe pasar como argumento "w" a la función open, como sigue:
+
+```julia
+julia> file = open("hola.txt", "w")
+IOStream(<file hola.txt>)
+
+julia> write(file, "Buenos días a todo el mundo.");
+```
+Si examinas el contenido del archivo en este punto, estará vacío. Esto es debido a que `IOStream` debe cerran antes de que los datos se escriban finalmente en el archivo.
+
+```julia
+julia> close(file)                      # Ahora sí los datos se escribirán en el archivo.
+```
+Ese es el patrón que se sigue al manejar datos en archivos: 
+1. Se abren el archivo. 
+2. Se trabaja con el contenido.
+3. Finalmente se cierra el archivo. 
+
+Es tan recurrente este patrón, que existe otra forma de invocar la función `open`, la cual toma como primer argumento una función, como segundo el nombre del archivo, e internamente abre el archivo, ejecuta la función tomando el objeto `IOStream` como argumento, y al terminar, lo cierra en automático. 
+
+```julia
+julia> function leer_y_mayusculas(f::IOStream)
+           return uppercase.(readlines(f))
+       end
+
+julia> open(leer_y_mayusculas, "hola.txt")
+2-element Vector{String}:
+ "¡HOLA A TODO EL MUNDO!"
+ "SEAN FELICES :D"
 ```
 
 ***
