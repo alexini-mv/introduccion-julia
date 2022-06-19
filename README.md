@@ -22,6 +22,14 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Funciones matemáticas básicas](#funciones-matemáticas-básicas)
         * [Funciones vectorizadas](#funciones-vectorizadas)
     * [Funciones](#funciones)
+        * [Bloque function](#bloque-function)
+        * [Funciones por asignación](#funciones-por-asignación)
+        * [Funciones anónimas](#funciones-anónimas)
+        * [Argumentos keywords](#argumentos-keyword)
+        * [Tipado de argumentos](#tipado-de-argumentos)
+        * [Vectorización de funciones](#vectorización-de-funciones)
+        * [Composición de funciones](#composición-de-funciones)
+        * [Return nothing](#return-nothing)
     * [Bloques de control de flujo](#bloques-de-control-de-flujo-condicionales-ciclos-y-otros)
         * [Condicionales](#condicionales)
         * [Evaluación short-circuit](#evaluación-short-circuit)
@@ -604,6 +612,7 @@ julia> sqrt.(vec)
 ```
 
 ## Funciones
+### Bloque function
 Las funciones en Julia son objetos que toman una tupla de valores y retornan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
 
 La síntaxis básica para declarar funciones en Julia es la siguientes:
@@ -615,17 +624,17 @@ julia>  function f(x, y)
 ```
 La definición de la función comienza con la palabra reservada ***function*** seguida por el nombre de la función y sus argumentos. Siempre se debe finalizar el bloque de definción de la función con la palabra reservada ***end***. 
 
-Por default, las funciones regresan siempre el valor de la última instrucción de su definición. Sin embargo, también existe la palabra reservada ***return*** que explicitamente indica el valor que la función retornará. Toda instrucción después de la línea de *return* será ignorada. 
+Por default, las funciones regresan siempre el valor de la última instrucción de su definición. Sin embargo, también existe la palabra reservada ***return*** que explicitamente indica el valor que la función retornará. Toda expresión después de la línea de *return* será ignorada. 
 
-Personalmente, recomiendo siempre incluir explicitamente el return en la definición de las funciones:
+Es recomendable siempre incluir explicitamente el return de las funciones:
 
 ```julia
 julia>  function f(x, y)
             return x^2 - 2x + y
         end
 ```
-
-Existe otra síntaxis para declarar funciones más compacta, llamada "por asignación", ideal cuando la definición de la función se puede hacer en una sola expresión:
+### Funciones por asignación
+Existe otra síntaxis para declarar funciones más compacta, llamada ***por asignación***, ideal cuando la definición de la función se puede hacer en una sola expresión:
 
 ```julia
 julia> f(x, y) = x^2 - 2x + y
@@ -641,7 +650,7 @@ julia> ∑(2, 7)
 ```
 
 ### Funciones anónimas
-Existe una tercera síntaxis para declarar funciones, las llamadas funciones anónimas (equivalentes a las lambda-functions de Python o las Arrow function de JavaScript), que principalmente se utilizaban como argumentos de otras funciones y que no necesariamente se requieren conservar después de su ejecución. Las dos formas equivalenes para declararlas es como sigue:
+Existe una tercera síntaxis para declarar funciones, las llamadas ***funciones anónimas*** (equivalentes a las *lambda functions* de Python o las *arrow functions* de JavaScript), que principalmente se utilizan como argumentos de otras funciones, y que no se requieren conservar después de su ejecución. Las dos formas equivalenes para declararlas es como sigue:
 
 ```julia
 julia> x -> x^2 - 2x + 1            # En una sola línea
@@ -656,16 +665,18 @@ Las funciones anónimas pueden aceptar múltiples argumentos, con la siguiente s
 ```julia
 julia> (x, y) -> x^2 - 2x + y
 ```
+Existe una tercera forma para declarar funciones anónimas, es por medio del [Bloque do](#bloque-do), que se describirá más adelante.
 
-Se pueden incluir **keyword arguments** en las funciones (al igual que en Python), separandolos de los argumentos posicionales con **;** de la siguiente forma:
+### Argumentos keyword
+Se pueden incluir **keyword arguments** en las funciones (al igual que en Python), separandolos de los argumentos posicionales con `;` de la siguiente forma:
 
 ```julia
 julia>  function f(x, y; radio=1.0, eje=1.0)
             return x + y * radio / eje
         end
 ```
-
-Es posible indicar el tipo de dato de los argumentos (tanto de los argumentos posicionales como los keyword argumentos), así como el tipo de dato que regresa la función. Si bien, no da ninguna ventaja en el desempeño del código, será sumamente útil más adelante para aplicaciones más avanzadas de Julia (Veáse el Multiple Dispatch). 
+### Tipado de argumentos
+Es posible indicar el tipo de dato de los argumentos (tanto de los argumentos posicionales como los keyword), al igual que el tipo de dato que retorna la función.
 
 La síntaxis para declarar el tipo de dato se realiza con los cuadripuntos **::** (similares a Fortran), de la siguiente forma:
 
@@ -676,6 +687,9 @@ julia>  function prediccion(x::Float64; n::Int64 = 5, p::Float64 = 0.5)::Float64
 ```
 Julia se asegurará de convertir el resultado al tipo de dato que declara como salida de la función.
 
+Si bien, el tipado de argumentos no da ninguna ventaja en el desempeño del código, será sumamente útil para aplicaciones más avanzadas de Julia (veáse el [Despacho múltiple](#métodos-de-funciones-despacho-múltiple)). 
+
+### Vectorización de funciones
 Una de las implementaciones más interesantes en Julia incluida en sus sistema base, es la implementación vectorizada (elemento a elemento) de las funciones al ser aplicadas a arreglos, vectores o matrices. Para conseguirlo, usamos la síntaxis punto (*dot syntax*) que ya vimos anteriormente con las funciones elementales, pero esta vez a nuestras funciones:
 
 ```julia
@@ -689,9 +703,10 @@ julia> prediccion.(A, n=5, p=0.5)       # Si se ejecuta la función sin el punto
  3.872983346207417
  5.0
 ```
-**Nota**: La síntaxis punto es azucar sintáctica de la función `broadcast` que justamente realiza la operación de aplicar la función a cada uno de los elementos de los arreglos.
+**Nota**: La síntaxis *punto* es azucar sintáctica de la función [broadcast](#broadcasting) que justamente realiza la operación de aplicar una función a cada uno de los elementos de los arreglos.
 
-Otra curiosidad de Julia, es que se puede realizar de manera sencilla **composición de funciones**, esto es, aplicar una función sobre el resultado de otra función (algo muy natural en matemáticas). Esto se logra con el operador de composicion **∘** esto es, `(f ∘ g)(args...)` es lo mismo que `f(g(args...))`. Dentro del REPL, el operador composición se obtiene escribiendo \circ + TAB.
+### Composición de funciones
+Otra curiosidad de Julia, es que se puede realizar de manera sencilla **composición de funciones**, esto es, aplicar una función sobre el resultado de otra función (algo muy natural en matemáticas). Esto se logra con el operador de composicion `∘` esto es, `(f ∘ g)(args...)` es lo mismo que `f(g(args...))`. Dentro del REPL, el operador composición se obtiene escribiendo **\circ + TAB**.
 
 Otra implementación de la composición de funciones es utilizando el operador *pipe* `|>` (algo más común entre los programadores). Realiza exactamente lo mismo, la salida de una función pasa como argumento de la siguiente:
 
@@ -708,6 +723,7 @@ julia> x |> sum |> sqrt     # Utilizando pipe al estilo programador
 3.872983346207417
 ```
 
+### Return nothing
 Finalmente, las funciones que no regresan algún valor y sólo realizan cambios, por convención se retorna la expresión ***nothing*** como sigue:
 
 ```julia
@@ -1579,37 +1595,38 @@ julia> string.(1:3, ".- ", ["Primero", "Segundo", "Tercero"])
  "3.- Tercero"
 ```
 ### Leer y escribir archivos
-Julia provee de dos funciones para leer y escribir datos sobre `stream`s (flujo de datos) `write`, `read`; en ambas, toman el `stream` como primer argumento:
+Antes de entrar al tema, revisemos lo siguiente. Julia provee dos funciones para leer y escribir datos sobre flujo de datos `stream`, estas son: `write`, `read`. Ambas funciones toman al `stream` como primer argumento:
 
 ```julia
-julia> write(stdout, "Hola mundo");
+julia> write(stdout, "Hola mundo");                         # Standard output
 Hola mundo
 
-julia> read(stdin, Char)
+julia> read(stdin, Char)                                    # Standard input
 a
 'a': ASCII/Unicode U+0061 (category Ll: Letter, lowercase)
 ```
-En particular, si se quiere leer una línea completa, se puede realizar con función más especifica: `readline` como sigue:
+En particular, para leer una línea completa, se puede realizar con una función más especifica: `readline` como sigue:
 
 ```julia
 julia> readline(stdin)
 Hola a todos.
 "Hola a todos."
 ```
-Ahora bien, para trabajar con datos dentro de un archivo de texto, Julia provee la función `open`, la cual toma el nombre del archivo y regresa un objeto tipo `IOStream`, que puede ser usado con `read` y `write` para leer y escribir en el archivo. Por ejemplo:
+
+Para el caso de datos dentro de un archivo de texto, Julia provee la función `open`, la cual toma el nombre del archivo y regresa un objeto tipo `IOStream`, que puede ser usado con `read` y `write` para leer y escribir dentro del archivo. Por ejemplo:
 
 ```julia
 julia> file = open("hola.txt")
 IOStream(<file hola.txt>)
 
-julia> readlines(archivo)
+julia> readlines(file)
 2-element Vector{String}:
  "¡Hola a todo el mundo!"
  "Sean felices :D"
 
-julia> close(f)
+julia> close(file)
 ```
-O si lo que se desea es escribir sobre el archivo, se debe pasar como argumento "w" a la función open, como sigue:
+O si lo que se desea es escribir sobre el archivo, se debe pasar como argumento "w" a la función `open`, como sigue:
 
 ```julia
 julia> file = open("hola.txt", "w")
@@ -1622,12 +1639,12 @@ Si examinas el contenido del archivo en este punto, estará vacío. Esto es debi
 ```julia
 julia> close(file)                      # Ahora sí los datos se escribirán en el archivo.
 ```
-Ese es el patrón que se sigue al manejar datos en archivos: 
+El patrón que se sigue al manejar datos en archivos: 
 1. Se abren el archivo. 
 2. Se trabaja con el contenido.
-3. Finalmente se cierra el archivo. 
+3. Se cierra el archivo. 
 
-Es tan recurrente este patrón, que existe otra forma de invocar la función `open`, la cual toma como primer argumento una función, como segundo el nombre del archivo, e internamente abre el archivo, ejecuta la función tomando el objeto `IOStream` como argumento, y al terminar, lo cierra en automático. 
+Es tan recurrente ese patrón, que existe otra forma de invocar la función `open`, la cual toma como primer argumento una función y como segundo argumento el nombre del archivo, e internamente abre el archivo, ejecuta la función tomando el objeto `IOStream` como argumento, y al terminar, lo cierra en automático. Por ejemplo:
 
 ```julia
 julia> function leer_y_mayusculas(file::IOStream)
@@ -1640,7 +1657,7 @@ julia> open(leer_y_mayusculas, "hola.txt")
  "SEAN FELICES :D"
 ```
 
-Ahora, recordando lo mencionado en la sección del [Bloque Do](#bloque-do), es muy frecuente invocar a la función `open` esta segunda forma pasandole como primer argumento una función anónima definida dentro de un bloque do, y tener una síntaxis parecida al bloque ***with*** de Python, como la siguiente:
+Ahora, recordando lo mencionado en la sección del [Bloque Do](#bloque-do), es muy frecuente invocar a la función `open` de esta segunda forma pasandole como primer argumento una función anónima definida dentro de un bloque do, y tener una síntaxis parecida a la expresión ***with*** de Python, como la siguiente:
 
 ```julia
 julia>  open("numeros.txt") do file
@@ -1648,7 +1665,8 @@ julia>  open("numeros.txt") do file
         end
 ```
 
-
+## Julia Avanzado
+### Métodos de funciones: Despacho múltiple
 ***
 
 ## Referencias 
