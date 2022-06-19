@@ -27,7 +27,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Evaluación short-circuit](#evaluación-short-circuit)
         * [Ciclos while y for](#ciclos-while-y-for)
         * [Bloque de expresiones compuestas](#bloque-de-expresiones-compuestas)
-        * [Bloque Do](#bloque-do)
+        * [Bloque do](#bloque-do)
     * [Estructura de datos](#estructura-de-datos)
         * [Vectores y arreglos](#vectores-y-arreglos)
         * [Tuplas](#tuplas)
@@ -43,8 +43,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Indexación](#indexación)
         * [Broadcasting](#broadcasting)
     * [Leer y escribir archivos](#leer-y-escribir-archivos)
-                                **↓ Pendiente ↓**
-    * [Gestor de paquetes Pkg](#)
+    * [Gestor de paquetes Pkg](#) **↓ Pendiente ↓**
     * [Manejo de ambientes virtuales en Julia](#)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
     * [Bloque try-catch-finally](#)
@@ -641,6 +640,7 @@ julia> ∑(2, 7)
 9
 ```
 
+### Funciones anónimas
 Existe una tercera síntaxis para declarar funciones, las llamadas funciones anónimas (equivalentes a las lambda-functions de Python o las Arrow function de JavaScript), que principalmente se utilizaban como argumentos de otras funciones y que no necesariamente se requieren conservar después de su ejecución. Las dos formas equivalenes para declararlas es como sigue:
 
 ```julia
@@ -834,7 +834,56 @@ julia>  suma = (x = 3; y = 5; x + y)
 ```
 En ambos casos, el valor que se guarda en la variable siempre será el resultado de la última instrucción. Aunque típicamente esta es la forma de utilizar las cadenas ***;*** y el bloque ***begin***, nada restringe la posibilida de tener un bloque begin en una línea, y una cadena ; multilínea.
 
+```julia
+julia>  suma =  begin; x = 3; y = 5; x + y; end
+
+julia>  suma = (x = 3;
+                y = 5;
+                x + y)
+```
+
 ### Bloque Do
+Al pasar funciones como argumentos a ***funciones de orden superior***, tipicamente se usan [funciones anónimas](#funciones-anónimas). Pero muchas veces de dichas funciones requieren multiples líneas para su definición, lo que hace engorrosa y díficil la lectura del código. Afortunadamente, el bloque `do` solventa este problema.
+
+El bloque `do` creará una función anónima que en autómatico se la pasará a la *función de orden superior*. Para esto, es necesario que la *función de orden superior* **reciba como primer argumento un función**. La síntaxis del bloque `do` es la siguiente:
+
+```julia
+# Invocación sin el bloque do sería: 
+julia>  función_orden_superior(función_anonima, otros_args...)
+
+# Usando el bloque Do
+julia>  función_orden_superior(otros_args...) do argumentos_función_anonima,...
+            # Intrucciones de la función anónima
+        end
+```
+Por ejemplo:
+
+```julia
+julia> numeros = [(1,2),(9,2),(5,5),(7,3),(3,4)];
+
+# Sin bloque Do:
+julia> map(x -> begin
+                    if x[1] < x[2]
+                        return "Es menor"
+                    elseif x[1] > x[2]
+                        return "Es mayor"
+                    else
+                        return "Son iguales"
+                    end
+                end, numeros)
+
+# Con el bloque Do:
+julia>  map(numeros) do x
+            if x[1] < x[2]
+                return "Es menor"
+            elseif x[1] > x[2]
+                return "Es mayor"
+            else
+                return "Son iguales"
+            end
+        end 
+```
+Así, la instrucción `do x` crea una función anónima con un argumento, o sea, `x -> ...` . Así, la instrucción `do x, y` creará una función anónima de dos argumentos, `(x, y) -> ...` . En cambio, la expresión `do (x, y)` creará una función anónima cuyo único argumento será una tupla que será deconstruida. Finalmente, la simple instrucción `do` definirá una función anónima sin argumentos.
 
 ## Estructura de Datos
 ### Vectores y Arreglos
@@ -1591,7 +1640,7 @@ julia> open(leer_y_mayusculas, "hola.txt")
  "SEAN FELICES :D"
 ```
 
-Ahora, como se mencionó en la sección de [Bloque Do](#bloque-do), con esta segunda forma se puede invocar la función `open` pasandole como primer argumento una función anónima definida dentro del bloque do, y tener una síntaxis parecida al bloque ***with*** de Python, como sigue:
+Ahora, recordando lo mencionado en la sección del [Bloque Do](#bloque-do), es muy frecuente invocar a la función `open` esta segunda forma pasandole como primer argumento una función anónima definida dentro de un bloque do, y tener una síntaxis parecida al bloque ***with*** de Python, como la siguiente:
 
 ```julia
 julia>  open("numeros.txt") do file
@@ -1610,3 +1659,4 @@ julia>  open("numeros.txt") do file
 * [Aprendizaje de Julia](https://riptutorial.com/Download/julia-language-es.pdf). Ebook open-source en español en PDF.
 * [Blog tutorial](https://www.analyticslane.com/2020/07/14/hola-julia/) en español muy amigable sobre Julia.
 * [Breve introducción a Julia](https://mauriciotejada.com/programacionjulia/) en español.
+* [Código básico con comentarios](https://github.com/aerdely/introJulia) para una introducción didáctica a Julia en español.
