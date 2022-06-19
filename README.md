@@ -52,7 +52,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Broadcasting](#broadcasting)
     * [Leer y escribir archivos](#leer-y-escribir-archivos)
     * [Gestor de paquetes Pkg](#) **↓ Pendiente ↓**
-    * [Manejo de ambientes virtuales en Julia](#)
+        * [Manejo de ambientes virtuales en Julia](#)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
     * [Bloque try-catch-finally](#)
     * [Tipo de datos compuestos: Struct](#)
