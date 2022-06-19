@@ -883,7 +883,7 @@ julia>  map(numeros) do x
             end
         end 
 ```
-Así, la instrucción `do x` crea una función anónima con un argumento, o sea, `x -> ...` . Así, la instrucción `do x, y` creará una función anónima de dos argumentos, `(x, y) -> ...` . En cambio, la expresión `do (x, y)` creará una función anónima cuyo único argumento será una tupla que será deconstruida. Finalmente, la simple instrucción `do` definirá una función anónima sin argumentos.
+La instrucción `do x` crea una función anónima con un argumento, `x -> ...` . Así, la instrucción `do x, y` creará una función anónima de dos argumentos, `(x, y) -> ...` . En cambio, la expresión `do (x, y)` creará una función anónima cuyo único argumento será una tupla que será deconstruida. Finalmente, la simple instrucción `do` definirá una función anónima sin argumentos `()-> ...` .
 
 ## Estructura de Datos
 ### Vectores y Arreglos
