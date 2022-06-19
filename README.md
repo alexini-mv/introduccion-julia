@@ -27,6 +27,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Evaluación short-circuit](#evaluación-short-circuit)
         * [Ciclos while y for](#ciclos-while-y-for)
         * [Bloque de expresiones compuestas](#bloque-de-expresiones-compuestas)
+        * [Bloque Do](#bloque-do)
     * [Estructura de datos](#estructura-de-datos)
         * [Vectores y arreglos](#vectores-y-arreglos)
         * [Tuplas](#tuplas)
@@ -41,8 +42,8 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Vistazo a los generadores](#vistazo-a-los-generadores)
         * [Indexación](#indexación)
         * [Broadcasting](#broadcasting)
-    * [Abrir, leer y escribir en archivos](#abrir-leer-y-escribir-en-archivos)
-    * [Bloque Do](#)                            **↓ Pendiente ↓**
+    * [Leer y escribir archivos](#leer-y-escribir-archivos)
+                                **↓ Pendiente ↓**
     * [Gestor de paquetes Pkg](#)
     * [Manejo de ambientes virtuales en Julia](#)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
@@ -833,6 +834,8 @@ julia>  suma = (x = 3; y = 5; x + y)
 ```
 En ambos casos, el valor que se guarda en la variable siempre será el resultado de la última instrucción. Aunque típicamente esta es la forma de utilizar las cadenas ***;*** y el bloque ***begin***, nada restringe la posibilida de tener un bloque begin en una línea, y una cadena ; multilínea.
 
+### Bloque Do
+
 ## Estructura de Datos
 ### Vectores y Arreglos
 Los vectores son colecciones de elementos ordenados, los cuales pueden estar duplicados y ser de diferente tipo de dato cada uno. Los vectores son mutables, esto es, pueden agregarse elementos y eliminarlos. Es un objeto iterable y se puede acceder a sus elementos mediante indexación. Es muy similar a las listas en Python.
@@ -1526,7 +1529,7 @@ julia> string.(1:3, ".- ", ["Primero", "Segundo", "Tercero"])
  "2.- Segundo"
  "3.- Tercero"
 ```
-### Abrir, leer y escribir en archivos
+### Leer y escribir archivos
 Julia provee de dos funciones para leer y escribir datos sobre `stream`s (flujo de datos) `write`, `read`; en ambas, toman el `stream` como primer argumento:
 
 ```julia
@@ -1578,8 +1581,8 @@ Ese es el patrón que se sigue al manejar datos en archivos:
 Es tan recurrente este patrón, que existe otra forma de invocar la función `open`, la cual toma como primer argumento una función, como segundo el nombre del archivo, e internamente abre el archivo, ejecuta la función tomando el objeto `IOStream` como argumento, y al terminar, lo cierra en automático. 
 
 ```julia
-julia> function leer_y_mayusculas(f::IOStream)
-           return uppercase.(readlines(f))
+julia> function leer_y_mayusculas(file::IOStream)
+           return uppercase.(readlines(file))
        end
 
 julia> open(leer_y_mayusculas, "hola.txt")
@@ -1587,6 +1590,15 @@ julia> open(leer_y_mayusculas, "hola.txt")
  "¡HOLA A TODO EL MUNDO!"
  "SEAN FELICES :D"
 ```
+
+Ahora, como se mencionó en la sección de [Bloque Do](#bloque-do), con esta segunda forma se puede invocar la función `open` pasandole como primer argumento una función anónima definida dentro del bloque do, y tener una síntaxis parecida al bloque ***with*** de Python, como sigue:
+
+```julia
+julia>  open("numeros.txt") do file
+            return parse.(Int64, readlines(file))
+        end
+```
+
 
 ***
 
