@@ -51,10 +51,13 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Indexación](#indexación)
         * [Broadcasting](#broadcasting)
     * [Leer y escribir archivos](#leer-y-escribir-archivos)
-    * [Gestor de paquetes Pkg](#) **↓ Pendiente ↓**
-        * [Manejo de ambientes virtuales en Julia](#)
+    * [Gestor de paquetes Pkg](#gestor-de-paquetes-pkg)
+        * [Uso básico](#uso-básico)
+        * [Ambientes virtuales en Julia](#ambientes-virtuales-en-julia)
+        * [Modo no interactivo de Pkg](#modo-no-interactivo-de-pkg)
+    * [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia) **↓ Pendiente ↓**
+    * [Manejo de errores](#manejo-de-errores)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
-    * [Bloque try-catch-finally](#)
     * [Tipo de datos compuestos: Struct](#)
     * [Métodos de funciones: Despacho multiple](#)
     * [Constructores](#)
@@ -1664,7 +1667,160 @@ julia>  open("numeros.txt") do file
             return parse.(Int64, readlines(file))
         end
 ```
+### Gestor de paquetes Pkg
+Julia provee de un excelente manejador de paquetes, que trabaja alrededor de ambientes o entornos (*enviroments*), es decir áreas de trabajo con conjunto de paquetes independientes que pueden ser locales para proyectos individuales o compartidos, así como seleccionados por nombre. El conjunto exacto de paquetes y versiones del ambiente es declarado en un archivo *manifiesto*, el cual ayuda a la reproducibilidad del proyecto.
 
+El enfoque del que se inspira Pkg de los ambientes es muy similar al usado en Python con virtualenv, pero que en Julia funciona de manera nativa.
+
+### Uso básico
+Existen dos formas para usar el gestor de paquetes Pkg, una es la forma interactiva por medio del REPL de Julia, y la otra no interactiva, por medio de la API de Pkg dentro del código. Aquí explicaremos las instrucciones básicas usando el REPL.
+
+Para entrar al REPL Pkg y administrar los paquetes, presionamos la tecla `]` dentro de REPL de Julia, y para salir presionamos la tecla de retroceso (*backspace*) o `ctrl + c`. Veremos que el REPL cambió y se verá similar al siguiente:
+
+```julia
+(@v1.7) pkg>
+```
+
+Aquí, podemos ejecutar las instrucciones. Por ejemplo, para instalar algún paquete, debemos ejecutar la instrucción `add` seguido por el nombre del paquete o paquetes que queremos instalar, separados por un espacio simple.
+```julia
+(@v1.7) pkg> add Paquete1 Paquete2 
+```
+
+Para remover algún paquete, lo ejecutaremos con la instrucción `rm` seguido del nombre del paquete:
+
+```julia
+(@v1.7) pkg> rm Paquete1
+```
+
+Para agregar algún paquete no registrado, se debe especificar la dirección URL donde está alojado el paquete, por ejemplo:
+
+```julia
+(@v1.7) pkg> add https://github.com/JuliaLang/Ejemplo.jl
+```
+Y al igual que en el caso anterior, para removerlo usamos la instrucción `rm`.
+
+Finalmente, para actualizar algún paquete usaremos la instrucción `update` como sigue:
+
+```julia
+(@v1.7) pkg> update Paquete1
+```
+o sin argumento, para actualizar todos los paquetes.
+
+Si desea instalar algún paquete en una versión especifica, puede señalarla usando el símbolo `@` y el número de versión, por ejemplo:
+
+```julia
+(@v1.7) pkg> add Paquete1@1.3.2 
+```
+
+Cuando se está trabajando en el desarrollo de un paquete, es muy conveniente instalarlo en modo *desarrollador* `dev`, para que sean siempre recargados de una ubicación de desarrollo.
+
+```julia
+(@v1.7) pkg> dev PaqueteDev
+```
+El manejador de paquetes hará un clon del paquete en la ruta de desarrollo de Julia. Y cuando se importe el paquete dentro de Julia, el interprete sabrá que deberá traerlo de la ruta desarrollo en lugar de los repositorios estables. Para dejar de seguir el paquete de desarrollo y utilizar el paquete estable, se puede hacer con
+
+```julia
+(@v1.7) pkg> free PaqueteDev
+```
+
+Para paquetes que no se utilicen por más de 30 días o que en ningún *manifiesto* los llame, se pueden borrar con el Garbage Collector, usando la siguiente instrucción:
+
+```julia
+(@v1.7) pkg> gc --all
+```
+Con esto, borrará de disco todos los paquetes viejos y que no se utilizan.
+
+### Ambientes virtuales en Julia
+Para este punto, seguro habrá notado en el REPL de Pkg (@v1.7), esto nos indica el ambiente o entorno virtual en el cual estamos trabajando. 
+
+Para crear un nuevo ambiente virtual para comenzar a trabajar en un nuevo proyecto, usamos la instrucción `activate` como sigue
+
+```julia
+(@v1.7) pkg> activate tutorial               # nombre del ambiente virtual
+  Activating new project at # dirección del directoria donde se trabajará.
+
+(tutorial) pkg>
+```
+Esto creará un carpeta con el nombre del ambiente, donde creará los archivos `Project.toml` y `Manifest.toml` con la información de los paquetes y dependencias que se instalarán para el nuevo proyectos.
+
+Si simplemente se quiere inicializar un ambiente virtual en el directorio actual, cuyo nombre lo tomará del directorio, sólo ejecute:
+
+```julia
+(@v1.7) pkg> activate .          
+  Activating new project at # directorio de trabajo
+
+(introduccion-julia) pkg>
+```
+Una vez activado el ambiente virtual, podemos usar las instrucciones que se vieron anteriormente para instalar, borrar o actualizar los paquetes que se requieren. Toda la información de las dependecias será actualizada en los archivos `Project.toml` y `Manifest.toml`.
+
+Cuando se desea regresar al ambiente por defecto, simplemente ejecute `activate` sin argumentos.
+
+```julia
+(introduccion-julia) pkg> activate
+
+(@v1.7) pkg>
+```
+
+Si se quiere recrear el ambiente virtual de algún proyecto del cual, por ejemplo, se clonó de github o que se distribuye libremente, se puede replicar el entorno de manera sencilla si se tienen los archivos `Project.toml` o `Manifest.toml`. Simplemente, ejecute Julia en el directorio raíz del proyecto, entre al REPL de Pkg, active el ambiente en el directorio actual e instancie como sigue:
+
+```julia
+(@v1.7) pkg> activate .          
+  Activating new project at # directorio de trabajo
+
+(proyecto-clonado) pkg> instantiate
+```
+
+Esto instalará todas las dependencias especificadas en los *manifiestos* o las resolverá a las versiones más actuales y compatibles con el proyecto.
+
+Ahora, si no se quiere usar `activate` desde el REPL de Julia, puede especificar el ambiente virtual usando la bandera --project=<directorio>. Por ejemplo, para ejecutar un script desde la línea de comando utilizando el entorno virtual en el directorio actual:
+
+```console
+$ julia --project=. miscript.jl
+```
+
+### Modo no interactivo de Pkg
+Como se mencionó anteriormente, se puede gestionar la instalación de paquetes sin entrar en el modo interactivo del REPL de Julia, ideal cuando se manejar scripts de ejecución, por medio de la API funcional de Pkg.
+
+Aunque tiene un grado de complejidad mayor para funciones avanzadas, presentamos las instrucciones básicas.
+
+```julia
+using Pkg                                       # Importamos la API del manejador de paquetes
+
+Pkg.add("Paquete1")                             # Instalamos un paquete
+Pkg.add(name="Paquete2", version="0.3")         # Instalamos un paquete en una version especifica
+Pkg.add(url="https://github.com/JuliaLang/pkg.jl", 
+        rev="master")                           # Instalamos paquete de un repo externo
+
+Pkg.develop("PaquetePrueba")                    # Instalamos un paquete en modo dev
+Pkg.develop(url="https://github.com/JuliaLang/Compat.jl")
+Pkg.develop(path="MyJuliaPackages/Package.jl")
+
+Pkg.activate("proyecto")                        # Activa el ambiente virtual de Julia ya sea por nombre
+Pkg.activate("ruta/local")                      # o por ruta del proyecto
+
+Pkg.rm("Paquete1")                              # Remueve el paquete del ambiente actual
+
+Pkg.update()                                    # Actualiza todo los paquete
+Pkg.update("Paquete1")                          # o alguno en especifico
+
+Pkg.instantiate()                               # Instala todas las dependencias declaradas en 
+                                                # los archivos manifiestos
+
+Pkg.gc()                                        # Limpia los paquete que no se usan en ningun ambiente
+
+Pkg.status()                                    # Imprime el estatus del los manifiestos
+
+Pkg.dependencies()                              # Regresa un diccionario con la información de las 
+                                                # dependencias instaladas
+
+pkg.project()                                   # Regresa la información del proyecto
+```
+
+**NOTA**: Los detalles avanzados acerca del gestor de paquetes Pkg de Julia se escapan del objetivo de este documento. Para mayor referencia, visite la [documentación oficial de Pkg](https://pkgdocs.julialang.org).
+
+### Usar paquetes dentro de Julia
+### Manejo de errores
+***
 ## Julia Avanzado
 ### Métodos de funciones: Despacho múltiple
 ***
@@ -1678,3 +1834,4 @@ julia>  open("numeros.txt") do file
 * [Blog tutorial](https://www.analyticslane.com/2020/07/14/hola-julia/) en español muy amigable sobre Julia.
 * [Breve introducción a Julia](https://mauriciotejada.com/programacionjulia/) en español.
 * [Código básico con comentarios](https://github.com/aerdely/introJulia) para una introducción didáctica a Julia en español.
+* [Documentación del gestor de paquetes Pgk](https://pkgdocs.julialang.org/v1/).
