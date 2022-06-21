@@ -59,6 +59,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Diferencia entre `using` e `import`](#diferencia-entre-using-e-import)
         * [Importando elementos especificos y el uso de alias](#importando-elementos-especificos-y-el-uso-de-alias)
     * [Manejo de errores](#manejo-de-errores) **↓ Pendiente ↓**
+    * [Comandos de Bash en Julia](#comandos-de-bash-en-julia)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
     * [Tipo de datos compuestos: Struct](#)
     * [Métodos de funciones: Despacho multiple](#)
@@ -1841,6 +1842,9 @@ Técnicamente, la declaración `using Paquete1` significa que un paquete llamado
 
 Por otra parte, usar `import`, sólo se trae el nombre del paquete al scope actual. Los usuarios necesitarán usar la síntaxis punto para acceder a todos los nombres dentro del paquete: `Paquete1.nombre`. Por lo general se usa `import` para mantener limpio el *namespace* de la sesión actual y evitar cruce de nombres repetidos.
 
+Otra diferencia relevante es al importar con `using` no se puede crear nuevos métodos a las funciones que viven dentro del paquete importado. En cambio usando `import` es posible crear nuevos métodos a las funciones importadas, pero es necesarios invocarlos con la síntaxis punto.
+
+
 ### Importando elementos especificos y el uso de alias 
 Tanto con `using` e `import` se pueden importar multiples paquetes en la misma expresión, separando los paquetes con comas, por ejemplo:
 
@@ -1866,6 +1870,8 @@ julia> using CSV: read as rd
 Aquí existe otra diferencia entre `import` y `using` en el uso de `as`: Con `using` sólo se pueden renombrar elementos especificos importados con `:`. La instrucción `using CSV as C` no tendría efecto alguno. En cambio, con `import` es posible renombrar el nombre del paquete mismo (tal como en Python).
 
 ## Manejo de errores
+## Comandos de Bash en Julia
+[Referencia de trabajo](https://github.com/aerdely/introJulia/blob/main/lenguaje/18entradasalida.jl)
 ***
 ## Julia Avanzado
 ## Métodos de funciones: Despacho múltiple
