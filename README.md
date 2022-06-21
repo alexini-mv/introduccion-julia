@@ -55,8 +55,10 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Uso básico](#uso-básico)
         * [Ambientes virtuales en Julia](#ambientes-virtuales-en-julia)
         * [Modo no interactivo de Pkg](#modo-no-interactivo-de-pkg)
-    * [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia) **↓ Pendiente ↓**
-    * [Manejo de errores](#manejo-de-errores)
+    * [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia) 
+        * [Diferencia entre `using` e `import`](#diferencia-entre-using-e-import)
+        * [Importando elementos especificos y el uso de alias](#importando-elementos-especificos-y-el-uso-de-alias)
+    * [Manejo de errores](#manejo-de-errores) **↓ Pendiente ↓**
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
     * [Tipo de datos compuestos: Struct](#)
     * [Métodos de funciones: Despacho multiple](#)
@@ -1234,7 +1236,7 @@ Dict{Any, Any} with 7 entries:
 ***
 
 ## Julia Intermedio
-### Arreglos multidimensionales
+## Arreglos multidimensionales
 Julia provee de un implementación de alta calidad para el manejo de arreglos multidimensionales. Su biblioteca de arreglos está escrita enteramente en Julia y su eficiencia se debe enteramente al compilador. Es posible definir tipos personalizados de arreglos, gracias a la herencia del tipo AbstractArray.
 
 En el caso general, los arreglos pueden contener objetos del tipo `Any` (cualquiera, indistinto). Pero para la mayoria de propositos computacionales, los arreglos pueden contener objetos de tipos más especificos como `Int64` o `Float64`. Y para cuestiones cientificas, incluve tipos `Complex`.
@@ -1597,7 +1599,7 @@ julia> string.(1:3, ".- ", ["Primero", "Segundo", "Tercero"])
  "2.- Segundo"
  "3.- Tercero"
 ```
-### Leer y escribir archivos
+## Leer y escribir archivos
 Antes de entrar al tema, revisemos lo siguiente. Julia provee dos funciones para leer y escribir datos sobre flujo de datos `stream`, estas son: `write`, `read`. Ambas funciones toman al `stream` como primer argumento:
 
 ```julia
@@ -1667,7 +1669,7 @@ julia>  open("numeros.txt") do file
             return parse.(Int64, readlines(file))
         end
 ```
-### Gestor de paquetes Pkg
+## Gestor de paquetes Pkg
 Julia provee de un excelente manejador de paquetes, que trabaja alrededor de ambientes o entornos (*enviroments*), es decir áreas de trabajo con conjunto de paquetes independientes que pueden ser locales para proyectos individuales o compartidos, así como seleccionados por nombre. El conjunto exacto de paquetes y versiones del ambiente es declarado en un archivo *manifiesto*, el cual ayuda a la reproducibilidad del proyecto.
 
 El enfoque del que se inspira Pkg de los ambientes es muy similar al usado en Python con virtualenv, pero que en Julia funciona de manera nativa.
@@ -1818,11 +1820,55 @@ pkg.project()                                   # Regresa la información del pr
 
 **NOTA**: Los detalles avanzados acerca del gestor de paquetes Pkg de Julia se escapan del objetivo de este documento. Para mayor referencia, visite la [documentación oficial de Pkg](https://pkgdocs.julialang.org).
 
-### Usar paquetes dentro de Julia
-### Manejo de errores
+## Usar paquetes dentro de Julia
+En Julia hay dos métodos para cargar los paquetes y usarlos dentro del código: la expresión `using` y la expresión `import`.
+
+```julia
+julia> using Paquete1
+
+julia> import Paquete2
+```
+Ya sea usando `using` o `import`, permite cargar un paquete, es decir, una colección independiente y reutilizable de código Julia y esté disponible con su nombre dentro del módulo de importación. Si el mismo *Paquete* se importa varias veces en la misma sesión de Julia, sólo se carga la primera vez; en las importaciones posteriores, sólo se obtiene una referencia al mismo módulo.
+
+### Diferencia entre `using` e `import`
+Si bien, ambas instrucciones sirven para cargar el código del paquete, tiene ligeras diferencias. 
+
+Usando `using`, se trae con ello:
+1. El nombre del módulo o paquete.
+2. Los elementos en la lista de *exportación* al espacio de nombres (*namespace*) global principal.
+
+Técnicamente, la declaración `using Paquete1` significa que un paquete llamado *Paquete1* estará disponible para resolver los nombres según sea necesario. Cuando se encuentra una variable global que no tiene definición en el módulo actual, el sistema la buscará entre las variables *exportadas* por *Paquete1* y la utilizará si se encuentra ahí. En palabras simples, con `using` se importa tanto el nombre del *Paquete1* y todos los nombres exportados por *Paquete1* para que **sean usados directamente** por la sesión de Julia donde se importa. Los nombres que son están en la lista de nombres exportados, pueden ser accedidos por medio de la síntaxis punto: `Paquete1.nombre`.
+
+Por otra parte, usar `import`, sólo se trae el nombre del paquete al scope actual. Los usuarios necesitarán usar la síntaxis punto para acceder a todos los nombres dentro del paquete: `Paquete1.nombre`. Por lo general se usa `import` para mantener limpio el *namespace* de la sesión actual y evitar cruce de nombres repetidos.
+
+### Importando elementos especificos y el uso de alias 
+Tanto con `using` e `import` se pueden importar multiples paquetes en la misma expresión, separando los paquetes con comas, por ejemplo:
+
+```julia
+julia> using LinearAlgebra, Statistics
+```
+
+Si se quiere sólo importar ciertos elementos especificos de un paquete, ya sea con `using` o `import`, sin importar todo lo demás, se puede especificar usando `:` como sigue:
+
+```julia
+julia> using Paquete: función1, función2
+```
+
+Muchas veces el nombre de los paquetes o de los elementos importados tienen nombre muy largos o dificiles de recordar o que pueden causar conflictos con nombres iguales en el scope actual. Para evitar esto, se puede *renombrar* los elementos importados por medio de alias, usando la palabra reservada `as` (similar a Python). Por ejemplo:
+
+```julia
+julia> import BenchmarkTools as BT
+
+julia> import CSV: read as rd
+
+julia> using CSV: read as rd
+```
+Aquí existe otra diferencia entre `import` y `using` en el uso de `as`: Con `using` sólo se pueden renombrar elementos especificos importados con `:`. La instrucción `using CSV as C` no tendría efecto alguno. En cambio, con `import` es posible renombrar el nombre del paquete mismo (tal como en Python).
+
+## Manejo de errores
 ***
 ## Julia Avanzado
-### Métodos de funciones: Despacho múltiple
+## Métodos de funciones: Despacho múltiple
 ***
 
 ## Referencias 
