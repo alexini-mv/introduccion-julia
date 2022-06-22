@@ -58,7 +58,10 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia) 
         * [Diferencia entre `using` e `import`](#diferencia-entre-using-e-import)
         * [Importando elementos especificos y el uso de alias](#importando-elementos-especificos-y-el-uso-de-alias)
-    * [Manejo de errores](#manejo-de-errores) **↓ Pendiente ↓**
+    * [Manejo de excepciones](#manejo-de-excepciones) **↓ Pendiente ↓**
+        * [Excepciones integradas](#excepciones-integradas)
+        * [Función `throw`](#función-throw)
+        * [Bloque `try`/`catch`/`finally`](#bloque-trycatchfinally)
     * [Comandos de Bash en Julia](#comandos-de-bash-en-julia)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
     * [Tipo de datos compuestos: Struct](#)
@@ -1869,7 +1872,138 @@ julia> using CSV: read as rd
 ```
 Aquí existe otra diferencia entre `import` y `using` en el uso de `as`: Con `using` sólo se pueden renombrar elementos especificos importados con `:`. La instrucción `using CSV as C` no tendría efecto alguno. En cambio, con `import` es posible renombrar el nombre del paquete mismo (tal como en Python).
 
-## Manejo de errores
+## Manejo de excepciones
+Cuando ocurre un caso inesperado, es posible que una función no pueda devolver un valor esperado. En tales casos, puede ser mejor para el caso excepcional terminar el programa mientras se imprime un mensaje de error de diagnóstico o mejor aún, incluir un código para manejar tales circunstancias excepcionales y permitir que el código tome la acción apropiada.
+
+### Excepciones integradas
+En Julia, se lanza una `Exception`s cuando ocurre una condición inesperada. Las siguientes son las excepciones integradas que interrumpen el flujo normal de control.
+
+|Exception|Descripción|
+|---|---|
+|[ArgumentError](https://docs.julialang.org/en/v1/base/base/#Core.ArgumentError)|Los parámetros de una llamada de función no coinciden con una firma válida.|
+|[AssertionError](https://docs.julialang.org/en/v1/base/base/#Core.AssertionError)|La condición afirmada no se evaluó como verdadera.|
+|[BoundsError](https://docs.julialang.org/en/v1/base/base/#Core.BoundsError)|Una operación de indexación en una matriz, intentó acceder a un elemento fuera de los límites en el índice.|
+|[CompositeException](https://docs.julialang.org/en/v1/base/base/#Base.CompositeException)|Envuelve un vector de excepciones lanzadas por una tarea con información sobre la serie de excepciones. Por ejemplo, si un grupo de trabajadores está ejecutando varias tareas y varios trabajadores fallan, la CompositeException resultante contendrá un "paquete" de información de cada trabajador que indica dónde y por qué ocurrieron las excepciones.|
+|[DimensionMismatch](https://docs.julialang.org/en/v1/base/base/#Base.DimensionMismatch)|Los objetos llamados no tienen una coincidencia dimensionalidad.|
+|[DivideError](https://docs.julialang.org/en/v1/base/base/#Core.DivideError)|Se intentó la división de enteros con un valor de denominador de 0.|
+|[DomainError](https://docs.julialang.org/en/v1/base/base/#Core.DomainError)|El argumento de una función o constructor está fuera del dominio válido.|
+|[EOFError](https://docs.julialang.org/en/v1/base/base/#Base.EOFError)|No había más datos disponibles para leer de un archivo o secuencia.|
+|[ErrorException](https://docs.julialang.org/en/v1/base/base/#Core.ErrorException)|Tipo de error genérico. |
+|[InexactError](https://docs.julialang.org/en/v1/base/base/#Core.InexactError)|No se puede convertir exactamente *valor* a un tipo *T* con algún método de la función.|
+|[InitError](https://docs.julialang.org/en/v1/base/base/#Core.InitError)|Ocurrió un error al ejecutar la función `__init__` de un módulo.|
+|[InterruptException](https://docs.julialang.org/en/v1/base/base/#Core.InterruptException)|El proceso fue detenido por una interrupción de terminal (CTRL+C).|
+|[KeyError](https://docs.julialang.org/en/v1/base/base/#Base.KeyError)|Una operación de indexación en un objeto `AbstractDict` (`Dict`) o `Set` intentó acceder o eliminar un elemento inexistente.|
+|[LoadError](https://docs.julialang.org/en/v1/base/base/#Core.LoadError)|Ocurrió un error al ejecutar `include`, `require` o `using` un archivo.|
+|[Meta.ParseError](https://docs.julialang.org/en/v1/base/base/#Base.Meta.ParseError)|La expresión pasada a la función `parse` no se pudo interpretar como una expresión de Julia válida.|
+|[MethodError](https://docs.julialang.org/en/v1/base/base/#Core.MethodError)|No existe un método con la firma de tipo requerida en la función genérica dada. Alternativamente, no existe un método único más específico.|
+|[MissingException](https://docs.julialang.org/en/v1/base/base/#Base.MissingException)|Se genera una excepción cuando se encuentra un valor `Missing` en una situación en la que no se admite.|
+|[OutOfMemoryError](https://docs.julialang.org/en/v1/base/base/#Core.OutOfMemoryError)|Una operación asignó demasiada memoria para que el sistema o el recolector de basura la manejen correctamente.|
+|[OverflowError](https://docs.julialang.org/en/v1/base/base/#Core.OverflowError)|El resultado de una expresión es demasiado grande para el tipo especificado y provocará un ajuste.|
+|[ProcessFailedException](https://docs.julialang.org/en/v1/base/base/#Base.ProcessFailedException)|Indica el estado de salida problemático de un proceso. Al ejecutar comandos o canalizaciones, esto se lanza para indicar que se devolvió un código de salida distinto de cero (es decir, que el proceso invocado falló).|
+|[ReadOnlyMemoryError](https://docs.julialang.org/en/v1/base/base/#Core.ReadOnlyMemoryError)|Una operación intentó escribir en la memoria que es de solo lectura.|
+|[StackOverflowError](https://docs.julialang.org/en/v1/base/base/#Core.StackOverflowError)|La llamada a la función creció más allá del tamaño de la pila de llamadas. Esto suele suceder cuando una llamada se repite infinitamente.|
+|[StringIndexError](https://docs.julialang.org/en/v1/base/base/#Base.StringIndexError)|Se produjo un error al intentar acceder a str en el índice i que no es válido.|
+|[SystemError](https://docs.julialang.org/en/v1/base/base/#Base.SystemError)|Una llamada del sistema falló con un código de error (en la variable global `errno`).|
+|[TypeError](https://docs.julialang.org/en/v1/base/base/#Core.TypeError)|Una aserción de tipo falló o se llamó a una función intrínseca con un tipo de argumento incorrecto.|
+|[UndefKeywordError](https://docs.julialang.org/en/v1/base/base/#Core.UndefKeywordError)|El argumento de palabra clave requerido no se asignó en una llamada de función.|
+|[UndefRefError](https://docs.julialang.org/en/v1/base/base/#Core.UndefRefError)|El elemento o campo no está definido para el objeto dado.|
+|[UndefVarError](https://docs.julialang.org/en/v1/base/base/#Core.UndefVarError)|Un símbolo en el scope actual no está definido.|
+
+Por ejemplo, la función `sqrt` lanzará la excepción `DomainError` si lo aplicamos a un valor negativo:
+
+```julia
+julia> sqrt(-1)
+ERROR: DomainError with -1.0:
+sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
+Stacktrace:
+...
+```
+
+Se pueden definir excepciones personalizadas, de la siguiente manera:
+
+```julia
+julia>  struct MiExcepcionPersonalizada <: Exception end
+```
+
+### Función `throw`
+Las excepciones se pueden crear explícitamente con la función `throw`. Por ejemplo, una función definida solo para números positivos podría escribirse para lanzar un `DomainError` si el argumento es negativo:
+
+```julia
+julia>  function positivo(x)
+            if x >= 0
+                return x
+            else
+                throw(DomainError(x, "el argumento debe ser positivo"))
+            end
+        end
+
+julia> positivo(-5)
+ERROR: DomainError with -5:
+el argumento debe ser positivo
+Stacktrace:
+...
+```
+Por convención, cuando escriba un mensaje de error, es preferible que lo escriba con minúsculas, por ejemplo:
+```julia
+size(A) == size(B) || throw(DimensionMismatch("size of A not equal to size of B"))
+```
+en lugar de `"Size of A not..."`.
+
+### Función `error`
+La función de `error` se utiliza para producir un `ErrorException` que interrumpe el flujo normal de control.
+
+```julia
+julia> doble(x) = x >= 0 ? 2x : error("el argumento debe ser positivo")
+doble (generic function with 1 method)
+
+julia> doble(-2)
+ERROR: el argumento debe ser positivo
+Stacktrace:
+...
+```
+### Bloque `try`/`catch`/`finally`
+Las instrucciones `try` y `catch` permiten probar y capturar excepciones, para tener un manejo elegante de las cosas inesperadas que pueden romper el código de la aplicación. Por ejemplo, al llamar una función que arrojaría un `Exception`, se puede envolver dentro de un bloque `try`/`catch` y mitigar el error, ya sea registrandola, devolviendo un valor por defecto, o imprimir una declaración. Una cosa a tener en cuenta al decidir cómo manejar situaciones inesperadas es que usar un bloque try/catch es mucho más lento que usar ramificaciones condicionales para manejar esas situaciones.  
+
+Por ejemplo, podemos manejar la siguiente excepción:
+
+```julia
+julia>  function raiz2(x)
+            try
+                return sqrt(x)
+            catch exception
+                if isa(exception, DomainError)
+                    return sqrt(Complex(x))
+                end
+            end
+        end
+raiz2 (generic function with 1 method)
+
+julia> raiz2(4)
+2.0
+
+julia> raiz2(-4)
+0.0 + 2.0im
+```
+Dentro de `try` incluiremos las instrucciones que deseamos ejecutar y que posiblemente puedan tener un comportamiento inesperado. En caso de lanzarse un `Error` o una `Exception`, la instrucción `catch` la capturará y la guardará localmente en un variable para su manejo. En caso de que `try` no arroje una excepción, entonces el bloque `catch` es ignorado. Es una buena práctica comparar la excepción arrojada con los tipos de excepciones que nosotros esperamos, y decirle al programa como manejarlos uno a uno.
+
+En el ejemplo anterior, sabemos que la función `sqrt` lanzará un `DomainError` si se le pasa un número negativo. En ese caso, se captura la excepción y explicitamente le pedimos convertir el número negativo a tipo `Complex` y que aplique inmediatamente la función `sqrt`, la cual está definida para argumentos tipo complejos.
+
+Hay instrucciones o tareas (como el uso de recursos en archivos o la modificación de estado) que requieren de un trabajo de limpieza, (por ejemplo, declarar el cierre archivos abiertos para escribir sobre ellos en disco) y que se debe ejecutar cuando finaliza el código. El lanzamiento de errores y excepciones complica esta tarea ya que interrumpen la ejecución código. Para eso existe la instrucción `finally` (opcional) que proporciona una forma de ejecutar código, independientemente que como resulte el bloque de código que lo antecede. Por ejemplo:
+
+```julia
+julia>  file = open("file.txt")
+            try
+                # Código que trabaja con file
+            catch exception
+                # Manejo de las excepciones
+            finally
+                # Código que siempre se ejecuta independientemente de lo que pasó 
+                # en try o en catch
+                close(file)
+            end
+```
+El bloque `try`/`catch`/`finally` es muy útil para el manejo de errores y excepciones. Pero esto sólo es lo básico. Julia proveé funciones más avanzadas para el manejo de excepciones, lo cual es un tema aparte, pero que invitamos a revisar la [documentación correspondiente](https://docs.julialang.org/en/v1/base/base/#Base.rethrow). 
+
 ## Comandos de Bash en Julia
 [Referencia de trabajo](https://github.com/aerdely/introJulia/blob/main/lenguaje/18entradasalida.jl)
 ***
