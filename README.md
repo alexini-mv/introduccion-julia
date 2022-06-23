@@ -65,7 +65,8 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Comandos shell en Julia](#comandos-shell-en-julia)
         * [Ejecutar instrucciones shell](#ejecutar-instrucciones-shell)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
-    * [Tipo de datos compuestos: Struct](#)
+    * [Tipos](#)
+        * [Tipos compuestos: `Struct`](#)
     * [Métodos de funciones: Despacho multiple](#)
     * [Constructores](#)
     * [Módulos](#)
