@@ -58,11 +58,12 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia) 
         * [Diferencia entre `using` e `import`](#diferencia-entre-using-e-import)
         * [Importando elementos especificos y el uso de alias](#importando-elementos-especificos-y-el-uso-de-alias)
-    * [Manejo de excepciones](#manejo-de-excepciones) **↓ Pendiente ↓**
+    * [Manejo de excepciones](#manejo-de-excepciones) 
         * [Excepciones integradas](#excepciones-integradas)
         * [Función `throw`](#función-throw)
         * [Bloque `try`/`catch`/`finally`](#bloque-trycatchfinally)
-    * [Comandos de Bash en Julia](#comandos-de-bash-en-julia)
+    * [Comandos shell en Julia](#comandos-shell-en-julia)
+        * [Ejecutar instrucciones shell](#ejecutar-instrucciones-shell)
 * [Julia Avanzado](#)                           **↓ Pendiente ↓**
     * [Tipo de datos compuestos: Struct](#)
     * [Métodos de funciones: Despacho multiple](#)
@@ -2004,8 +2005,81 @@ julia>  file = open("file.txt")
 ```
 El bloque `try`/`catch`/`finally` es muy útil para el manejo de errores y excepciones. Pero esto sólo es lo básico. Julia proveé funciones más avanzadas para el manejo de excepciones, lo cual es un tema aparte, pero que invitamos a revisar la [documentación correspondiente](https://docs.julialang.org/en/v1/base/base/#Base.rethrow). 
 
-## Comandos de Bash en Julia
-[Referencia de trabajo](https://github.com/aerdely/introJulia/blob/main/lenguaje/18entradasalida.jl)
+## Comandos Shell en Julia
+En Julia, es posible usar funciones incluidas para manejar archivos y directorios por línea de comandos, muy similares a las usadas en la `shell` de `UNIX`. Aquí una breve lista:
+
+|Función|Descripción|
+|---|---|
+|[pwd](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.pwd)|Retorna la ruta completa del directorio actual de trabajo.|
+|[cd](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.cd-Tuple{AbstractString})|Cambia de directorio de trabajo.|
+|[readdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.readdir)|Devuelve los nombres en el directorio actual de trabajo u otro si se especifica. Similar a `ls`.|
+|[walkdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.walkdir)|Regresa un iterador que recorré el árbol de directorios del directorio actual de trabajo u otro si se especifica.|
+|[mkdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mkdir)|Crea un directorio nuevo en el directorio actual de trabajo o en otro si se especifica.|
+|[mkpath](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mkpath)|Crea todos los directorios necesarios para crear la ruta especifica.|
+|[symlink](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.symlink)|Crea un link simbólico a *target* con nombre *link*.|
+|[readlink](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.readlink)|Regresa la localización del *target* de un link simbólico.|
+|[cdmod](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.chmod)|Cambia los permisos de una ruta especifica.|
+|[chown](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.chown)|Cambia el propietario y grupo de una ruta especifica.|
+|[stat](https://docs.julialang.org/en/v1/base/file/#Base.stat)|Regresa la información de un archivo, como es tamaño, fecha de creación y modificación, permisos, etc.|
+|[filesize](https://docs.julialang.org/en/v1/base/file/#Base.filesize)|Lo mismo que stat(*archivo*).size|
+|[cp](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.cp)|Copia un directorio, archivo o link simbólico de un directorio origen a uno destino.|
+|[download](https://docs.julialang.org/en/v1/stdlib/Downloads/#Downloads.download)|Descarga un archivo de una URL dada y lo guarda en la salida ruta especifica. En caso que no se proporcione, se guarda en una ruta temporal.|
+|[mv](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mv)|Mueve un archivo, link o directorio, de un origen a un destino.|
+|[rm](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.rm)|Elimina un archivo, link o directorio especifico. Acepta los argumentos force y recursive, para forzar la eliminación o que sea recursiva.|
+|[touch](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.touch)|Actualiza la fecha de actualización de un archivo. En caso de no existir el archivo especifico, lo crea.|
+|[tempname](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.tempname)|Genera una ruta temporal especifica. Sólo regresa la ruta mas no la crea.|
+|[tempdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.tempdir)|Genera una ruta de directorio temporal. No la crea.|
+|[mktemp](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mktemp-Tuple{AbstractString})|Crea una ruta temporal junto con un archivo abierto tambien temporal. Después de su uso, desaparece.|
+|[mktempdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mktempdir-Tuple{Function,%20AbstractString})|Crea un directorio temporal. Después de su uso, desaparece.|
+|[homedir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.homedir)|Regresa la ruta del directorio *home* del usuario actual.|
+
+### Ejecutar Instrucciones Shell
+Adicional a estas funciones que actuan como algunos comandos de `shell`, también se pueden ejecutar instrucciones de `shell` directamente en Julia, dentro de los acentos graves `, tal como en Perl o Ruby.
+
+Los acentos graves regresan un objeto `Cmd` que representan un objeto comando. Este objeto comando puede ser pasado a otros via pipes, o ejecutandolo con la función `run`. Julia no ejecuta el comando directamente a una shell, sino que lo analiza e interpola las variables o separa las palabras, para que sea ejecutado en un proceso secundario de Julia.
+
+```julia
+julia> micomando = `echo Hola Mundo`
+`echo Hola Mundo`
+
+julia> typeof(micomando)
+Cmd
+
+# Ejecutamos el comando
+julia> run(micomando);
+Hola Mundo
+```
+Si se quiere leer la respuesta del comando para guardarla dentro de una variable, se puede hacer con la función `read` o `readchomp`, como sigue:
+
+```julia
+julia> salida = read(`ls -al`, String)
+"hola.txt\nManifest.toml\nnumeros.txt\nProject.toml\nREADME.md\nscript.jl\n"
+
+julia> println(salida)
+hola.txt
+Manifest.toml
+numeros.txt
+Project.toml
+README.md
+script.jl
+```
+
+Para ejecutar instrucciones entubados con pipes, se requiere usar la función `pipeline`:
+
+```julia
+julia> run(pipeline(`echo hola`, `grep ho`));       # Equivalente a $ echo hola | grep ho
+hola
+```
+Julia también permite ejecutar varias instrucciones en paralelo:
+
+```julia
+julia> run(`echo hola` & `echo mundo`);
+mundo
+hola
+```
+
+Para ver más información relacionada y avanzada, por favor consulte la siguiente [documentación](https://docs.julialang.org/en/v1/manual/running-external-programs/).
+
 ***
 ## Julia Avanzado
 ## Métodos de funciones: Despacho múltiple
