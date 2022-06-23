@@ -2052,7 +2052,7 @@ Hola Mundo
 Si se quiere leer la respuesta del comando para guardarla dentro de una variable, se puede hacer con la función `read` o `readchomp`, como sigue:
 
 ```julia
-julia> salida = read(`ls -al`, String)
+julia> salida = read(`ls`, String)
 "hola.txt\nManifest.toml\nnumeros.txt\nProject.toml\nREADME.md\nscript.jl\n"
 
 julia> println(salida)
