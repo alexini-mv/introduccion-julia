@@ -64,8 +64,8 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Bloque `try`/`catch`/`finally`](#bloque-trycatchfinally)
     * [Comandos shell en Julia](#comandos-shell-en-julia)
         * [Ejecutar instrucciones shell](#ejecutar-instrucciones-shell)
-* [Julia Avanzado](#)                           **↓ Pendiente ↓**
-    * [Tipos](#)
+* [Julia Avanzado](#julia-avanzado)                           **↓ Pendiente ↓**
+    * [Tipos](#tipos)
         * [Tipos compuestos: `Struct`](#)
     * [Métodos de funciones: Despacho multiple](#)
     * [Constructores](#)
@@ -2083,6 +2083,32 @@ Para ver más información relacionada y avanzada, por favor consulte la siguien
 
 ***
 ## Julia Avanzado
+### Tipos
+Los ***sistemas de tipos*** se han dividido tradicionalmente en dos campos muy diferentes: los sistemas de ***tipado estático***, en los que cada expresión del programa debe tener un tipo computable antes de la ejecución del programa; y los sistemas de ***tipado dinámico***, en los que no se sabe nada sobre los tipos hasta el momento de la ejecución, cuando los valores reales manipulados por el programa están disponibles. La ***orientación a objetos*** permite cierta flexibilidad en los lenguajes de tipado estático al permitir que el código se escriba sin que se conozcan los tipos precisos de los valores en ***tiempo de compilación***. La capacidad de escribir código que puede operar con diferentes tipos se llama ***polimorfismo***. Todo el código en los lenguajes clásicos ***dinámicamente tipados*** es polimórfico: sólo mediante la comprobación explícita de los tipos, o cuando los objetos no soportan operaciones en ***tiempo de ejecución***, se restringen los tipos de cualquier valor.
+
+**El sistema de tipos de Julia es dinámico**, pero obtiene algunas de las ventajas de los sistemas de tipado estáticos al hacer posible indicar que ciertos valores son de tipos específicos. Esto puede ser de gran ayuda en la generación de código eficiente, pero es más significativo porque permite el envío de ***métodos*** dependiendo el tipo de argumentos de las funciones. El envío de métodos se explora en detalle en la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
+
+El comportamiento por defecto en Julia cuando se omiten los tipos es permitir que los valores sean de cualquier tipo. Por lo tanto, uno puede **escribir muchas funciones útiles en Julia sin usar explícitamente los tipos**. Sin embargo, cuando se necesita expresividad adicional, es fácil introducir gradualmente anotaciones de tipo explícitas en el código previamente "*no tipado*". Añadir anotaciones tiene tres propósitos principales: 
+
+1. Aprovechar el poderoso mecanismo de despacho múltiple de Julia. 
+2. Mejorar la legibilidad humana. 
+3. Detectar errores de programación.
+
+Julia es un lenguaje: dinámico, nominativo y paramétrico. 
+
+Los ***tipos genéricos*** pueden ser parametrizados. Las relaciones jerárquicas entre los tipos se declaran explícitamente, en lugar de estar implícitas por una estructura compatible. Una característica particularmente distintiva del sistema de tipos de Julia es que los ***tipos concretos*** no pueden subtiparse entre sí: todos los tipos concretos son finales y sólo pueden tener ***tipos abstractos*** como sus supertipos. Aunque al principio esto puede parecer excesivamente restrictivo, tiene muchas consecuencias beneficiosas con pocos inconvenientes. Ser capaz de heredar el ***comportamiento*** es mucho más importante que ser capaz de heredar la ***estructura***, pero heredar ambos causa dificultades significativas en los lenguajes orientados a objetos tradicionales. 
+
+Otros aspectos de alto nivel del sistema de tipos de Julia que deben ser mencionados por adelantado son:
+
+* No hay división entre valores *objeto* y *no objeto*: **todos los valores en Julia son verdaderos objetos** que tienen un tipo que pertenece a un único gráfico de tipos totalmente conectado, todos los nodos del cual son igualmente de primera clase como tipos.
+* No hay un concepto significativo de "*tipo en tiempo de compilación*": el único tipo que tiene un valor es su tipo real cuando el programa se está ejecutando. Esto se denomina ***tipo en tiempo de ejecución*** en los lenguajes orientados a objetos, donde la combinación de la compilación estática con el polimorfismo hace que esta distinción sea significativa.
+* **Sólo los valores, no las variables, tienen tipos**. Las variables son simplemente nombres vinculados a valores, aunque para simplificar podemos decir "*tipo de una variable*" como abreviatura de "*tipo del valor al que se refiere una variable*".
+* Tanto los ***tipos abstractos*** como los concretos pueden ser parametrizados por otros tipos. También pueden ser parametrizados por ***símbolos***, por valores de cualquier tipo para los que isbits devuelva true (esencialmente, cosas como números y bools que se almacenan como tipos C o structs sin punteros a otros objetos), y también por tuplas de los mismos. Los parámetros de tipo pueden ser omitidos cuando no necesitan ser referenciados o restringidos.
+
+El sistema de tipos de Julia está diseñado para ser potente y expresivo, pero claro, intuitivo y discreto. Muchos programadores de Julia pueden no sentir **nunca** la necesidad de escribir código que utilice explícitamente tipos. Algunos tipos de programación, sin embargo, se vuelven más claros, más simples, más rápidos y más robustos con tipos declarados.
+
+
+
 ## Métodos de funciones: Despacho múltiple
 ***
 
