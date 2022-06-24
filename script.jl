@@ -13,3 +13,8 @@ println(claves)
 println("Dime tu nombre")
 nombre = readline()
 println("Hola, $nombre")
+
+let
+x::Float64 = 1.0
+println("$x => ", typeof(x))
+end
