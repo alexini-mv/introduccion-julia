@@ -2170,59 +2170,99 @@ julia> abstract type «name» <: «supertype» end
 
 La palabra reservada `abstract type` introduce un nuevo *tipo abstracto*, con nombre *name*. Este nombre puede ir opcionalmente seguido de `<:` para heredar de un *tipo* ya existente, indicando que el nuevo *tipo abstracto* declarado es un ***subtipo*** de este *tipo padre*.
 
-Cuando no se especifique un ***supertipo*** (*supertype*), por defecto será `Any` (un *tipo abstracto* predefinido del que todos los objetos son instancias y todos los tipos son subtipos). En la teoría de tipos, Any es comúnmente llamado "top" porque está en el vértice del gráfico de tipos. Julia también tiene un tipo abstracto predefinido "inferior", en el nadir del gráfico de tipos, que se escribe como Union{}. Es exactamente lo contrario de Any: ningún objeto es una instancia de Union{} y todos los tipos son supertipos de Union{}.
+Cuando no se especifique un ***supertipo*** (*supertype*), por defecto será `Any` (un *tipo abstracto* predefinido del que **todos** los objetos son instancias y todos los tipos son subtipos de este). En la teoría de tipos, `Any` está en el vértice superior del gráfico de tipos (ver imagen). Julia también tiene un tipo abstracto predefinido *inferior*, en el fondo del gráfico de tipos, que se escribe como `Union{}`. Es exactamente lo contrario de `Any`: ningún objeto es una instancia de `Union{}` y **todos** los tipos son ***supertipos*** de `Union{}`.
+
+<div align=center>
+    <img src="./type_tree.png"><br>
+    Imagen 1. Árbol jerárquico de tipos númericos en Julia. Los recuadros verdes son <b>tipos abstractos</b>. 
+    <br>En cambio, los recuadros azules son <b>tipos concretos</b>.<br>
+</div>
 
 Consideremos algunos de los tipos abstractos que componen la jerarquía numérica de Julia:
 
+```julia
+abstract type Number end
+abstract type Real     <: Number end
+abstract type AbstractFloat <: Real end
+abstract type Integer  <: Real end
+abstract type Signed   <: Integer end
+abstract type Unsigned <: Integer end
+```
 
+El tipo `Number` es un tipo hijo directo de `Any`.En cambio, `Real` es hijo de `Real`. A su vez, `Real` tiene dos hijos (tiene más, pero aquí sólo se muestran dos): `Integer` y `AbstractFloat`, separando el mundo en representaciones de números enteros y representaciones de números reales. Las representaciones de números reales incluyen, por supuesto, son los tipos de ***punto flotante***, pero también incluyen otros tipos, como los ***racionales***. Por lo tanto, `AbstractFloat` es un subtipo propio de `Real`, que incluye sólo representaciones de números reales en punto flotante. Los enteros se subdividen a su vez en variedades con signo `Signed` y sin signo `Unsigned`.
 
-El tipo Number es un tipo hijo directo de Any, y Real es su hijo. A su vez, Real tiene dos hijos (tiene más, pero aquí sólo se muestran dos; llegaremos a los demás más adelante): Integer y AbstractFloat, separando el mundo en representaciones de números enteros y representaciones de números reales. Las representaciones de números reales incluyen, por supuesto, los tipos de punto flotante, pero también incluyen otros tipos, como los racionales. Por lo tanto, AbstractFloat es un subtipo propio de Real, que incluye sólo representaciones de números reales en coma flotante. Los enteros se subdividen a su vez en variedades con signo y sin signo.
+El operador `<:` significa en general ***es un subtipo de*** y declara que el tipo de la derecha es un ***supertipo*** inmediato del nuevo tipo declarado. También puede usarse en expresiones como un operador de subtipo que devuelve verdadero cuando su operando izquierdo es un subtipo de su operando derecho:
 
-El operador <: significa en general "es un subtipo de" y, utilizado en declaraciones como ésta, declara que el tipo de la derecha es un supertipo inmediato del nuevo tipo declarado. También puede usarse en expresiones como un operador de subtipo que devuelve verdadero cuando su operando izquierdo es un subtipo de su operando derecho:
+```julia
+julia> Integer <: Number
+true
 
-
-
+julia> Integer <: AbstractFloat
+false
+```
 
 Un uso importante de los tipos abstractos es proporcionar implementaciones por defecto para los tipos concretos. Para dar un ejemplo simple, considere:
 
+```julia
+julia>  function sumar(a, b)
+            return a + b
+        end
+```
+Lo primero que hay que tener en cuenta es que las declaraciones de argumentos anteriores son equivalentes a `a::Any` y `b::Any`. Cuando se llama esta función, `sumar(2,5)`, el despachador elige el método más específico llamado a `sumar` que coincide con los argumentos dados (ver [Métodos de Funciones](#métodos-de-funciones-despacho-múltiple) para más información sobre el ***despacho múltiple***).
 
+Asumiendo que no se encuentra ningún método más específico que el anterior, **Julia define y compila internamente** un método llamado `sumar` específicamente para dos argumentos `Int` basado en la función genérica dada anteriormente, es decir, define y compila implícitamente:
 
+```julia
+function sumar(a::Int, b::Int)
+    return a + b
+end
+```
+y finalmente, **llama este método concreto**.
 
-Lo primero que hay que tener en cuenta es que las declaraciones de argumentos anteriores son equivalentes a x::Any e y::Any. Cuando se invoca esta función, digamos como myplus(2,5), el despachador elige el método más específico llamado myplus que coincide con los argumentos dados. (Ver Métodos para más información sobre el envío múltiple).
+Así, los ***tipos abstractos*** permite escribir funciones genéricas que luego pueden ser utilizadas como método por defecto por muchas combinaciones de tipos concretos. Gracias al envío múltiple, se tiene pleno control sobre que método utilizar por defecto o en específico.
 
-Asumiendo que no se encuentra ningún método más específico que el anterior, Julia define y compila internamente un método llamado myplus específicamente para dos argumentos Int basado en la función genérica dada anteriormente, es decir, define y compila implícitamente:
-
-
-
-
-
-y, finalmente, invoca este método concreto.
-
-Así, los tipos abstractos permiten a los programadores escribir funciones genéricas que luego pueden ser utilizadas como método por defecto por muchas combinaciones de tipos concretos. Gracias al envío múltiple, el programador tiene pleno control sobre si se utiliza el método por defecto o uno más específico.
-
-Un punto importante a tener en cuenta es que no hay pérdida de rendimiento si el programador confía en una función cuyos argumentos son tipos abstractos, porque se recompila para cada tupla de tipos concretos de argumentos con los que se invoca. (Sin embargo, puede haber un problema de rendimiento en el caso de los argumentos de la función que son contenedores de tipos abstractos; véase Consejos de rendimiento).
+Un punto importante a tener en cuenta es que no hay pérdida de rendimiento si se confía en una función cuyos argumentos son ***tipos abstractos***, porque se recompila para cada tupla de tipos concretos de argumentos con los que se invoca. Sin embargo, puede haber un problema de rendimiento en el caso de los argumentos de la función que son contenedores de ***tipos abstractos***.
 
 
 ### Tipos primitivos
-    Casi siempre es preferible envolver un tipo primitivo existente en un nuevo tipo compuesto que definir su propio tipo primitivo.
 
-    Esta funcionalidad existe para permitir a Julia arrancar los tipos primitivos estándar que LLVM soporta. Una vez definidos, hay muy pocas razones para definir más.
+>Casi siempre es preferible envolver un ***tipo primitivo*** existente en un nuevo ***tipo compuesto*** que definir su propio ***tipo primitivo***.
+>Esta funcionalidad existe para permitir a Julia arrancar los ***tipos primitivos*** estándar que LLVM soporta. Una vez definidos, hay muy pocas razones para definir más.
 
-Un tipo primitivo es un tipo concreto cuyos datos consisten en simples bits. Ejemplos clásicos de tipos primitivos son los enteros y los valores de punto flotante. A diferencia de la mayoría de los lenguajes, Julia le permite declarar sus propios tipos primitivos, en lugar de proporcionar sólo un conjunto fijo de los incorporados. De hecho, los tipos primitivos estándar están todos definidos en el propio lenguaje:
+Un ***tipo primitivo*** es un ***tipo concreto*** **cuyos datos consisten en simples bits**. Ejemplos clásicos de ***tipos primitivos*** son los ***enteros*** y los valores de ***punto flotante***. 
 
+A diferencia de la mayoría de los lenguajes, Julia le permite declarar sus propios ***tipos primitivos***, en lugar de proporcionar sólo un conjunto fijo de los incorporados. De hecho, los ***tipos primitivos*** estándar están todos definidos en el propio lenguaje:
 
+```julia
+primitive type Float16 <: AbstractFloat 16 end
+primitive type Float32 <: AbstractFloat 32 end
+primitive type Float64 <: AbstractFloat 64 end
 
+primitive type Bool <: Integer 8 end
+primitive type Char <: AbstractChar 32 end
 
-
+primitive type Int8    <: Signed   8 end
+primitive type UInt8   <: Unsigned 8 end
+primitive type Int16   <: Signed   16 end
+primitive type UInt16  <: Unsigned 16 end
+primitive type Int32   <: Signed   32 end
+primitive type UInt32  <: Unsigned 32 end
+primitive type Int64   <: Signed   64 end
+primitive type UInt64  <: Unsigned 64 end
+primitive type Int128  <: Signed   128 end
+primitive type UInt128 <: Unsigned 128 end
+```
 Las sintaxis generales para declarar un tipo primitivo son:
 
+```julia
+primitive type «name» «bits» end
+primitive type «name» <: «supertype» «bits» end
+```
 
 
+El número de «bits» indica cuánto almacenamiento requiere el tipo y el «name» da un nombre al nuevo tipo. Un ***tipo primitivo*** puede declararse opcionalmente como ***subtipo*** de algún ***supertipo***. Si se omite un ***supertipo***, entonces el tipo tiene por defecto `Any` como su ***supertipo*** inmediato. La declaración de `Bool` arriba significa, por tanto, que un valor ***booleano*** toma ocho bits para ser almacenado, y tiene `Integer` como su ***supertipo*** inmediato. Actualmente, sólo se soportan los tamaños que son múltiplos de 8 bits y es probable que se produzcan errores en LLVM con tamaños distintos a los utilizados anteriormente. Por lo tanto, los valores ***booleanos***, aunque realmente necesitan un solo bit, no pueden ser declarados con un tamaño inferior a ocho bits.
 
-El número de bits indica cuánto almacenamiento requiere el tipo y el nombre da un nombre al nuevo tipo. Un tipo primitivo puede declararse opcionalmente como subtipo de algún supertipo. Si se omite un supertipo, entonces el tipo tiene por defecto Any como su supertipo inmediato. La declaración de Bool arriba significa, por tanto, que un valor booleano toma ocho bits para ser almacenado, y tiene Integer como su supertipo inmediato. Actualmente, sólo se soportan los tamaños que son múltiplos de 8 bits y es probable que se produzcan errores en LLVM con tamaños distintos a los utilizados anteriormente. Por lo tanto, los valores booleanos, aunque realmente necesitan un solo bit, no pueden ser declarados con un tamaño inferior a ocho bits.
-
-Los tipos Bool, Int8 y UInt8 tienen todos representaciones idénticas: son trozos de memoria de ocho bits. Sin embargo, como el sistema de tipos de Julia es nominativo, no son intercambiables a pesar de tener una estructura idéntica. Una diferencia fundamental entre ellos es que tienen diferentes supertipos: El supertipo directo de Bool es Integer, el de Int8 es Signed, y el de UInt8 es Unsigned. Todas las demás diferencias entre Bool, Int8 y UInt8 son cuestiones de comportamiento, es decir, la forma en que las funciones están definidas para actuar cuando se les dan objetos de estos tipos como argumentos. Por eso es necesario un sistema de tipos nominativos: si la estructura determinara el tipo, que a su vez dicta el comportamiento, entonces sería imposible hacer que Bool se comportara de forma diferente a Int8 o UInt8.
-
+Los tipos `Bool`, `Int8` y `UInt8` tienen todos representaciones idénticas: son espacios de memoria de ocho bits. Sin embargo, como el sistema de tipos de Julia es **nominativo**, no son intercambiables a pesar de tener una estructura idéntica. Una diferencia fundamental entre ellos es que tienen diferentes ***supertipos***: El ***supertipo*** directo de `Bool` es `Integer`, el de `Int8` es `Signed`, y el de `UInt8` es `Unsigned`. Todas las demás diferencias entre `Bool`, `Int8` y `UInt8` son cuestiones de comportamiento, es decir, la forma en que las funciones están definidas para actuar cuando se les dan objetos de estos tipos como argumentos. Por eso es necesario un ***sistema de tipos nominativos***: si la estructura determinara el tipo, que a su vez dicta el comportamiento, entonces sería imposible hacer que `Bool` se comportara de forma diferente a `Int8` o `UInt8`.
 
 ### Tipos compuestos: `Struct`
 
