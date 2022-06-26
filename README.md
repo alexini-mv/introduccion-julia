@@ -70,6 +70,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
         * [Tipos abstractos](#tipos-abstractos)
         * [Tipos primitivos](#tipos-primitivos)
         * [Tipos compuestos: `Struct`](#tipos-compuestos-struct)
+        * [Tipos compuestos mutables](#tipos-compuestos-mutables)
     * [Métodos de funciones: Despacho multiple](#)                           **↓ Pendiente ↓**
     * [Álcance o Scope de la variables](#)
     * [Constructores](#)
@@ -2265,6 +2266,99 @@ El número de «bits» indica cuánto almacenamiento requiere el tipo y el «nam
 Los tipos `Bool`, `Int8` y `UInt8` tienen todos representaciones idénticas: son espacios de memoria de ocho bits. Sin embargo, como el sistema de tipos de Julia es **nominativo**, no son intercambiables a pesar de tener una estructura idéntica. Una diferencia fundamental entre ellos es que tienen diferentes ***supertipos***: El ***supertipo*** directo de `Bool` es `Integer`, el de `Int8` es `Signed`, y el de `UInt8` es `Unsigned`. Todas las demás diferencias entre `Bool`, `Int8` y `UInt8` son cuestiones de comportamiento, es decir, la forma en que las funciones están definidas para actuar cuando se les dan objetos de estos tipos como argumentos. Por eso es necesario un ***sistema de tipos nominativos***: si la estructura determinara el tipo, que a su vez dicta el comportamiento, entonces sería imposible hacer que `Bool` se comportara de forma diferente a `Int8` o `UInt8`.
 
 ### Tipos compuestos: `Struct`
+Los ***tipos compuestos*** se denominan ***registros, structs u objetos*** en varios lenguajes. Un tipo compuesto es una colección de campos con nombre, una instancia de los cuales puede ser tratada como un único valor. En muchos lenguajes, los ***tipos compuestos*** son la única clase de tipo definible por el usuario, y son con mucho el tipo definido por el usuario más comúnmente utilizado en Julia.
+
+En los principales lenguajes orientados a objetos, como C++, Java, Python y Ruby, los ***tipos compuestos*** también tienen funciones con nombre asociadas a ellos, y la combinación se llama **objeto**. En ***lenguajes orientados a objetos*** más puros, como Ruby o Smalltalk, todos los valores son objetos, sean o no compuestos. En lenguajes orientados a objetos menos puros, como C++ y Java, algunos valores, como los *enteros* y los de *punto flotante*, no son objetos, mientras que las instancias de tipos compuestos definidos por el usuario son verdaderos objetos con métodos asociados. En Julia, todos los valores son objetos, pero **las funciones no se agrupan con los objetos sobre los que operan**. Esto es necesario ya que Julia elige qué método de una función utilizar mediante el ***despacho múltiple***, lo que significa que los tipos de todos los argumentos de una función se consideran al seleccionar un método, en lugar de sólo el primero. Por lo tanto, sería inapropiado que las funciones *pertenecieran* sólo a su primer argumento. Organizar los métodos en objetos-función en lugar de tener bolsas de métodos con nombre *dentro* de cada objeto acaba siendo un aspecto muy beneficioso del diseño del lenguaje.
+
+Los ***tipos compuestos*** se definen con la palabra clave `struct` seguida de un bloque de campos con nombre, opcionalmente declarando su tipo con el operador `::`, como sigue:
+
+```julia
+julia>  struct Objeto
+            campo1
+            campo2::Int
+            campo3::Float64
+        end
+```
+Los campos sin anotación de tipo tienen por defecto el valor `Any` y en consecuencia pueden contener cualquier tipo de valor.
+
+Los nuevos objetos de tipo `Objeto` se crean invocando al tipo `Objeto` como una función a los valores correspondientes de sus campos:
+
+```julia
+julia> obj = Objeto("Hola mundo.", 23, 1.5)
+Objeto("Hola mundo.", 23, 1.5)
+
+julia> typeof(obj)
+Objeto
+```
+
+Cuando un ***tipo*** es aplicado como una *función* se llama ***constructor***. Se generan automáticamente dos constructores (llamados ***constructores por defecto***). Uno acepta cualquier tipo de argumentos y llama a `convert` para convertirlo a los ***tipos*** de los campos definidos; el otro acepta argumentos que coinciden exactamente con los ***tipos*** de los campos. La razón por la que se generan ambos es que así es más fácil añadir nuevas definiciones sin reemplazar inadvertidamente un ***constructor por defecto***.
+
+Se puede consultar una lista de los nombres de campo del ***tipo*** usando la función `fieldnames`:
+
+```julia
+julia> fieldnames(Objeto)
+```
+Se puede acceder a los valores de los campos de un objeto compuesto instanciado utilizando la notación punto tradicional:
+
+```julia
+julia> obj.campo1
+"Hola mundo."
+
+julia> obj.campo2
+23
+
+julia> obj.campo3
+1.5
+```
+
+Los ***tipos compuestos*** declarados con `struct` son **inmutables**, no pueden ser modificados después de su construcción. uede parecer extraño al principio, pero tiene varias ventajas:
+
+* Es más eficiente. Algunos `struct`s pueden ser empaquetados eficientemente en arreglos, y en algunos casos el compilador es capaz de evitar la asignación de objetos inmutables por completo.
+* No es posible violar los invariantes proporcionados por los ***constructores del tipo***.
+* El código que utiliza objetos inmutables puede ser más fácil de razonar.
+
+Un ***objeto inmutable*** puede contener objetos mutables como valores de campo, por ejemplo arrays. Esos objetos contenidos seguirán siendo mutables; sólo los campos del propio objeto inmutable no pueden ser apuntar a objetos diferentes.
+
+Si todos los campos de una ***estructura inmutable*** son indistinguibles (con el comparador `===`), entonces dos valores inmutables que contengan esos campos también son indistinguibles:
+
+```julia
+julia>  struct X
+            a::Int
+            b::Float64
+        end
+
+julia>  X(1, 2) === X(1, 2)
+true
+```
+### Tipos compuestos mutables
+Si un ***tipo compuesto*** se declara con la instrucción `mutable struct` en lugar de `struct`, entonces se pueden modificar las instancias de este como sigue:
+
+```julia
+julia>  mutable struct Objeto
+            campo1
+            campo2::Int
+            campo3::Float64
+        end
+
+julia>  obj = Objeto("Hola", 3, 5.7)
+Objeto("Hola", 3, 5.7)
+
+julia> obj.campo3 = 10.1
+10.1
+```
+Para soportar la *mutabilidad*, estos objetos se asignan generalmente en la ***heap-allocate***, y tienen *direcciones de memoria* estables. Un ***objeto mutable*** es como un pequeño contenedor que puede contener diferentes valores a lo largo del tiempo y sólo puede ser identificado de forma fiable con su *dirección*. Por el contrario, una instancia de un ***tipo inmutable*** está asociada con valores de campo específicos (los valores de campo por sí solos describen al objeto). 
+
+A la hora de decidir si hacer un ***tipo mutable***, hay que preguntarse **si dos instancias con los mismos valores de campo se considerarían idénticas, o tendrían que cambiar independientemente a lo largo del tiempo**. Si se consideran idénticas, el tipo probablemente debería ser ***inmutable***.
+
+Para repasar, dos propiedades esenciales definen la inmutabilidad en Julia:
+
+* No está permitido modificar el valor de un ***tipo inmutable***.
+    * Para los *tipos de bits* esto significa que el patrón de bits de un valor una vez establecido nunca cambiará.
+    * Para los ***tipos compuestos***, esto significa que la identidad de los valores de sus campos nunca cambiará. Cuando los campos son tipos de bits, esto significa que sus bits nunca cambiarán, para los campos cuyos **valores son tipos mutables** como los ***arrays***, esto significa que los campos siempre **se referirán al mismo valor mutable** aunque el contenido de ese valor mutable cambie.
+* Un objeto de ***tipo inmutable*** puede ser copiado libremente por el compilador, ya que su inmutabilidad hace imposible distinguir programáticamente entre el objeto original y una copia.
+    * Esto significa que los ***valores inmutables*** suficientemente pequeños, como los enteros y los flotantes, suelen pasarse a las funciones en registros (o en la ***stack-allocation***).
+    * Los ***valores mutables***, en cambio, se asignan a la ***heap-allocation*** y se pasan a las funciones como punteros a valores en la ***heap-allocation***, excepto en los casos en los que el compilador está seguro de que no hay forma de saber que esto no es lo que está ocurriendo.
+
 
 ## Métodos de funciones: Despacho múltiple
 ***
