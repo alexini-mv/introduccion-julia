@@ -4,90 +4,98 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
 ***
 
 ## Índice
+
 * [Instalación](#instalación)
 * [Ejecutando Hola Mundo](#ejecutando-hola-mundo)
 * [Julia Esencial](#julia-esencial)
-    * [Variables](#variables)
-    * [Tipos de datos](#tipos-de-datos)
-        * [Números enteros y de punto flotante](#números-enteros-y-de-punto-flotante)
-        * [Literales numéricos como coeficientes](#literales-numéricos-como-coeficientes)
-        * [Números racionales](#números-racionales)
-        * [Números complejos](#números-complejos)
-        * [Strings](#strings)
-    * [Operadores matemáticos y funciones elementales](#operadores-matemáticos-y-funciones-elementales)
-        * [Operadores aritméticos](#operadores-aritméticos)
-        * [Operadores booleanos](#operadores-booleanos)
-        * [Operadores de actualización](#operadores-de-actualización)
-        * [Operadores de comparación](#operadores-de-comparación)
-        * [Funciones matemáticas básicas](#funciones-matemáticas-básicas)
-        * [Funciones vectorizadas](#funciones-vectorizadas)
-    * [Funciones](#funciones)
-        * [Bloque function](#bloque-function)
-        * [Funciones por asignación](#funciones-por-asignación)
-        * [Funciones anónimas](#funciones-anónimas)
-        * [Argumentos keywords](#argumentos-keyword)
-        * [Tipado de argumentos](#tipado-de-argumentos)
-        * [Vectorización de funciones](#vectorización-de-funciones)
-        * [Composición de funciones](#composición-de-funciones)
-        * [Return nothing](#return-nothing)
-    * [Bloques de control de flujo](#bloques-de-control-de-flujo-condicionales-ciclos-y-otros)
-        * [Condicionales](#condicionales)
-        * [Evaluación short-circuit](#evaluación-short-circuit)
-        * [Ciclos while y for](#ciclos-while-y-for)
-        * [Bloque de expresiones compuestas](#bloque-de-expresiones-compuestas)
-        * [Bloque do](#bloque-do)
-    * [Estructura de datos](#estructura-de-datos)
-        * [Vectores y arreglos](#vectores-y-arreglos)
-        * [Tuplas](#tuplas)
-        * [Diccionarios](#diccionarios)
-* [Julia Intermedio](#julia-intermedio) 
-    * [Arreglos multidimensionales](#arreglos-multidimensionales)
-        * [Funciones básicas para arreglos](#funciones-básicas-para-arreglos)
-        * [Construcción de arreglos e inicialización](#construcción-de-arreglos-e-inicialización)
-        * [Arreglos literales](#arreglos-literales)
-        * [Concatenación](#concatenación)
-        * [Array comprehension](#array-comprehension)
-        * [Vistazo a los generadores](#vistazo-a-los-generadores)
-        * [Indexación](#indexación)
-        * [Broadcasting](#broadcasting)
-    * [Leer y escribir archivos](#leer-y-escribir-archivos)
-    * [Gestor de paquetes Pkg](#gestor-de-paquetes-pkg)
-        * [Uso básico](#uso-básico)
-        * [Ambientes virtuales en Julia](#ambientes-virtuales-en-julia)
-        * [Modo no interactivo de Pkg](#modo-no-interactivo-de-pkg)
-    * [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia) 
-        * [Diferencia entre `using` e `import`](#diferencia-entre-using-e-import)
-        * [Importando elementos especificos y el uso de alias](#importando-elementos-especificos-y-el-uso-de-alias)
-    * [Manejo de excepciones](#manejo-de-excepciones) 
-        * [Excepciones integradas](#excepciones-integradas)
-        * [Función `throw`](#función-throw)
-        * [Bloque `try`/`catch`/`finally`](#bloque-trycatchfinally)
-    * [Comandos shell en Julia](#comandos-shell-en-julia)
-        * [Ejecutar instrucciones shell](#ejecutar-instrucciones-shell)
+  * [Variables](#variables)
+  * [Tipos de datos](#tipos-de-datos)
+    * [Números enteros y de punto flotante](#números-enteros-y-de-punto-flotante)
+    * [Literales numéricos como coeficientes](#literales-numéricos-como-coeficientes)
+    * [Números racionales](#números-racionales)
+    * [Números complejos](#números-complejos)
+    * [Strings](#strings)
+  * [Operadores matemáticos y funciones elementales](#operadores-matemáticos-y-funciones-elementales)
+    * [Operadores aritméticos](#operadores-aritméticos)
+    * [Operadores booleanos](#operadores-booleanos)
+    * [Operadores de actualización](#operadores-de-actualización)
+    * [Operadores de comparación](#operadores-de-comparación)
+    * [Funciones matemáticas básicas](#funciones-matemáticas-básicas)
+    * [Funciones vectorizadas](#funciones-vectorizadas)
+  * [Funciones](#funciones)
+    * [Bloque function](#bloque-function)
+    * [Funciones por asignación](#funciones-por-asignación)
+    * [Funciones anónimas](#funciones-anónimas)
+    * [Argumentos keywords](#argumentos-keyword)
+    * [Tipado de argumentos](#tipado-de-argumentos)
+    * [Vectorización de funciones](#vectorización-de-funciones)
+    * [Composición de funciones](#composición-de-funciones)
+    * [Return nothing](#return-nothing)
+  * [Bloques de control de flujo](#bloques-de-control-de-flujo-condicionales-ciclos-y-otros)
+    * [Condicionales](#condicionales)
+    * [Evaluación short-circuit](#evaluación-short-circuit)
+    * [Ciclos while y for](#ciclos-while-y-for)
+    * [Bloque de expresiones compuestas](#bloque-de-expresiones-compuestas)
+    * [Bloque do](#bloque-do)
+  * [Estructura de datos](#estructura-de-datos)
+    * [Vectores y arreglos](#vectores-y-arreglos)
+    * [Tuplas](#tuplas)
+    * [Diccionarios](#diccionarios)
+* [Julia Intermedio](#julia-intermedio)
+  * [Arreglos multidimensionales](#arreglos-multidimensionales)
+    * [Funciones básicas para arreglos](#funciones-básicas-para-arreglos)
+    * [Construcción de arreglos e inicialización](#construcción-de-arreglos-e-inicialización)
+    * [Arreglos literales](#arreglos-literales)
+    * [Concatenación](#concatenación)
+    * [Array comprehension](#array-comprehension)
+    * [Vistazo a los generadores](#vistazo-a-los-generadores)
+    * [Indexación](#indexación)
+    * [Broadcasting](#broadcasting)
+  * [Leer y escribir archivos](#leer-y-escribir-archivos)
+  * [Gestor de paquetes Pkg](#gestor-de-paquetes-pkg)
+    * [Uso básico](#uso-básico)
+    * [Ambientes virtuales en Julia](#ambientes-virtuales-en-julia)
+    * [Modo no interactivo de Pkg](#modo-no-interactivo-de-pkg)
+  * [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia)
+    * [Diferencia entre `using` e `import`](#diferencia-entre-using-e-import)
+    * [Importando elementos especificos y el uso de alias](#importando-elementos-especificos-y-el-uso-de-alias)
+  * [Manejo de excepciones](#manejo-de-excepciones)
+    * [Excepciones integradas](#excepciones-integradas)
+    * [Función `throw`](#función-throw)
+    * [Bloque `try`/`catch`/`finally`](#bloque-trycatchfinally)
+  * [Comandos shell en Julia](#comandos-shell-en-julia)
+    * [Ejecutar instrucciones shell](#ejecutar-instrucciones-shell)
 * [Julia Avanzado](#julia-avanzado)
-    * [Tipos](#tipos)
-        * [Declaración de *Tipos*](#declaración-de-tipos)
-        * [Tipos abstractos](#tipos-abstractos)
-        * [Tipos primitivos](#tipos-primitivos)
-        * [Tipos compuestos: `Struct`](#tipos-compuestos-struct)
-        * [Tipos compuestos mutables](#tipos-compuestos-mutables)
-    * [Métodos de funciones: Despacho multiple](#)                           **↓ Pendiente ↓**
-    * [Álcance o Scope de la variables](#)
-    * [Constructores](#)
-    * [Módulos](#)
-    * [Documentación](#)
+  * [Tipos](#tipos)
+    * [Declaración de Tipos](#declaración-de-tipos)
+    * [Tipos abstractos](#tipos-abstractos)
+    * [Tipos primitivos](#tipos-primitivos)
+    * [Tipos compuestos: `Struct`](#tipos-compuestos-struct)
+    * [Tipos compuestos mutables](#tipos-compuestos-mutables)
+    * [Tipos declarados](#tipos-declarados)
+    * [Tipos `Union`](#tipos-union)
+    * [Tipos paramétricos](#tipos-paramétricos)
+      * [Tipos compuestos paramétricos](#tipos-compuestos-paramétricos)
+      * [Tipos abstractos paramétricos](#tipos-abstractos-paramétricos)
+  * [Métodos de funciones: Despacho multiple](#métodos-de-funciones-despacho-múltiple)                           **↓ Pendiente ↓**
+  * [Constructores](#)
+  * [Álcance o Scope de la variables](#)
+  * [Módulos](#)
+  * [Documentación](#)
 * [Referencias](#referencias)
+
 ***
 
 ## Instalación
+
 Para instalar el intérprete de Julia en nuestra computadora, debemos descargarlo directamente de los [repositorios](https://julialang.org/downloads/) oficiales. Elegimos la versión deseada, dependiendo del sistema operativo y arquitectura donde vamos a trabajar.
 
-En mi caso, usaré la versión 1.7.3 para el sistema operativo Linux x86 a 64-bits. Se descargará un archivo con extensión **.tar.gz**. 
+En mi caso, usaré la versión 1.7.3 para el sistema operativo Linux x86 a 64-bits. Se descargará un archivo con extensión **.tar.gz**.
 
 Para extraer el contenido, dentro de una terminal ejecutaremos el siguiente comando:
 
 ```console
-$ tar -xvzf julia-1.7.3-linux-x86_64.tar.gz
+tar -xvzf julia-1.7.3-linux-x86_64.tar.gz
 ```
 
 donde ustedes deben sustituir por el nombre del archivo que descargaron. El comando les habrá generado una carpeta con el `julia-1.7.3` que contiene los binarios del interprete.
@@ -95,43 +103,48 @@ donde ustedes deben sustituir por el nombre del archivo que descargaron. El coma
 Ahora, copiaremos todo el contenido de dicha carpeta al directorio `/opt/` de nuestro sistema de la siguiente manera:
 
 ```console
-$ sudo cp -r julia-1.7.3 /opt/
+sudo cp -r julia-1.7.3 /opt/
 ```
 
-Finalmente, crearemos un enlace simbólico (_symbolic link_) de **Julia** dentro del directorio `/usr/local/bin/` para que sea visible para todo el sistema:
+Finalmente, crearemos un enlace simbólico (*symbolic link*) de **Julia** dentro del directorio `/usr/local/bin/` para que sea visible para todo el sistema:
 
 ```console
-$ sudo ln -s /opt/julia-1.7.3/bin/julia /usr/local/bin/julia
+sudo ln -s /opt/julia-1.7.3/bin/julia /usr/local/bin/julia
 ```
 
 Listo, tenemos Julia instalado. Podemos verificar la instalación, reabriendo la terminal y ejecutando el comando
 
 ```console
-$ julia
+julia
 ```
+
 el cual, nos permitirá abrir el interprete de Julia.
 ***
 
 ## Ejecutando Hola Mundo
+
 Para ejecutar código en Julia, se pueden utilizar varias opciones. La más fácil es usando el intérprete de Julia, también conocido como **REPL**. Lo abrímos en una terminal ejecutando `$ julia`. Una vez dentro del REPL, ejecutaremos el hola mundo, con esta sencilla instrucción para imprimir en pantalla:
 
 ```julia
 julia> println("Hola Mundo")
 Hola Mundo  
 ```
-Listo, tenemos nuestro 'Hola Mundo'. 😄 
+
+Listo, tenemos nuestro 'Hola Mundo'. 😄
 
 Otra forma para ejecutar código, es escribiendo el código dentro archivos con extensión `.jl`, por ejemplo, en un archivo `script.jl` como sigue:
 
 ```julia
 println("Hola Mundo")
 ```
+
 y ejecutar el script en la terminal:
 
 ```console
 $ julia script.jl
 Hola Mundo
 ```
+
 Podemos personalizar nuestro 'Hola, mundo', preguntando el nombre del usuario, con la siguiente línea:
 
 ```julia
@@ -141,12 +154,13 @@ nombre = readline()                   # Con esta instrucción podemos introducir
 println("Hola, ", nombre)
 ```
 
-Listo, hemos ejecutado un nuevo 'Hola Mundo'. 😄 
+Listo, hemos ejecutado un nuevo 'Hola Mundo'. 😄
 ***
 
 ## Julia Esencial
 
 ## Variables
+
 En Julia, una variable es un nombre asociado a un valor, útil para almacenar ese valor en memoria para su uso posterior. Para declarar variables en Julia, se usa la asignación directa:
 
 ```julia
@@ -154,6 +168,7 @@ variable = 1 + 2
 nombre = "Juan"
 mensaje = "Hola Mundo"
 ```
+
 Las variables son sensibles a mayúsculas y minúsculas, pero estás diferencias no tienen significado semántico, es decir, si tienen propiedades diferentes si se escriben en una forma u otra.
 
 El nombre de las variables pueden usar cualquier carácter de UTF-8, por ejemplo:
@@ -161,6 +176,7 @@ El nombre de las variables pueden usar cualquier carácter de UTF-8, por ejemplo
 ```julia
 δ = 0.001
 ```
+
 En el REPL de Julia u otros editores, se pueden escribir carácteres especiales de LaTeX presionando el backslash \\ y el nombre del carácter, seguido de un TAB. Por ejemplo, \alpha + TAB = α.
 
 Los nombres de las variables en Julia por convención deben iniciar por una letra (A-Z ó a-z), guiones bajos o carácteres especiales Unicode, ya sea letras o simbolos matemáticos. En estos últimos, se debe tener precaución ya que algunos se podría confundir con los operadores matemáticos que usa Julia.
@@ -169,7 +185,7 @@ Los nombres para variables no validos son aquellas dentro de la lista de *palabr
 
 Julia impone pocas restricciones al asignar nombre a las variables, se recomienda las siguientes **convenciones de estilo**:
 
-1. El nombre de las variables son escritas en minúsculas. 
+1. El nombre de las variables son escritas en minúsculas.
 2. La separación de palabras puede ser indicada por el guión bajo, pero se desaconseja a menos de que el nombre sea díficil de leer en otro caso.
 3. El nombre de **Type**s y **Module**s deben empezar por una letra mayúscula y se debe utilizar *CamelCase* entre palabras de nombres compuestos, en lugar de guiones bajos.
 4. El nombre de **function**s y **macro**s deben escribirse siempre en minúsculas y sin guiones bajos.
@@ -178,13 +194,15 @@ Julia impone pocas restricciones al asignar nombre a las variables, se recomiend
 Para más ver más recomendaciones, por favor revise la [guía de estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
 
 ## Tipos de Datos
+
 Una de las fortalezas de Julia es su amplia variedad de tipo de datos. Además, cada tipo de dato es muy especifico a las necesidades que requiere la tarea.
 
 A diferencia de otros lenguajes de programación como Javascript donde se tienen solo unos tipos de datos genéricos, por ejemplo, "number" para cualquier dato númerico, en Julia se tiene que ser muy especifico, es especial sí se quiere tener un buen desempeño del lenguaje. Esto, aunque a primera vista podría parecer engorroso, nos dará ventajas que veremos más adelante.
 
-Empecemos a ver los diferentes tipos de datos que nos ofrece Julia. 
+Empecemos a ver los diferentes tipos de datos que nos ofrece Julia.
 
 ### Números Enteros y de Punto Flotante
+
 Julia proporciona una amplia gama de tipos numéricos primitivos, y sobre ellos se define un conjunto completo de operadores aritméticos y bit a bit, así como funciones matemáticas estándar.
 
 En la parte de números enteros, Julia nos proporciona los siguientes tipos numéricos primitivos:
@@ -192,7 +210,7 @@ En la parte de números enteros, Julia nos proporciona los siguientes tipos num�
 |Tipo|Signo|Número de bits|Valor mínimo|Valor máximo|
 |--|--|--|--|--|
 |Int8|✓|8|-2^7|2^7 - 1|
-|UInt8|	|8|0|2^8 - 1|
+|UInt8| |8|0|2^8 - 1|
 |Int16|✓|16|-2^15|2^15 - 1|
 |UInt16| |16|0|2^16 - 1|
 |Int32|✓|32|-2^31|2^31 - 1|
@@ -313,6 +331,7 @@ En los tipos de punto flotante, existen **dos ceros**, el cero positivo y el cer
 julia> 0.0 == -0.0
 true
 ```
+
 Existe tres valores especificos de números de punto flotante, los cuales no se corresponden a ningún punto en la recta real;
 
 |Nombre|Float16|Float32|Float64|Descripción|
@@ -324,6 +343,7 @@ Existe tres valores especificos de números de punto flotante, los cuales no se 
 Existe un tipo de número, entero y flotante, que sirve para trabajar con números de precisión arbitraria, aún de los límites por tipo. Estos son **BigInt** y **BigFloat**.
 
 ### Literales numéricos como coeficientes
+
 La síntaxis de Julia nos permite tener literales numéricos como coeficientes de expresiones o fórmulas. De está forma, podemos tener expresiones claras, ya que un literal que precede a una variable es interpretado como una multiplicación:
 
 ```julia
@@ -361,7 +381,9 @@ julia> one(Int32)
 julia> one(BigFloat)
 1.0
 ```
+
 ### Números racionales
+
 Julia incluye nativamente los tipos de datos de números racionales (aquellos que se pueden escribir como una fracción de enteros) y números complejos (aquellos con parte real y parte imaginaria).
 
 Los **números racionales** son construidos usando el operador **//** como sigue:
@@ -370,6 +392,7 @@ Los **números racionales** son construidos usando el operador **//** como sigue
 julia> typeof(2//3)
 Rational{Int64}
 ```
+
 Si el numerador y el denominador tienen factores comúnes, la fracción será reducida a su mínima expresión:
 
 ```julia
@@ -397,12 +420,14 @@ julia> float(3//4)
 La promoción de tipo nos ayuda a que un racional pueda operar con cualquier otro tipo de dato númerico directamente.
 
 ### Números complejos
+
 Para el tipo de datos **numéricos complejos**, Julia implementa la constante global **im** ligada a la unidad imaginaria matemática $i$, que representa la $\sqrt{-1}$. Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
 
 ```julia
 julia> typeof(1 + 2im)
 Complex{Int64}
 ```
+
 Y pueden realizarse cualquier tipo de operación matemática entre números complejos, e inclusive, por promoción de tipo, puede operar con otros tipos de datos númericos sin problema:
 
 ```julia
@@ -439,6 +464,7 @@ julia> abs2(z) # Norma cuadrada o valor absoluto cuadrado de z
 julia> angle(z) # Ángulo o fase de z
 1.1071487177940904
 ```
+
 Si bien es posible construir complejos a partir de variables númericas que representen sus coeficientes:
 
 ```julia
@@ -446,6 +472,7 @@ julia> a = 1; b = 2;
 julia> a + b*im
 1 + 2im
 ```
+
 es recomendable y más eficiente construirlo a partir de la función *complex*, donde directamente lo construye pasando la parte real e imaginaria del complejo:
 
 ```julia
@@ -454,7 +481,8 @@ julia> complex(a, b)
 ```
 
 ### Strings
-Los literales tipo string son cadenas finitas de carácteres. Cada carácter es un elemento de tipo Char. Julia puede aceptar, en términos sencillos, cualquier carácter UTF-8. 
+
+Los literales tipo string son cadenas finitas de carácteres. Cada carácter es un elemento de tipo Char. Julia puede aceptar, en términos sencillos, cualquier carácter UTF-8.
 
 Se puede definir los strings entre comillas dobles o entre dos pares de comillas triples, como el siguiente ejemplo:
 
@@ -479,6 +507,7 @@ julia> str1[1]
 julia> str1[4]
 'a': ASCII/Unicode U+0061 (category Ll: Letter, lowercase)
 ```
+
 **Nota**: aúnque esto es cierto en la mayoria de casos, Julia indexa los string realmente por la cantidad de bytes que ocupa el carácter para ser codificado. UTF-8 incluye carácteres de longitud en byte variable. El índice arriba indicado, se refiere a la posición de byte que observa para retornar el carácter, en lugar de referirse a la posición relativa del carácter dentro del string. Esto es algo para tener en cuenta y cuidado a la hora de trabajar con strings. Para revisar más detalles al respecto, [aquí](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8).
 
 Para usar símbolos o carácteres Unicode, sólo se tienen que declarar como:
@@ -497,11 +526,13 @@ julia> string(str1, str2)
 "Hola Mundo"
 ```
 
-Las segunda forma es utilizando el operador **\*** (de multiplicación). 
+Las segunda forma es utilizando el operador **\*** (de multiplicación).
+
 ```julia
 julia> str1 * str2
 "Hola Mundo"
 ```
+
 Si bien, en otros lenguajes utilizan el operador **+** para realizar la acción de concatenación de strings, sintacticamente es un poco incorrecto, ya que la operación de concatenación es no-conmutativo. De hecho, matemáticamente, el conjunto de todos los strings de longitud finita **S** junto con el operador de concatenación **\*** forma un monoide libre $(S,*)$, que no es conmutativo. Y es común representar la operación concatenación con el símbolo **\***, por lo que Julia es coherente con esa notación.
 
 Para utilizar el valor de variables con literales strings dentro de nuevos string, Julia utiliza la interpolación mediante el simbolo **$**, de la siguiente forma:
@@ -510,6 +541,7 @@ Para utilizar el valor de variables con literales strings dentro de nuevos strin
 julia> "$str1 a todos, hoy salió el sol para todo el $str2"
 "Hola a todos, hoy salió el sol para todo el Mundo"
 ```
+
 De hecho se pueden evaluar expresiones y retornarlas dentro del string con el mismo simbolo como sigue:
 
 ```julia
@@ -522,6 +554,7 @@ julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
 Julia provee con un colección completa de operadores aritméticos y bit a bit en todos los tipos de primitivos. Así como una colección de funciones matemáticas éstandar implementadas eficientemente.
 
 ### Operadores aritméticos
+
 En la siguiente tabla, se muestran los **operadores aritméticos** básicos:
 
 |Expresión|Descripción|
@@ -536,6 +569,7 @@ En la siguiente tabla, se muestran los **operadores aritméticos** básicos:
 |x **%** y|Residuo|
 
 ### Operadores booleanos
+
 En la siguiente tabla, se muestra los **operadores booleanos**:
 
 |Expresión|Descripción|
@@ -545,12 +579,15 @@ En la siguiente tabla, se muestra los **operadores booleanos**:
 |x **\|\|** y|Operador OR|
 
 ### Operadores de actualización
+
 Todos los operadores aritméticos tienen su correspondiente **operador de actualización**, esto es, toma el valor de una variable, ejecuta la operación y guarda el resultado en la misma variable. Por ejemplo, x **+=** 1 equivale a x = x **+** 1. Los operadores son:
+
 ```julia
 +=   -=   *=   /=   \=   ÷=   ^=   %=
 ```
 
 ### Operadores de comparación
+
 Los siguientes son los **operadores de comparación**:
 
 |Expresión|Descripción|
@@ -568,7 +605,9 @@ Al igual que Python, Julia acepta cadena de comparaciones de la siguiente forma:
 julia> -21 < 1 < x <= 4 < 10 
 true
 ```
+
 ### Funciones matemáticas básicas
+
 Las siguientes son las **funciones de redondeo**:
 |Función|Descripción|
 |---|---|
@@ -598,6 +637,7 @@ La siguiente tabla contienen las principales **funciones potencia, raíces y log
 |log10(x)|Logaritmo base 10 de x|
 
 También, Julia incluye las funciones **trigonométricas** estandar:
+
 ```
 sin     asin     sinh   asinh
 cos     acos     cosh   acosh
@@ -606,13 +646,15 @@ cot     acot     coth   acoth
 sec     asec     sech   asech
 csc     acsc     csch   acsch
 ```
+
 Adicionalmente, ya ofrece en el repertorio funciones **sinpi(x)** y **cospi(x)** que son versiones mejor implementadas y optimizadas para calcular **sin(π\*x)** y  **cos(π\*x)**.
 De manera paralela, se incluyen funciones trigonométricas que hacen los cálculos en grados en lugar de radianes, agregandole una *d* al nombre de la función: sind(x), cosd(x), tand(x) ...
 
 ### Funciones vectorizadas
+
 Todas las funciones y operadores tienen su versión **vectorizada**, eso es, que aplicadas a un arreglo o vector, las funciones actuan sobre cada uno de los elementos (*elementwise*), mediante el *operador punto (.)*. Por ejemplo, si tenemos la instrucción [1, 2, 3]^2, dicha instrucción no está definida en la base estandar. En cambio, utilizando el operador punto como [1, 2, 3] **.^** 2, ahora sí, la operación potencia se aplicada a cada elemento del vector [1^2, 2^2, 3^2]. Este operador puede ser aplicado a cualquier operador básico. Por convención y para evitar confusiones con los literales exponentes, se recomienda siempre dejar un espacio blanco en cada lado de los operadores.
 
-Las **funciones básicas vectorizadas** tambien se pueden aplicar elemento a elemento agregando un punto al final del nombre de la función. Por ejemplo, **sin.(x)** aplicará la función **sin** a cada elemento del vector x. 
+Las **funciones básicas vectorizadas** tambien se pueden aplicar elemento a elemento agregando un punto al final del nombre de la función. Por ejemplo, **sin.(x)** aplicará la función **sin** a cada elemento del vector x.
 
 ```julia
 julia> vec = [1, 2, 3, 4, 5, 6];
@@ -628,7 +670,9 @@ julia> sqrt.(vec)
 ```
 
 ## Funciones
+
 ### Bloque function
+
 Las funciones en Julia son objetos que toman una tupla de valores y retornan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
 
 La síntaxis básica para declarar funciones en Julia es la siguientes:
@@ -638,9 +682,10 @@ julia>  function f(x, y)
             x + y
         end
 ```
-La definición de la función comienza con la palabra reservada ***function*** seguida por el nombre de la función y sus argumentos. Siempre se debe finalizar el bloque de definción de la función con la palabra reservada ***end***. 
 
-Por default, las funciones regresan siempre el valor de la última instrucción de su definición. Sin embargo, también existe la palabra reservada ***return*** que explicitamente indica el valor que la función retornará. Toda expresión después de la línea de *return* será ignorada. 
+La definición de la función comienza con la palabra reservada ***function*** seguida por el nombre de la función y sus argumentos. Siempre se debe finalizar el bloque de definción de la función con la palabra reservada ***end***.
+
+Por default, las funciones regresan siempre el valor de la última instrucción de su definición. Sin embargo, también existe la palabra reservada ***return*** que explicitamente indica el valor que la función retornará. Toda expresión después de la línea de *return* será ignorada.
 
 Es recomendable siempre incluir explicitamente el return de las funciones:
 
@@ -649,7 +694,9 @@ julia>  function f(x, y)
             return x^2 - 2x + y
         end
 ```
+
 ### Funciones por asignación
+
 Existe otra síntaxis para declarar funciones más compacta, llamada ***por asignación***, ideal cuando la definición de la función se puede hacer en una sola expresión:
 
 ```julia
@@ -666,6 +713,7 @@ julia> ∑(2, 7)
 ```
 
 ### Funciones anónimas
+
 Existe una tercera síntaxis para declarar funciones, las llamadas ***funciones anónimas*** (equivalentes a las *lambda functions* de Python o las *arrow functions* de JavaScript), que principalmente se utilizan como argumentos de otras funciones, y que no se requieren conservar después de su ejecución. Las dos formas equivalenes para declararlas es como sigue:
 
 ```julia
@@ -681,9 +729,11 @@ Las funciones anónimas pueden aceptar múltiples argumentos, con la siguiente s
 ```julia
 julia> (x, y) -> x^2 - 2x + y
 ```
+
 Existe una tercera forma para declarar funciones anónimas, es por medio del [Bloque do](#bloque-do), que se describirá más adelante.
 
 ### Argumentos keyword
+
 Se pueden incluir **keyword arguments** en las funciones (al igual que en Python), separandolos de los argumentos posicionales con `;` de la siguiente forma:
 
 ```julia
@@ -691,7 +741,9 @@ julia>  function f(x, y; radio=1.0, eje=1.0)
             return x + y * radio / eje
         end
 ```
+
 ### Tipado de argumentos
+
 Es posible indicar el tipo de dato de los argumentos (tanto de los argumentos posicionales como los keyword), al igual que el tipo de dato que retorna la función.
 
 La síntaxis para declarar el tipo de dato se realiza con los cuadripuntos **::** (similares a Fortran), de la siguiente forma:
@@ -701,11 +753,13 @@ julia>  function prediccion(x::Float64; n::Int64 = 5, p::Float64 = 0.5)::Float64
             return (n * x) ^ p 
         end
 ```
+
 Julia se asegurará de convertir el resultado al tipo de dato que declara como salida de la función.
 
-Si bien, el tipado de argumentos no da ninguna ventaja en el desempeño del código, será sumamente útil para aplicaciones más avanzadas de Julia (veáse el [Despacho múltiple](#métodos-de-funciones-despacho-múltiple)). 
+Si bien, el tipado de argumentos no da ninguna ventaja en el desempeño del código, será sumamente útil para aplicaciones más avanzadas de Julia (veáse el [Despacho múltiple](#métodos-de-funciones-despacho-múltiple)).
 
 ### Vectorización de funciones
+
 Una de las implementaciones más interesantes en Julia incluida en sus sistema base, es la implementación vectorizada (elemento a elemento) de las funciones al ser aplicadas a arreglos, vectores o matrices. Para conseguirlo, usamos la síntaxis punto (*dot syntax*) que ya vimos anteriormente con las funciones elementales, pero esta vez a nuestras funciones:
 
 ```julia
@@ -719,9 +773,11 @@ julia> prediccion.(A, n=5, p=0.5)       # Si se ejecuta la función sin el punto
  3.872983346207417
  5.0
 ```
+
 **Nota**: La síntaxis *punto* es azucar sintáctica de la función [broadcast](#broadcasting) que justamente realiza la operación de aplicar una función a cada uno de los elementos de los arreglos.
 
 ### Composición de funciones
+
 Otra curiosidad de Julia, es que se puede realizar de manera sencilla **composición de funciones**, esto es, aplicar una función sobre el resultado de otra función (algo muy natural en matemáticas). Esto se logra con el operador de composicion `∘` esto es, `(f ∘ g)(args...)` es lo mismo que `f(g(args...))`. Dentro del REPL, el operador composición se obtiene escribiendo **\circ + TAB**.
 
 Otra implementación de la composición de funciones es utilizando el operador *pipe* `|>` (algo más común entre los programadores). Realiza exactamente lo mismo, la salida de una función pasa como argumento de la siguiente:
@@ -740,6 +796,7 @@ julia> x |> sum |> sqrt     # Utilizando pipe al estilo programador
 ```
 
 ### Return nothing
+
 Finalmente, las funciones que no regresan algún valor y sólo realizan cambios, por convención se retorna la expresión ***nothing*** como sigue:
 
 ```julia
@@ -750,6 +807,7 @@ julia>  function imprime(nombre)
 ```
 
 ## Bloques de Control de Flujo: Condicionales, Ciclos y Otros
+
 ### Condicionales
 
 Los bloques condicionales permiten evaluar porciones de código dependiendo si se cumple o no cierta expresión booleana. La estructura condicional sigue el siguiente patrón `if-elseif-else`:
@@ -763,6 +821,7 @@ julia>  if condición_1
             # Bloque de código 3
         end
 ```
+
 El bloque condicional no introduce un alcance local de las variables, lo que significa que variables definidas o modificadas dentro del bloque, pueden ser accedidas fuera de él después de la ejecución del bloque condicional.
 
 Existe otra síntaxis para evaluar condicionales, principalmente cuando se pueden escribir en una sóla expresión, el llamado ***operador ternario*** **? :** que tiene la siguiente estructura sintáctica:
@@ -770,20 +829,22 @@ Existe otra síntaxis para evaluar condicionales, principalmente cuando se puede
 ```julia
 julia> condición ? expresión_1 : expresión_2
 ```
+
 La expresión condicional se pone antes del signo **?** . Si la ***condición*** es verdadera, se ejecuta el ***expresión_1***. En caso contrario, si la ***condición*** es falsa, se ejecuta ***expresión_2***.
 
-### Evaluación Short-Circuit 
+### Evaluación Short-Circuit
+
 Al evaluar dos o más condiciones lógicas, Julia utiliza tanto **&&** como **||** como operadores lógicos AND y OR respectivamente. Sin embargo, estos operadores tienen una propiedad adicional, la evaluación ***short-circuit*** o de cortocircuito, el cual consiste en no evaluar necesariamente el segundo argumento. En una serie de expresiones booleanas conectadas con estos operadores, sólo el mínimo de expresiones necesarias son evaluadas para determinar el valor del booleano final. En otras palabras, tenemos estas dos condiciones:
 
 1. En la expresión `A && B`, la subexpresión ***B*** es evaluada solamente si la expresión ***A*** es **verdadera**.
 2. En la expresión `A || B`, la subexpresión ***B*** es evaluada solamente si la expresión ***A*** es **falsa**.
 
-La razón de estas dos condiciones es la siguiente: 
+La razón de estas dos condiciones es la siguiente:
 
 1. Si ***A*** es falsa, entonce la expresión `A && B` debe ser falsa, independientemente del valor que tenga ***B***.
 2. Si ***A*** es verdadera, entonces las expresión `A || B` debe ser verdadera, independientemente del valor que tenga ***B***.
 
-La evaluación *short-circuit* de los operadores **&&** y **||** se realiza de izquierda a derecha, teniendo la preferencia la evaluación de **&&** sobre **||**. 
+La evaluación *short-circuit* de los operadores **&&** y **||** se realiza de izquierda a derecha, teniendo la preferencia la evaluación de **&&** sobre **||**.
 
 Si se desea hacer la evaluación explicita de las dos subexpresiones **A** y **B**, entonces se puede usar los operadores lógicos bit a bit **&** y **|**.
 
@@ -806,6 +867,7 @@ julia> condición || # expresion
 ```
 
 ### Ciclos While y For
+
 El primer bloque para realizar ciclo de repeticiones es el **while**, el cual evalua una expresión condicional. En el caso de que la expresión condicional sea verdadera, el ciclo se ejecutará, hasta que se deje de cumplir la expresión. La estructura sintáctica del ciclo while es el siguiente:
 
 ```julia
@@ -829,6 +891,7 @@ julia>  for i = objeto_iterable         # Forma matemática o de Fortran de decl
             # Bloque de código
         end
 ```
+
 Se puede utilizar la palabra clave **in** o el símbolo ∈ (\in + TAB) o el símbolo igual (=) para índicar la pertenencia del índice mudo a cada elemento del objeto iterable.
 
 Las objetos **range** son los más frecuentemente utilizados para iterar sobre un rango de valores numéricos. Hay dos formas equivalente de declarar rangos en Julia:
@@ -850,9 +913,11 @@ julia>  for i in [1, 2], j in [3, 4]
 (2, 3)
 (2, 4)
 ```
+
 Hay que tener cuidado, ya que a diferencia del ciclo for anidado tradicional, donde recorre uno por uno los elementos de cada índice, en este último ciclo for hace el producto cartesiano de los elementos de los iterables, e itera sobre esos nuevos elementos. Para la mayoría de casos, ambos ciclos son equivalentes, pero se debe tener cuidado al trabajar con ellos dependiendo que la tarea que se quiera realizar.
 
 ### Bloque de Expresiones Compuestas
+
 Muchas veces es conveniente y útil tener un sola expresión que evalue varias subexpresiones y que únicamente devuelva el valor de la última subexpresión. Hay dos formas equivalentes de hacer esto en Julia, la primera es con el ***bloque begin*** y la segunda es con cadenas ***;*** como sigue:
 
 ```julia
@@ -864,6 +929,7 @@ julia>  suma =  begin
 
 julia>  suma = (x = 3; y = 5; x + y)
 ```
+
 En ambos casos, el valor que se guarda en la variable siempre será el resultado de la última instrucción. Aunque típicamente esta es la forma de utilizar las cadenas ***;*** y el bloque ***begin***, nada restringe la posibilida de tener un bloque begin en una línea, y una cadena ; multilínea.
 
 ```julia
@@ -875,6 +941,7 @@ julia>  suma = (x = 3;
 ```
 
 ### Bloque Do
+
 Al pasar funciones como argumentos a ***funciones de orden superior***, tipicamente se usan [funciones anónimas](#funciones-anónimas). Pero muchas veces de dichas funciones requieren multiples líneas para su definición, lo que hace engorrosa y díficil la lectura del código. Afortunadamente, el bloque `do` solventa este problema.
 
 El bloque `do` creará una función anónima que en autómatico se la pasará a la *función de orden superior*. Para esto, es necesario que la *función de orden superior* **reciba como primer argumento un función**. La síntaxis del bloque `do` es la siguiente:
@@ -888,6 +955,7 @@ julia>  función_orden_superior(otros_args...) do argumentos_función_anonima,..
             # Intrucciones de la función anónima
         end
 ```
+
 Por ejemplo:
 
 ```julia
@@ -915,10 +983,13 @@ julia>  map(numeros) do x
             end
         end 
 ```
+
 La instrucción `do x` crea una función anónima con un argumento, `x -> ...` . Así, la instrucción `do x, y` creará una función anónima de dos argumentos, `(x, y) -> ...` . En cambio, la expresión `do (x, y)` creará una función anónima cuyo único argumento será una tupla que será deconstruida. Finalmente, la simple instrucción `do` definirá una función anónima sin argumentos `()-> ...` .
 
 ## Estructura de Datos
+
 ### Vectores y Arreglos
+
 Los vectores son colecciones de elementos ordenados, los cuales pueden estar duplicados y ser de diferente tipo de dato cada uno. Los vectores son mutables, esto es, pueden agregarse elementos y eliminarlos. Es un objeto iterable y se puede acceder a sus elementos mediante indexación. Es muy similar a las listas en Python.
 
 Hay varias formas de declarar un vector:
@@ -930,12 +1001,12 @@ julia> b = Vector{T}([valor1, valor2, valor3, etc])
 
 julia> c = Array{T, 1}([valor1, valor2, valor3, etc])
 ```
+
 La primera forma es la forma más directa, donde Julia identifica el mejor tipo de vector que se definirá dependiendo del tipo de dato de los elementos.
 
 La segunda forma, se define el objeto ***Vector***, donde *T* es el tipo de dato de los elementos que contendrá la lista. En este caso, los elementos futuros no pueden tener un tipo de dato distinto al declarado, por lo que hay que tener precaución.
 
 La tercerda forma, se define al vector como un objeto ***Array*** de una dimensión. De la misma forma que el caso anterios, *T* es el tipo de dato de los elementos del vector. Realmente en el fondo, *Vector* es un alias de *Array* de una dimensión.
-
 
 Como se mencionó con anterioridad, se pueden acceder a los valores de los vectores mediante la indexización usando los ***[]***. Se puede pasar el índice, número natural, o un rango, siempre y cuando tenga sentido. Julia es un lenguaje **1-indexado**, lo que significa que el índice del primer elemento es uno, a diferencia de lenguajes de programación como Python o JavaScript, que son 0-indexados, su primer elemento se indexa  a partir del cero.
 
@@ -974,7 +1045,9 @@ julia> a
  "Igualmente"
  "Adiós"
 ```
+
 También se pueden agregar o quitar elementos al final del vector, de la siguiente forma:
+
 ```julia
 julia> push!(a, "Postdata")                     # Agrega un elemento al final del vector
 6-element Vector{String}:
@@ -993,7 +1066,9 @@ julia> pop!(a)                                  # Elimina el último elemento de
  "Igualmente"
  "Adiós"
 ```
+
 O se puede agregar o quitar elementos al principio del vector como sigue:
+
 ```julia
 julia> pushfirst!(a, "Antes que nada")          # Agrega un elemento al principio del vector
 6-element Vector{String}:
@@ -1035,6 +1110,7 @@ julia> b = [1 2 3; 4 5 6]
  1  2  3
  4  5  6
 ```
+
 Para acceder a los elementos de la matriz, tenemos que usar dos índices, el primero para la fila, el segundo para la columna:
 
 ```julia
@@ -1045,6 +1121,7 @@ julia> b[2, 1]
 ```
 
 Para agregar nuevos datos al final de la matrix, y modificando así su dimensión matricial, se realiza de la siguiente forma
+
 ```julia
 julia> c = [b; [7 8 9]]                             # Se agrega como una nueva fila
 3×3 Matrix{Int64}:
@@ -1077,6 +1154,7 @@ julia> d = cat([1 2; 3 4], [5 6; 7 8], dims=3)
  5  6
  7  8
 ```
+
 Para acceder a sus elementos, se requieren tres índices:
 
 ```julia
@@ -1088,6 +1166,7 @@ julia> d[2,1,1]
 ```
 
 ### Tuplas
+
 Otra estructura de datos son las ***tuplas***, los cuales son contenedores de longitud fija y cuyos valores no se pueden modificar (son inmutables). Pero al igual que los vectores, sus valores se pueden acceder via índices. Las tuplas se definen con paréntesis y comas, como sigue:
 
 ```julia
@@ -1106,6 +1185,7 @@ Tuple{Int64, String, Float64}
 julia> a[2]
 "Hola"
 ```
+
 Note que para la tupla unidimensional, se requiere definirlo como $(1,)$ y no como $(1)$ ya que este último significa simplemente el valor 1 entre paréntesis.
 
 Opcionalmente, los elementos de las tuplas se pueden nombrar, en tal caso, el objeto se llamará ***tupla nombrada***, y se construye como sigue:
@@ -1129,6 +1209,7 @@ julia> b.edad
 ```
 
 ### Diccionarios
+
 Los diccionarios en Julia, al igual que en Python, son colecciones de pares clave-valor (key-value), donde cada valor puede ser accedido por su clave, en lugar de índices, ya que en general, los diccionarios son desordenados. Cada diccionario debe tener claves diferentes, preferentemente deben ser strings, enteros o simbolos (:*simbolo*), mientras que en los valores no hay restricciones.
 
 Un diccionario es definido mediante un constructor ya incluido **Dict()**, y separando la clave con el valor mediante el símbolo **=>** siguiendo la siguiente estructura y síntaxis:
@@ -1244,10 +1325,13 @@ Dict{Any, Any} with 7 entries:
   "estado"   => "Jalisco"
   :Δ         => "Hola"
 ```
+
 ***
 
 ## Julia Intermedio
+
 ## Arreglos multidimensionales
+
 Julia provee de un implementación de alta calidad para el manejo de arreglos multidimensionales. Su biblioteca de arreglos está escrita enteramente en Julia y su eficiencia se debe enteramente al compilador. Es posible definir tipos personalizados de arreglos, gracias a la herencia del tipo AbstractArray.
 
 En el caso general, los arreglos pueden contener objetos del tipo `Any` (cualquiera, indistinto). Pero para la mayoria de propositos computacionales, los arreglos pueden contener objetos de tipos más especificos como `Int64` o `Float64`. Y para cuestiones cientificas, incluve tipos `Complex`.
@@ -1255,6 +1339,7 @@ En el caso general, los arreglos pueden contener objetos del tipo `Any` (cualqui
 A diferencia de otros lenguajes de programación, Julia no espera que los programas sean escritos de forma "vectorizada" por mejorar su eficiencia. En cambio, el compilador de Julia utiliza la inferencia de tipos para generar código optimizado permitiendo que escribir el código con un estilo conveniente y legible, sin sacrificar el desempeño y memoria.
 
 ### Funciones Básicas para Arreglos
+
 Estas son algunas de las funciones básicas para obtener información de los arreglos:
 
 |Función|Descripción|
@@ -1269,6 +1354,7 @@ Estas son algunas de las funciones básicas para obtener información de los arr
 |**eachindex(A)**|Un eficiente iterador para visitar cada posición de A.|
 
 ### Construcción de arreglos e inicialización
+
 Existe muchas funciones para construir e inicializar arreglos. La siguiente lista contiene algunas de ellas, en las cuales, el argumento `dims...` son las dimensiones del arreglo y puede ser pasado ya sea como tupla con cada una de las dimensiones, o como una sucesion de argumentos númericos individuales. La mayoria de las funciones acepta como primer argumento el tipo de dato de los elementos del arreglo (***T***), que si se omite, por defecto será `Float64`.
 
 |Función|Descripción|
@@ -1290,6 +1376,7 @@ Existe muchas funciones para construir e inicializar arreglos. La siguiente list
 |**fill(x, dims...)**|Regresa un arrego llena con el valor x, con dimensiones `dims`.|  
 
 ### Arreglos literales
+
 Como vimos en secciones pasadas, se pueden definir arreglos especificando directamente sus elementos mediante parentesis cuadrados siguiendo la síntaxis `[a, b, c, ...]`, separando los elementos con comas. Esto genera un arreglo 1-dimensional (o vector columna). Con esta forma de declaración, el tipo del arreglo se determinará automáticamente a partir del tipo de dato de los elementos. Si el tipo de dato de los elementos es diferente, se determinará el tipo de dato común mediante la función de `promoción de tipo` (es decir, si tenemos enteros y flotantes, todos será promovidos a flotantes). En el caso de que los tipos de datos sean heterogéneos, entonces se definirá como tipo `Any`.
 
 ```julia
@@ -1300,10 +1387,11 @@ julia> [1, 2.3, 4//5]               # Cada elemento tiene un tipo de dato difere
  0.8
  ```
 
- ### Concatenación
+### Concatenación
+
  Existen varias síntaxis para realizar la contatenación de arreglos.
- 
- * Si los arreglos dentro de los paréntesis cuadrados son separados por punto y coma (`;`) o por saltos de línea, en lugar de comas (`,`), entonces esos elementos se concatenan verticalmente, en lugar de que sean elementos en sí mismos.
+
+* Si los arreglos dentro de los paréntesis cuadrados son separados por punto y coma (`;`) o por saltos de línea, en lugar de comas (`,`), entonces esos elementos se concatenan verticalmente, en lugar de que sean elementos en sí mismos.
 
  ```julia
  julia> [1:2, 3:4, 5:6]                         # Arreglos separados por coma. Cada arreglo será 
@@ -1333,6 +1421,7 @@ julia> [1:2; 3:4; 5:6]                         # Arreglos separados por punto y 
  5
  6
  ```
+
 * Si los arreglos son separados por tabuladores, espacios vacíos, o dobles punto y coma (`;;`), entonces, los elementos son concatenados horizontalmente. *Nota: Recordemos que los arreglos unidimensionales se representan como vectores columna*.
 
 ```julia
@@ -1379,11 +1468,14 @@ julia> [zeros(Int, 2, 2)    [1; 2]
  0  0  2
  3  4  5
 ```
+
 Existe una jerarquía de orden al realizar las concatenaciones horizontales si se combinan simbolos para realizarlas:
+
 * Los espacios y los tabuladores tienen preferencia sobre los `;`, realizando primero las concatenaciones horizontal y después las verticales.
 * En cambio, si se utiliza punto y coma dobles `;;` para indicar la concatenación horizontal,  entonces las concatenaciones verticales tienen preferencia, y al finalizar se realizan las concatenaciones horizontales.
 
 En otras palabras, se resuelven las concatenaciones en este orden: **tabs o espacios → `;` →  `;;`→**...
+
 ```julia
 julia> [1:2; 4;; 1; 3:4]
 3×2 Matrix{Int64}:
@@ -1391,7 +1483,9 @@ julia> [1:2; 4;; 1; 3:4]
  2  3
  4  4
 ```
+
 Se puede realizar concatenaciones a más altas dimensiones, agregando triples, cuadruples,..., puntos y comas. El símbolo `;;;` significa una concatenación sobre una tercera dimensión, y así sucesivamente.
+
 ```julia
 julia> [1; 2;; 3; 4;; 5; 6;;; 7; 8;; 9; 10;; 11; 12]
 2×3×2 Array{Int64, 3}:
@@ -1403,13 +1497,17 @@ julia> [1; 2;; 3; 4;; 5; 6;;; 7; 8;; 9; 10;; 11; 12]
  7   9  11
  8  10  12
 ```
+
 Más en general, cada uno de las formas anteriores, son azucar sintáctica de la función `cat` o alguna de sus variaciones: `vcat`, `hcat`, `hvcat`, `hvncat`.
 
 ### Array Comprehension
+
 Los array comprehension son muy similares a los list comprehension de Python. Son arreglos que se construyen a partir de la iteración sobre los elementos de objetos iterables. Su construcción es muy similar a la notación de la definición de conjuntos:
+
 ```julia
 A = [f(x,y,...) for x in iterable1, y in iterable2]$$
 ```
+
 donde $f(x,y,...)$ es un expresión que será evaluada por cada uno de los iterables y cuyo resultado se guardará en el nuevo arreglo. Al igual que en Python, los arrays comprehension pueden evaluar condicionales `if` durante su construcción.
 
 ```julia
@@ -1429,7 +1527,9 @@ julia> pares = [i for i in numeros if i % 2 == 0]
  4
  6
 ```
+
 ### Vistazo a los Generadores
+
 A diferencia de los `array comprehension`, que se construyen completos a partir de las iteraciones y se guarda todo en memoria, en los `generadores` sólo se declara la expresión de su construcción y los elementos se van generando conforme se vayan necesitando, sin ser guardados en memoria.
 
 Los `generadores` se construyen casi igual que los `array comprehension`, pero en lugar de usar paréntesis cuadrados `[]`, se usan paréntesis normales `()`. Los generadores también aceptan la evaluación de condicionales `if` es su construcción.
@@ -1441,10 +1541,12 @@ Base.Generator{Base.Iterators.Filter{var"#40#41", UnitRange{Int64}}, typeof(iden
 julia> sum(pares)
 250500
 ```
+
 Se puede obtener los elementos de `generador` utilizando la función `iterate()`. Para mayor referencia a como recorrer un generador, por favor dirijase a la siguiente [documentación](https://docs.julialang.org/en/v1/base/collections/).
 
 ### Indexación
-Para traer los elementos de los arreglos, se usan índices con la siguiente síntaxis general: 
+
+Para traer los elementos de los arreglos, se usan índices con la siguiente síntaxis general:
 $$A[i_1, i_2, i_3, ..., i_n]$$
 donde cada $i_j$ puede ser un entero, un arreglo de enteros o un conjunto de índices soportados. Esto último incluye al símbolo (`:`) que selecciona todos los elementos indexados en la dimensión correspondiente. También incluye rangos del tipo *start:end*, *start:step:end*, o arreglo de booleanos donde se seleccionan los elementos con índice `true`.
 
@@ -1486,6 +1588,7 @@ julia> A[[1, 4], 1:2:4]                 # Uso de rangos para seleccionar una sec
   1   3
  13  15
 ```
+
 Dentro de los índices especiales soportados, existe la palabra `end` para indicar el último índice del arreglo, y su valor varía dependiendo de la dimensión y forma del arreglo.
 
 ```julia
@@ -1520,6 +1623,7 @@ A[14] = 8
 A[15] = 12
 A[16] = 16
 ```
+
 Así, si creamos una matrix B cuyos elementos son los índices de los elementos de A, retornara los valores de A que le corresponden a dichos indices, por ejemplo:
 
 ```julia
@@ -1544,6 +1648,7 @@ julia> A[B]
  3  2  1
 
 ```
+
 Como se mencionó anteriormente, también se puede pasar un arreglo de valores booleanos, llamados *índices lógicos* o *máscara lógica*, donde solamente se seleccionan los elementos cuyo indice corresponde al valor `true`.
 
 ```julia
@@ -1574,7 +1679,9 @@ julia> A[mascara]
   8
  16
 ```
+
 ### Broadcasting
+
 Anteriormente vimos que se puede aplicar operaciones o funciones elemento a elemento sobre vectores o arreglos. Pero en otras será útil realizar operaciones binarias sobre arreglos de diferentes dimensiones, como por ejemplo, sumar un vector a cada una de las columnas de una matriz. Una manera poco eficiente de realizarlo sería hace una matriz con multiples copias del vector, y después hacer la suma de matrices. Al trabajar con matrices de altas dimensiones, esta estrategía se vuelve laboriosa de manejar y causa un desperdicio de memoria.
 
 Es por eso que Julia provee de la función `broadcast`, que duplica un singletón para que coincidan con las dimensiones de la matriz correspondiente, creando una nueva matriz sin usar memoria adicional, y realizar la operación elemento a elemento. La función `broadcast` tiene la siguiente síntaxis `broadcast(f, args,...)`, donde `f` es la función que se quiere aplicar.
@@ -1595,6 +1702,7 @@ julia> broadcast(+, a, B)
  4   5   6
  9  10  11
 ```
+
 La *notación punto* para operadores o funciones es azúcar sintáctica de la función `broadcast`, es decir, `f.(args, ...)` es equivalente a `broadcast(f, args, ...)`. Además el `broadcast` no está limitado a arreglos únicamente, sino también es posible aplicarlo a otros objetos como escalares (`Numbers`, `Strings`, `Symbols`, `Types`, `Functions`), tuplas u otra colección. Los siguiente ejemplos son equivalentes:
 
 ```julia
@@ -1610,7 +1718,9 @@ julia> string.(1:3, ".- ", ["Primero", "Segundo", "Tercero"])
  "2.- Segundo"
  "3.- Tercero"
 ```
+
 ## Leer y escribir archivos
+
 Antes de entrar al tema, revisemos lo siguiente. Julia provee dos funciones para leer y escribir datos sobre flujo de datos `stream`, estas son: `write`, `read`. Ambas funciones toman al `stream` como primer argumento:
 
 ```julia
@@ -1621,6 +1731,7 @@ julia> read(stdin, Char)                                    # Standard input
 a
 'a': ASCII/Unicode U+0061 (category Ll: Letter, lowercase)
 ```
+
 En particular, para leer una línea completa, se puede realizar con una función más especifica: `readline` como sigue:
 
 ```julia
@@ -1642,6 +1753,7 @@ julia> readlines(file)
 
 julia> close(file)
 ```
+
 O si lo que se desea es escribir sobre el archivo, se debe pasar como argumento "w" a la función `open`, como sigue:
 
 ```julia
@@ -1650,15 +1762,18 @@ IOStream(<file hola.txt>)
 
 julia> write(file, "Buenos días a todo el mundo.");
 ```
+
 Si examinas el contenido del archivo en este punto, estará vacío. Esto es debido a que `IOStream` debe cerran antes de que los datos se escriban finalmente en el archivo.
 
 ```julia
 julia> close(file)                      # Ahora sí los datos se escribirán en el archivo.
 ```
-El patrón que se sigue al manejar datos en archivos: 
-1. Se abren el archivo. 
+
+El patrón que se sigue al manejar datos en archivos:
+
+1. Se abren el archivo.
 2. Se trabaja con el contenido.
-3. Se cierra el archivo. 
+3. Se cierra el archivo.
 
 Es tan recurrente ese patrón, que existe otra forma de invocar la función `open`, la cual toma como primer argumento una función y como segundo argumento el nombre del archivo, e internamente abre el archivo, ejecuta la función tomando el objeto `IOStream` como argumento, y al terminar, lo cierra en automático. Por ejemplo:
 
@@ -1680,12 +1795,15 @@ julia>  open("numeros.txt") do file
             return parse.(Int64, readlines(file))
         end
 ```
+
 ## Gestor de paquetes Pkg
+
 Julia provee de un excelente manejador de paquetes, que trabaja alrededor de ambientes o entornos (*enviroments*), es decir áreas de trabajo con conjunto de paquetes independientes que pueden ser locales para proyectos individuales o compartidos, así como seleccionados por nombre. El conjunto exacto de paquetes y versiones del ambiente es declarado en un archivo *manifiesto*, el cual ayuda a la reproducibilidad del proyecto.
 
 El enfoque del que se inspira Pkg de los ambientes es muy similar al usado en Python con virtualenv, pero que en Julia funciona de manera nativa.
 
 ### Uso básico
+
 Existen dos formas para usar el gestor de paquetes Pkg, una es la forma interactiva por medio del REPL de Julia, y la otra no interactiva, por medio de la API de Pkg dentro del código. Aquí explicaremos las instrucciones básicas usando el REPL.
 
 Para entrar al REPL Pkg y administrar los paquetes, presionamos la tecla `]` dentro de REPL de Julia, y para salir presionamos la tecla de retroceso (*backspace*) o `ctrl + c`. Veremos que el REPL cambió y se verá similar al siguiente:
@@ -1695,6 +1813,7 @@ Para entrar al REPL Pkg y administrar los paquetes, presionamos la tecla `]` den
 ```
 
 Aquí, podemos ejecutar las instrucciones. Por ejemplo, para instalar algún paquete, debemos ejecutar la instrucción `add` seguido por el nombre del paquete o paquetes que queremos instalar, separados por un espacio simple.
+
 ```julia
 (@v1.7) pkg> add Paquete1 Paquete2 
 ```
@@ -1710,6 +1829,7 @@ Para agregar algún paquete no registrado, se debe especificar la dirección URL
 ```julia
 (@v1.7) pkg> add https://github.com/JuliaLang/Ejemplo.jl
 ```
+
 Y al igual que en el caso anterior, para removerlo usamos la instrucción `rm`.
 
 Finalmente, para actualizar algún paquete usaremos la instrucción `update` como sigue:
@@ -1717,6 +1837,7 @@ Finalmente, para actualizar algún paquete usaremos la instrucción `update` com
 ```julia
 (@v1.7) pkg> update Paquete1
 ```
+
 o sin argumento, para actualizar todos los paquetes.
 
 Si desea instalar algún paquete en una versión especifica, puede señalarla usando el símbolo `@` y el número de versión, por ejemplo:
@@ -1730,6 +1851,7 @@ Cuando se está trabajando en el desarrollo de un paquete, es muy conveniente in
 ```julia
 (@v1.7) pkg> dev PaqueteDev
 ```
+
 El manejador de paquetes hará un clon del paquete en la ruta de desarrollo de Julia. Y cuando se importe el paquete dentro de Julia, el interprete sabrá que deberá traerlo de la ruta desarrollo en lugar de los repositorios estables. Para dejar de seguir el paquete de desarrollo y utilizar el paquete estable, se puede hacer con
 
 ```julia
@@ -1741,10 +1863,12 @@ Para paquetes que no se utilicen por más de 30 días o que en ningún *manifies
 ```julia
 (@v1.7) pkg> gc --all
 ```
+
 Con esto, borrará de disco todos los paquetes viejos y que no se utilizan.
 
 ### Ambientes virtuales en Julia
-Para este punto, seguro habrá notado en el REPL de Pkg (@v1.7), esto nos indica el ambiente o entorno virtual en el cual estamos trabajando. 
+
+Para este punto, seguro habrá notado en el REPL de Pkg (@v1.7), esto nos indica el ambiente o entorno virtual en el cual estamos trabajando.
 
 Para crear un nuevo ambiente virtual para comenzar a trabajar en un nuevo proyecto, usamos la instrucción `activate` como sigue
 
@@ -1754,6 +1878,7 @@ Para crear un nuevo ambiente virtual para comenzar a trabajar en un nuevo proyec
 
 (tutorial) pkg>
 ```
+
 Esto creará un carpeta con el nombre del ambiente, donde creará los archivos `Project.toml` y `Manifest.toml` con la información de los paquetes y dependencias que se instalarán para el nuevo proyectos.
 
 Si simplemente se quiere inicializar un ambiente virtual en el directorio actual, cuyo nombre lo tomará del directorio, sólo ejecute:
@@ -1764,6 +1889,7 @@ Si simplemente se quiere inicializar un ambiente virtual en el directorio actual
 
 (introduccion-julia) pkg>
 ```
+
 Una vez activado el ambiente virtual, podemos usar las instrucciones que se vieron anteriormente para instalar, borrar o actualizar los paquetes que se requieren. Toda la información de las dependecias será actualizada en los archivos `Project.toml` y `Manifest.toml`.
 
 Cuando se desea regresar al ambiente por defecto, simplemente ejecute `activate` sin argumentos.
@@ -1788,10 +1914,11 @@ Esto instalará todas las dependencias especificadas en los *manifiestos* o las 
 Ahora, si no se quiere usar `activate` desde el REPL de Julia, puede especificar el ambiente virtual usando la bandera --project=<directorio>. Por ejemplo, para ejecutar un script desde la línea de comando utilizando el entorno virtual en el directorio actual:
 
 ```console
-$ julia --project=. miscript.jl
+julia --project=. miscript.jl
 ```
 
 ### Modo no interactivo de Pkg
+
 Como se mencionó anteriormente, se puede gestionar la instalación de paquetes sin entrar en el modo interactivo del REPL de Julia, ideal cuando se manejar scripts de ejecución, por medio de la API funcional de Pkg.
 
 Aunque tiene un grado de complejidad mayor para funciones avanzadas, presentamos las instrucciones básicas.
@@ -1832,6 +1959,7 @@ pkg.project()                                   # Regresa la información del pr
 **NOTA**: Los detalles avanzados acerca del gestor de paquetes Pkg de Julia se escapan del objetivo de este documento. Para mayor referencia, visite la [documentación oficial de Pkg](https://pkgdocs.julialang.org).
 
 ## Usar paquetes dentro de Julia
+
 En Julia hay dos métodos para cargar los paquetes y usarlos dentro del código: la expresión `using` y la expresión `import`.
 
 ```julia
@@ -1839,12 +1967,15 @@ julia> using Paquete1
 
 julia> import Paquete2
 ```
+
 Ya sea usando `using` o `import`, permite cargar un paquete, es decir, una colección independiente y reutilizable de código Julia y esté disponible con su nombre dentro del módulo de importación. Si el mismo *Paquete* se importa varias veces en la misma sesión de Julia, sólo se carga la primera vez; en las importaciones posteriores, sólo se obtiene una referencia al mismo módulo.
 
 ### Diferencia entre `using` e `import`
-Si bien, ambas instrucciones sirven para cargar el código del paquete, tiene ligeras diferencias. 
+
+Si bien, ambas instrucciones sirven para cargar el código del paquete, tiene ligeras diferencias.
 
 Usando `using`, se trae con ello:
+
 1. El nombre del módulo o paquete.
 2. Los elementos en la lista de *exportación* al espacio de nombres (*namespace*) global principal.
 
@@ -1854,8 +1985,8 @@ Por otra parte, usar `import`, sólo se trae el nombre del paquete al scope actu
 
 Otra diferencia relevante es al importar con `using` no se puede crear nuevos métodos a las funciones que viven dentro del paquete importado. En cambio usando `import` es posible crear nuevos métodos a las funciones importadas, pero es necesarios invocarlos con la síntaxis punto.
 
+### Importando elementos especificos y el uso de alias
 
-### Importando elementos especificos y el uso de alias 
 Tanto con `using` e `import` se pueden importar multiples paquetes en la misma expresión, separando los paquetes con comas, por ejemplo:
 
 ```julia
@@ -1877,12 +2008,15 @@ julia> import CSV: read as rd
 
 julia> using CSV: read as rd
 ```
+
 Aquí existe otra diferencia entre `import` y `using` en el uso de `as`: Con `using` sólo se pueden renombrar elementos especificos importados con `:`. La instrucción `using CSV as C` no tendría efecto alguno. En cambio, con `import` es posible renombrar el nombre del paquete mismo (tal como en Python).
 
 ## Manejo de excepciones
+
 Cuando ocurre un caso inesperado, es posible que una función no pueda devolver un valor esperado. En tales casos, puede ser mejor para el caso excepcional terminar el programa mientras se imprime un mensaje de error de diagnóstico o mejor aún, incluir un código para manejar tales circunstancias excepcionales y permitir que el código tome la acción apropiada.
 
 ### Excepciones integradas
+
 En Julia, se lanza una `Exception`s cuando ocurre una condición inesperada. Las siguientes son las excepciones integradas que interrumpen el flujo normal de control.
 
 |Exception|Descripción|
@@ -1933,6 +2067,7 @@ julia>  struct MiExcepcionPersonalizada <: Exception end
 ```
 
 ### Función `throw`
+
 Las excepciones se pueden crear explícitamente con la función `throw`. Por ejemplo, una función definida solo para números positivos podría escribirse para lanzar un `DomainError` si el argumento es negativo:
 
 ```julia
@@ -1950,13 +2085,17 @@ el argumento debe ser positivo
 Stacktrace:
 ...
 ```
+
 Por convención, cuando escriba un mensaje de error, es preferible que lo escriba con minúsculas, por ejemplo:
+
 ```julia
 size(A) == size(B) || throw(DimensionMismatch("size of A not equal to size of B"))
 ```
+
 en lugar de `"Size of A not..."`.
 
 ### Función `error`
+
 La función de `error` se utiliza para producir un `ErrorException` que interrumpe el flujo normal de control.
 
 ```julia
@@ -1968,7 +2107,9 @@ ERROR: el argumento debe ser positivo
 Stacktrace:
 ...
 ```
+
 ### Bloque `try`/`catch`/`finally`
+
 Las instrucciones `try` y `catch` permiten probar y capturar excepciones, para tener un manejo elegante de las cosas inesperadas que pueden romper el código de la aplicación. Por ejemplo, al llamar una función que arrojaría un `Exception`, se puede envolver dentro de un bloque `try`/`catch` y mitigar el error, ya sea registrandola, devolviendo un valor por defecto, o imprimir una declaración. Una cosa a tener en cuenta al decidir cómo manejar situaciones inesperadas es que usar un bloque try/catch es mucho más lento que usar ramificaciones condicionales para manejar esas situaciones.  
 
 Por ejemplo, podemos manejar la siguiente excepción:
@@ -1991,6 +2132,7 @@ julia> raiz2(4)
 julia> raiz2(-4)
 0.0 + 2.0im
 ```
+
 Dentro de `try` incluiremos las instrucciones que deseamos ejecutar y que posiblemente puedan tener un comportamiento inesperado. En caso de lanzarse un `Error` o una `Exception`, la instrucción `catch` la capturará y la guardará localmente en un variable para su manejo. En caso de que `try` no arroje una excepción, entonces el bloque `catch` es ignorado. Es una buena práctica comparar la excepción arrojada con los tipos de excepciones que nosotros esperamos, y decirle al programa como manejarlos uno a uno.
 
 En el ejemplo anterior, sabemos que la función `sqrt` lanzará un `DomainError` si se le pasa un número negativo. En ese caso, se captura la excepción y explicitamente le pedimos convertir el número negativo a tipo `Complex` y que aplique inmediatamente la función `sqrt`, la cual está definida para argumentos tipo complejos.
@@ -2009,9 +2151,11 @@ julia>  file = open("file.txt")
                 close(file)
             end
 ```
-El bloque `try`/`catch`/`finally` es muy útil para el manejo de errores y excepciones. Pero esto sólo es lo básico. Julia proveé funciones más avanzadas para el manejo de excepciones, lo cual es un tema aparte, pero que invitamos a revisar la [documentación correspondiente](https://docs.julialang.org/en/v1/base/base/#Base.rethrow). 
+
+El bloque `try`/`catch`/`finally` es muy útil para el manejo de errores y excepciones. Pero esto sólo es lo básico. Julia proveé funciones más avanzadas para el manejo de excepciones, lo cual es un tema aparte, pero que invitamos a revisar la [documentación correspondiente](https://docs.julialang.org/en/v1/base/base/#Base.rethrow).
 
 ## Comandos Shell en Julia
+
 En Julia, es posible usar funciones incluidas para manejar archivos y directorios por línea de comandos, muy similares a las usadas en la `shell` de `UNIX`. Aquí una breve lista:
 
 |Función|Descripción|
@@ -2040,6 +2184,7 @@ En Julia, es posible usar funciones incluidas para manejar archivos y directorio
 |[homedir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.homedir)|Regresa la ruta del directorio *home* del usuario actual.|
 
 ### Ejecutar Instrucciones Shell
+
 Adicional a estas funciones que actuan como algunos comandos de `shell`, también se pueden ejecutar instrucciones de `shell` directamente en Julia, dentro de los acentos graves `, tal como en Perl o Ruby.
 
 Los acentos graves regresan un objeto `Cmd` que representan un objeto comando. Este objeto comando puede ser pasado a otros via pipes, o ejecutandolo con la función `run`. Julia no ejecuta el comando directamente a una shell, sino que lo analiza e interpola las variables o separa las palabras, para que sea ejecutado en un proceso secundario de Julia.
@@ -2055,6 +2200,7 @@ Cmd
 julia> run(micomando);
 Hola Mundo
 ```
+
 Si se quiere leer la respuesta del comando para guardarla dentro de una variable, se puede hacer con la función `read` o `readchomp`, como sigue:
 
 ```julia
@@ -2076,6 +2222,7 @@ Para ejecutar instrucciones entubados con pipes, se requiere usar la función `p
 julia> run(pipeline(`echo hola`, `grep ho`));       # Equivalente a $ echo hola | grep ho
 hola
 ```
+
 Julia también permite ejecutar varias instrucciones en paralelo:
 
 ```julia
@@ -2087,21 +2234,24 @@ hola
 Para ver más información relacionada y avanzada, por favor consulte la siguiente [documentación](https://docs.julialang.org/en/v1/manual/running-external-programs/).
 
 ***
+
 ## Julia Avanzado
+
 ### Tipos
+
 Los ***sistemas de tipos*** se han dividido tradicionalmente en dos campos muy diferentes: los sistemas de ***tipado estático***, en los que cada expresión del programa debe tener un tipo computable antes de la ejecución del programa; y los sistemas de ***tipado dinámico***, en los que no se sabe nada sobre los tipos hasta el momento de la ejecución, cuando los valores reales manipulados por el programa están disponibles. La ***orientación a objetos*** permite cierta flexibilidad en los lenguajes de tipado estático al permitir que el código se escriba sin que se conozcan los tipos precisos de los valores en ***tiempo de compilación***. La capacidad de escribir código que puede operar con diferentes tipos se llama ***polimorfismo***. Todo el código en los lenguajes clásicos ***dinámicamente tipados*** es polimórfico: sólo mediante la comprobación explícita de los tipos, o cuando los objetos no soportan operaciones en ***tiempo de ejecución***, se restringen los tipos de cualquier valor.
 
 **El sistema de tipos de Julia es dinámico**, pero obtiene algunas de las ventajas de los sistemas de tipado estáticos al hacer posible indicar que ciertos valores son de tipos específicos. Esto puede ser de gran ayuda en la generación de código eficiente, pero es más significativo porque permite el envío de ***métodos*** dependiendo el tipo de argumentos de las funciones. El envío de métodos se explora en detalle en la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
 
-El comportamiento por defecto en Julia cuando se omiten los tipos es permitir que los valores sean de cualquier tipo. Por lo tanto, uno puede **escribir muchas funciones útiles en Julia sin usar explícitamente los tipos**. Sin embargo, cuando se necesita expresividad adicional, es fácil introducir gradualmente anotaciones de tipo explícitas en el código previamente "*no tipado*". Añadir anotaciones tiene tres propósitos principales: 
+El comportamiento por defecto en Julia cuando se omiten los tipos es permitir que los valores sean de cualquier tipo. Por lo tanto, uno puede **escribir muchas funciones útiles en Julia sin usar explícitamente los tipos**. Sin embargo, cuando se necesita expresividad adicional, es fácil introducir gradualmente anotaciones de tipo explícitas en el código previamente "*no tipado*". Añadir anotaciones tiene tres propósitos principales:
 
-1. Aprovechar el poderoso mecanismo de despacho múltiple de Julia. 
-2. Mejorar la legibilidad humana. 
+1. Aprovechar el poderoso mecanismo de despacho múltiple de Julia.
+2. Mejorar la legibilidad humana.
 3. Detectar errores de programación.
 
-Julia es un lenguaje: dinámico, nominativo y paramétrico. 
+Julia es un lenguaje: dinámico, nominativo y paramétrico.
 
-Los ***tipos genéricos*** pueden ser parametrizados. Las relaciones jerárquicas entre los tipos se declaran explícitamente, en lugar de estar implícitas por una estructura compatible. Una característica particularmente distintiva del sistema de tipos de Julia es que los ***tipos concretos*** no pueden subtiparse entre sí: todos los tipos concretos son finales y sólo pueden tener ***tipos abstractos*** como sus supertipos. Aunque al principio esto puede parecer excesivamente restrictivo, tiene muchas consecuencias beneficiosas con pocos inconvenientes. Ser capaz de heredar el ***comportamiento*** es mucho más importante que ser capaz de heredar la ***estructura***, pero heredar ambos causa dificultades significativas en los lenguajes orientados a objetos tradicionales. 
+Los ***tipos genéricos*** pueden ser parametrizados. Las relaciones jerárquicas entre los tipos se declaran explícitamente, en lugar de estar implícitas por una estructura compatible. Una característica particularmente distintiva del sistema de tipos de Julia es que los ***tipos concretos*** no pueden subtiparse entre sí: todos los tipos concretos son finales y sólo pueden tener ***tipos abstractos*** como sus supertipos. Aunque al principio esto puede parecer excesivamente restrictivo, tiene muchas consecuencias beneficiosas con pocos inconvenientes. Ser capaz de heredar el ***comportamiento*** es mucho más importante que ser capaz de heredar la ***estructura***, pero heredar ambos causa dificultades significativas en los lenguajes orientados a objetos tradicionales.
 
 Otros aspectos de alto nivel del sistema de tipos de Julia que deben ser mencionados por adelantado son:
 
@@ -2113,6 +2263,7 @@ Otros aspectos de alto nivel del sistema de tipos de Julia que deben ser mencion
 El sistema de tipos de Julia está diseñado para ser potente y expresivo, pero claro, intuitivo y discreto. Muchos programadores de Julia pueden no sentir **nunca** la necesidad de escribir código que utilice explícitamente tipos. Algunos tipos de programación, sin embargo, se vuelven más claros, más simples, más rápidos y más robustos con tipos declarados.
 
 ### Declaración de Tipos
+
 El operador `::` (*cuadripuntos*) se puede utilizar para adjuntar anotaciones de tipo a expresiones y variables en los programas. Hay dos razones principales para hacer esto:
 
 1. Declarar una afirmación (*typeassert*) para ayudar a confirmar que su programa funciona de la manera esperada.
@@ -2130,6 +2281,7 @@ julia> (2 + 3)::Float64                     # 2 + 3 no es una instancia de Float
 ERROR: TypeError: in typeassert, expected Float64, got a value of type Int64
 ...
 ```
+
 Cuando se añade a una variable en el **lado izquierdo de una *asignación***, o como parte de una ***declaración*** `local` (las *declaraciones de tipo* en variables globales no están soportadas), el operador `::` significa que la variable siempre tendrá el tipo especificado (como una declaración de tipo en un lenguaje de tipado estático como C o Fortran). Cada valor asignado a la variable se convertirá al tipo declarado utilizando `convert`:
 
 ```julia
@@ -2155,9 +2307,10 @@ julia> x = suma(2, 3); println("$x => ", typeof(x))
 ```
 
 ### Tipos Abstractos
+
 Los ***tipos abstractos*** no pueden ser instanciados. Sólo sirven  como nodos en el *grafo de tipos*, ***describiendo así conjuntos de tipos concretos relacionados***, es decir, aquellos ***tipos concretos*** que son sus *descendientes*. Los *tipos abstractos*, aunque no tengan instanciación, son la columna vertebral del *sistema de tipos* porque forman la jerarquía conceptual que hace que el sistema de tipos de Julia sea algo más que una colección de implementaciones de objetos.
 
-En la sección [Tipos de Datos](#tipos-de-datos) se introdujeron una gran variedad de ***tipos concretos*** de valores numéricos: `Int8`, `UInt8`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Int128`, `UInt128`, `Float16`, `Float32` y `Float64`. Apesar de tener diferentes tamaños de representación, Int8, Int16, Int32, Int64 e Int128 tienen en común que son ***tipos enteros con signo***. Asimismo, UInt8, UInt16, UInt32, UInt64 y UInt128 son ***tipos enteros sin signo***, mientras que Float16, Float32 y Float64 se distinguen por ser ***tipos de punto flotante***. 
+En la sección [Tipos de Datos](#tipos-de-datos) se introdujeron una gran variedad de ***tipos concretos*** de valores numéricos: `Int8`, `UInt8`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Int128`, `UInt128`, `Float16`, `Float32` y `Float64`. Apesar de tener diferentes tamaños de representación, Int8, Int16, Int32, Int64 e Int128 tienen en común que son ***tipos enteros con signo***. Asimismo, UInt8, UInt16, UInt32, UInt64 y UInt128 son ***tipos enteros sin signo***, mientras que Float16, Float32 y Float64 se distinguen por ser ***tipos de punto flotante***.
 
 Es habitual que un fragmento de código tenga sentido sólo si sus argumentos son de algún tipo de entero, pero que no dependa realmente de qué ***tipo concreto*** de entero. Por ejemplo, el algoritmo del máximo común denominador funciona para todos los tipos de enteros, pero no funcionará para los números de punto flotante. Justamente, los ***tipos abstractos*** permiten la construcción de una *jerarquía de tipos*, proporcionando un contexto en el que los tipos concretos pueden encajar. Esto permite, programar fácilmente para cualquier tipo entero, sin restringir a un tipo específico de entero.
 
@@ -2175,7 +2328,7 @@ Cuando no se especifique un ***supertipo*** (*supertype*), por defecto será `An
 
 <div align=center>
     <img src="./type_tree.png"><br>
-    Imagen 1. Árbol jerárquico de tipos númericos en Julia. Los recuadros verdes son <b>tipos abstractos</b>. 
+    Imagen 1. Árbol jerárquico de tipos númericos en Julia. Los recuadros verdes son <b>tipos abstractos</b>.
     <br>En cambio, los recuadros azules son <b>tipos concretos</b>.<br>
 </div>
 
@@ -2209,6 +2362,7 @@ julia>  function sumar(a, b)
             return a + b
         end
 ```
+
 Lo primero que hay que tener en cuenta es que las declaraciones de argumentos anteriores son equivalentes a `a::Any` y `b::Any`. Cuando se llama esta función, `sumar(2,5)`, el despachador elige el método más específico llamado a `sumar` que coincide con los argumentos dados (ver [Métodos de Funciones](#métodos-de-funciones-despacho-múltiple) para más información sobre el ***despacho múltiple***).
 
 Asumiendo que no se encuentra ningún método más específico que el anterior, **Julia define y compila internamente** un método llamado `sumar` específicamente para dos argumentos `Int` basado en la función genérica dada anteriormente, es decir, define y compila implícitamente:
@@ -2218,19 +2372,19 @@ function sumar(a::Int, b::Int)
     return a + b
 end
 ```
+
 y finalmente, **llama este método concreto**.
 
 Así, los ***tipos abstractos*** permite escribir funciones genéricas que luego pueden ser utilizadas como método por defecto por muchas combinaciones de tipos concretos. Gracias al envío múltiple, se tiene pleno control sobre que método utilizar por defecto o en específico.
 
 Un punto importante a tener en cuenta es que no hay pérdida de rendimiento si se confía en una función cuyos argumentos son ***tipos abstractos***, porque se recompila para cada tupla de tipos concretos de argumentos con los que se invoca. Sin embargo, puede haber un problema de rendimiento en el caso de los argumentos de la función que son contenedores de ***tipos abstractos***.
 
-
 ### Tipos primitivos
 
 >Casi siempre es preferible envolver un ***tipo primitivo*** existente en un nuevo ***tipo compuesto*** que definir su propio ***tipo primitivo***.
 >Esta funcionalidad existe para permitir a Julia arrancar los ***tipos primitivos*** estándar que LLVM soporta. Una vez definidos, hay muy pocas razones para definir más.
 
-Un ***tipo primitivo*** es un ***tipo concreto*** **cuyos datos consisten en simples bits**. Ejemplos clásicos de ***tipos primitivos*** son los ***enteros*** y los valores de ***punto flotante***. 
+Un ***tipo primitivo*** es un ***tipo concreto*** **cuyos datos consisten en simples bits**. Ejemplos clásicos de ***tipos primitivos*** son los ***enteros*** y los valores de ***punto flotante***.
 
 A diferencia de la mayoría de los lenguajes, Julia le permite declarar sus propios ***tipos primitivos***, en lugar de proporcionar sólo un conjunto fijo de los incorporados. De hecho, los ***tipos primitivos*** estándar están todos definidos en el propio lenguaje:
 
@@ -2253,6 +2407,7 @@ primitive type UInt64  <: Unsigned 64 end
 primitive type Int128  <: Signed   128 end
 primitive type UInt128 <: Unsigned 128 end
 ```
+
 Las sintaxis generales para declarar un tipo primitivo son:
 
 ```julia
@@ -2260,12 +2415,12 @@ primitive type «name» «bits» end
 primitive type «name» <: «supertype» «bits» end
 ```
 
-
 El número de «bits» indica cuánto almacenamiento requiere el tipo y el «name» da un nombre al nuevo tipo. Un ***tipo primitivo*** puede declararse opcionalmente como ***subtipo*** de algún ***supertipo***. Si se omite un ***supertipo***, entonces el tipo tiene por defecto `Any` como su ***supertipo*** inmediato. La declaración de `Bool` arriba significa, por tanto, que un valor ***booleano*** toma ocho bits para ser almacenado, y tiene `Integer` como su ***supertipo*** inmediato. Actualmente, sólo se soportan los tamaños que son múltiplos de 8 bits y es probable que se produzcan errores en LLVM con tamaños distintos a los utilizados anteriormente. Por lo tanto, los valores ***booleanos***, aunque realmente necesitan un solo bit, no pueden ser declarados con un tamaño inferior a ocho bits.
 
 Los tipos `Bool`, `Int8` y `UInt8` tienen todos representaciones idénticas: son espacios de memoria de ocho bits. Sin embargo, como el sistema de tipos de Julia es **nominativo**, no son intercambiables a pesar de tener una estructura idéntica. Una diferencia fundamental entre ellos es que tienen diferentes ***supertipos***: El ***supertipo*** directo de `Bool` es `Integer`, el de `Int8` es `Signed`, y el de `UInt8` es `Unsigned`. Todas las demás diferencias entre `Bool`, `Int8` y `UInt8` son cuestiones de comportamiento, es decir, la forma en que las funciones están definidas para actuar cuando se les dan objetos de estos tipos como argumentos. Por eso es necesario un ***sistema de tipos nominativos***: si la estructura determinara el tipo, que a su vez dicta el comportamiento, entonces sería imposible hacer que `Bool` se comportara de forma diferente a `Int8` o `UInt8`.
 
 ### Tipos compuestos: `Struct`
+
 Los ***tipos compuestos*** se denominan ***registros, structs u objetos*** en varios lenguajes. Un tipo compuesto es una colección de campos con nombre, una instancia de los cuales puede ser tratada como un único valor. En muchos lenguajes, los ***tipos compuestos*** son la única clase de tipo definible por el usuario, y son con mucho el tipo definido por el usuario más comúnmente utilizado en Julia.
 
 En los principales lenguajes orientados a objetos, como C++, Java, Python y Ruby, los ***tipos compuestos*** también tienen funciones con nombre asociadas a ellos, y la combinación se llama **objeto**. En ***lenguajes orientados a objetos*** más puros, como Ruby o Smalltalk, todos los valores son objetos, sean o no compuestos. En lenguajes orientados a objetos menos puros, como C++ y Java, algunos valores, como los *enteros* y los de *punto flotante*, no son objetos, mientras que las instancias de tipos compuestos definidos por el usuario son verdaderos objetos con métodos asociados. En Julia, todos los valores son objetos, pero **las funciones no se agrupan con los objetos sobre los que operan**. Esto es necesario ya que Julia elige qué método de una función utilizar mediante el ***despacho múltiple***, lo que significa que los tipos de todos los argumentos de una función se consideran al seleccionar un método, en lugar de sólo el primero. Por lo tanto, sería inapropiado que las funciones *pertenecieran* sólo a su primer argumento. Organizar los métodos en objetos-función en lugar de tener bolsas de métodos con nombre *dentro* de cada objeto acaba siendo un aspecto muy beneficioso del diseño del lenguaje.
@@ -2279,6 +2434,7 @@ julia>  struct Objeto
             campo3::Float64
         end
 ```
+
 Los campos sin anotación de tipo tienen por defecto el valor `Any` y en consecuencia pueden contener cualquier tipo de valor.
 
 Los nuevos objetos de tipo `Objeto` se crean invocando al tipo `Objeto` como una función a los valores correspondientes de sus campos:
@@ -2298,6 +2454,7 @@ Se puede consultar una lista de los nombres de campo del ***tipo*** usando la fu
 ```julia
 julia> fieldnames(Objeto)
 ```
+
 Se puede acceder a los valores de los campos de un objeto compuesto instanciado utilizando la notación punto tradicional:
 
 ```julia
@@ -2330,7 +2487,9 @@ julia>  struct X
 julia>  X(1, 2) === X(1, 2)
 true
 ```
+
 ### Tipos compuestos mutables
+
 Si un ***tipo compuesto*** se declara con la instrucción `mutable struct` en lugar de `struct`, entonces se pueden modificar las instancias de este como sigue:
 
 ```julia
@@ -2346,24 +2505,292 @@ Objeto("Hola", 3, 5.7)
 julia> obj.campo3 = 10.1
 10.1
 ```
-Para soportar la *mutabilidad*, estos objetos se asignan generalmente en la ***heap-allocate***, y tienen *direcciones de memoria* estables. Un ***objeto mutable*** es como un pequeño contenedor que puede contener diferentes valores a lo largo del tiempo y sólo puede ser identificado de forma fiable con su *dirección*. Por el contrario, una instancia de un ***tipo inmutable*** está asociada con valores de campo específicos (los valores de campo por sí solos describen al objeto). 
+
+Para soportar la *mutabilidad*, estos objetos se asignan generalmente en la ***heap-allocate***, y tienen *direcciones de memoria* estables. Un ***objeto mutable*** es como un pequeño contenedor que puede contener diferentes valores a lo largo del tiempo y sólo puede ser identificado de forma fiable con su *dirección*. Por el contrario, una instancia de un ***tipo inmutable*** está asociada con valores de campo específicos (los valores de campo por sí solos describen al objeto).
 
 A la hora de decidir si hacer un ***tipo mutable***, hay que preguntarse **si dos instancias con los mismos valores de campo se considerarían idénticas, o tendrían que cambiar independientemente a lo largo del tiempo**. Si se consideran idénticas, el tipo probablemente debería ser ***inmutable***.
 
 Para repasar, dos propiedades esenciales definen la inmutabilidad en Julia:
 
 * No está permitido modificar el valor de un ***tipo inmutable***.
-    * Para los *tipos de bits* esto significa que el patrón de bits de un valor una vez establecido nunca cambiará.
-    * Para los ***tipos compuestos***, esto significa que la identidad de los valores de sus campos nunca cambiará. Cuando los campos son tipos de bits, esto significa que sus bits nunca cambiarán, para los campos cuyos **valores son tipos mutables** como los ***arrays***, esto significa que los campos siempre **se referirán al mismo valor mutable** aunque el contenido de ese valor mutable cambie.
+  * Para los *tipos de bits* esto significa que el patrón de bits de un valor una vez establecido nunca cambiará.
+  * Para los ***tipos compuestos***, esto significa que la identidad de los valores de sus campos nunca cambiará. Cuando los campos son tipos de bits, esto significa que sus bits nunca cambiarán, para los campos cuyos **valores son tipos mutables** como los ***arrays***, esto significa que los campos siempre **se referirán al mismo valor mutable** aunque el contenido de ese valor mutable cambie.
 * Un objeto de ***tipo inmutable*** puede ser copiado libremente por el compilador, ya que su inmutabilidad hace imposible distinguir programáticamente entre el objeto original y una copia.
-    * Esto significa que los ***valores inmutables*** suficientemente pequeños, como los enteros y los flotantes, suelen pasarse a las funciones en registros (o en la ***stack-allocation***).
-    * Los ***valores mutables***, en cambio, se asignan a la ***heap-allocation*** y se pasan a las funciones como punteros a valores en la ***heap-allocation***, excepto en los casos en los que el compilador está seguro de que no hay forma de saber que esto no es lo que está ocurriendo.
+  * Esto significa que los ***valores inmutables*** suficientemente pequeños, como los enteros y los flotantes, suelen pasarse a las funciones en registros (o en la ***stack-allocation***).
+  * Los ***valores mutables***, en cambio, se asignan a la ***heap-allocation*** y se pasan a las funciones como punteros a valores en la ***heap-allocation***, excepto en los casos en los que el compilador está seguro de que no hay forma de saber que esto no es lo que está ocurriendo.
 
+### Tipos declarados
+
+Los tres tipos (*abstracto, primitivo y compuesto*) analizados anteriormente están estrechamente relacionados. Comparten las mismas propiedades:
+
+* Se declaran explícitamente.
+* Tienen nombres.
+* Tienen supertipos declarados explícitamente.
+* Pueden tener parámetros.
+
+Debido a estas propiedades compartidas, **estos tipos se representan internamente como instancias del mismo concepto**, `DataType`, que es el tipo de cualquiera de estos tipos:
+
+```julia
+julia> typeof(Real)
+DataType
+
+julia> typeof(Int)
+DataType
+```
+
+Un `DataType` puede ser abstracto o concreto. Si es concreto, tiene un tamaño especificado, una disposición de almacenamiento y (opcionalmente) nombres de campo. Un tipo primitivo es un tipo de datos con un tamaño distinto de cero, pero sin nombres de campo. Un tipo compuesto es un tipo de datos que tiene nombres de campo o está vacío (tamaño cero).
+
+Cada valor concreto del sistema es una instancia de un `DataType`.
+
+### Tipos Union
+
+Una ***unión de tipos*** es un ***tipo abstracto*** especial que incluye como objetos todas las instancias de cualquiera de sus tipos argumentales, construido mediante la palabra reservada `Union`:
+
+```julia
+julia> EnteroString = Union{Int,AbstractString}
+Union{Int64, AbstractString}
+
+julia> 1 :: EnteroString
+1
+
+julia> "¡Hola!" :: EnteroString
+"¡Hola!"
+
+julia> 1.0 :: EnteroString
+ERROR: TypeError: in typeassert, expected Union{Int64, AbstractString}, got a value of type Float64
+```
+
+Los compiladores de muchos lenguajes tienen una construcción de unión interna para razonar sobre los tipos; Julia simplemente lo expone al programador. El compilador de Julia es capaz de generar código eficiente en presencia de tipos `Union` con un pequeño número de tipos, generando código especializado en ramas separadas para cada tipo posible.
+
+Un caso particularmente útil de un tipo `Union` es `Union{T, Nothing}`, donde `T` puede ser cualquier tipo y `Nothing` es el tipo singleton cuya única instancia es el objeto `nothing`. Este patrón es el equivalente en Julia de los tipos `Nullable`, `Option` o `Maybe` en otros lenguajes. Declarar un argumento de función o un campo como `Union{T, Nothing}` permite establecer un valor de tipo `T`, o nada para indicar que no hay valor.
+
+### Tipos paramétricos
+
+Una característica importante y poderosa del sistema de tipos de Julia es que es ***paramétrico***, es decir, **los tipos pueden tomar parámetros**, de modo que las declaraciones de tipos introducen en realidad toda una familia de nuevos tipos, uno para cada posible combinación de valores de los parámetros.
+
+Todos los ***tipos declarados*** (la variedad `DataType`) pueden ser **parametrizados**, con la misma sintaxis en cada caso. Estos incluyen los tipos compuestos paramétricos, luego los tipos abstractos paramétricos, y finalmente los tipos primitivos paramétricos.
+
+#### Tipos compuestos paramétricos
+
+Los *parámetros del tipo* se declaran inmediatamente después del nombre del tipo, rodeados de llaves `{}`:
+
+```julia
+julia> struct Punto{T}
+           x::T
+           y::T
+       end
+```
+
+Esta declaración define un nuevo ***tipo paramétrico***, `Punto{T}`, que contiene dos *campos o "coordenadas"* de tipo `T`, donde `T` puede ser cualquier tipo. Por ejemplo, `Punto{Float64}` es un ***tipo concreto*** equivalente a sustituir `T` por `Float64` en la definición de `Punto`. Así, la definición anterior declara en realidad un número ilimitado de tipos: `Punto{Float64}`, `Punto{AbstractString}`, `Punto{Int64}`, etc. Cada uno de ellos se convierte un tipo concreto utilizable:
+
+```julia
+julia> Punto{Float64}
+Punto{Float64}
+
+julia> Punto{AbstractString}
+Punto{AbstractString}
+```
+
+El tipo `Punto{Float64}` es un *Punto* con *coordenadas* tipo ***punto flotante de 64 bits***, mientras que el tipo `Punto{AbstractString}` es un *"punto"* cuyas *"coordenadas"* son objetos de tipo `String`.
+
+`Punto` también es un objeto de tipo válido que contiene como subtipo todas las instancias `Punto{Float64}`, `Punto{AbstractString}`, etc.:
+
+```julia
+julia> Punto{Float64} <: Punto
+true
+
+julia> Punto{AbstractString} <: Punto
+true
+```
+
+Pero otros tipos no son subtipos de `Punto`:
+
+```julia
+julia> Float64 <: Punto
+false
+
+julia> AbstractString <: Punto
+false
+```
+
+Los ***tipos concretos*** de `Puntos` con diferentes valores de `T` nunca son subtipos entre sí:
+
+```julia
+julia> Punto{Float64} <: Punto{Int64}
+false
+
+julia> Punto{Float64} <: Punto{Real}
+false
+```
+
+Este último punto es muy importante: aunque ```Float64 <: Real``` es verdadero, NO es verdad cuando tenemos ```Punto{Float64} <: Punto{Real}```. Esto último es por razones prácticas: mientras que cualquier instancia de `Punto{Float64}` puede ser conceptualmente parecida a una instancia de `Punto{Real}`, los dos tipos tienen diferentes representaciones en memoria:
+
+* Una instancia de `Punto{Float64}` puede representarse de forma compacta y eficiente como un par inmediato de valores de 64 bits;
+* Una instancia de `Punto{Real}` debe poder contener cualquier par de instancias de `Real`. Dado que los objetos instanciados de `Real` pueden tener un tamaño y una estructura arbitraria, en la práctica `Punto{Real}` debe representarse como un par de punteros a objetos `Real` asignados individualmente.
+
+La eficiencia obtenida al poder almacenar objetos `Puntos{Float64}` con valores inmediatos se magnifica enormemente en el caso de los ***arrays***: un `Array{Float64}` puede almacenarse como un bloque de memoria contiguo de valores de ***punto flotante de 64 bits***, mientras que un `Array{Real}` debe ser un array de punteros a objetos `Real` asignados individualmente que bien pueden ser valores de ***punto flotante de 64 bits***, pero también podrían ser objetos complejos de tamaño arbitrario, declarandos como del ***tipo abstracto*** `Real`.
+
+Como `Punto{Float64}` no es un subtipo de `Punto{Real}`, definir un método para `Punto{Real}`, no puede aplicarse a argumentos de tipo `Punto{Float64}`:
+
+```julia
+julia>  function norma(p::Punto{Real})
+            sqrt(p.x^2 + p.y^2)
+        end
+
+julia>  p = Punto{Float64}(1.5, 2.5);
+
+julia>  norma(p)
+ERROR: MethodError: no method matching norma(::Punto{Float64})
+```
+
+Una forma correcta de definir un método que acepta todos los argumentos de tipo `Punto{T}` donde `T` es un ***subtipo*** de `Real` es:
+
+```julia
+julia>  function norma(p::Punto{<:Real})
+            sqrt(p.x^2 + p.y^2)
+        end
+
+julia>  norma(p)
+2.9154759474226504
+```
+donde la sintaxis `norma(p::Punto{<:Real})` es equivalente a `norma(p::Punto{T} where T<:Real)` o `norma(p::Punto{T}) where T<:Real`.
+
+Existe dos constructores por defecto para instanciar objetos de tipo `Punto`: Uno al que se le especifica el tipo `T`, y el segundo donde se omite explicitamente `T` y del cual infiere el tipo `T` a partir de los valores que se les pasa como argumento, siempre y cuando no haya ambigüedad en los argumentos:
+
+```julia
+julia> p1 = Punto{Float64}(1.5, 2.5)              # Primera forma de construcción
+Punto{Float64}(1.5, 2.5)
+
+julia> p2 = Punto(1, 2)                           # Segunda forma de construcción
+Punto{Int64}(1, 2)
+
+julia> p3 = Punto(1, 2.5)                         # Generamos una ambigüedad con los tipos de los argumentos
+ERROR: MethodError: no method matching Punto(::Int64, ::Float64)
+Closest candidates are:
+  Punto(::T, ::T) where T 
+```
+
+#### Tipos abstractos paramétricos
+
+Las ***tipos abstractos paramétricos*** declaran una colección de ***tipos abstractos***, de forma muy parecida a lo antes visto:
+
+```julia
+julia> abstract type Punto{T} end
+```
+
+Con esta declaración, `Punto{T}` es un ***tipo abstracto*** distinto para cada tipo o valor entero de `T`. Al igual que con los ***tipos compuestos paramétricos***, cada una de estas instancias es un ***subtipo*** de `Punto`:
+
+```julia
+julia> Punto{Int64} <: Punto
+true
+
+julia> Punto{1} <: Punto
+true
+```
+
+Al igual que los ***tipos compuestos paramétricos***, los ***tipos abstractos paramétricos*** son *invariantes*:
+
+```julia
+julia> Punto{Float64} <: Punto{Real}
+false
+
+julia> Punto{Real} <: Punto{Float64}
+false
+```
+
+La notación `Punto{<:Real}` se puede utilizar:
+
+```julia
+julia> Punto{Float64} <: Punto{<:Real}
+true
+```
+
+De la misma manera que los ***tipos abstractos simples*** sirven para crear una jerarquía sobre ***tipos concretos***, los ***tipos abstractos paramétricos*** sirven el mismo propósito con respecto a los ***tipos compuestos paramétricos***. Por ejemplo, podemos declarar que `Puntito{T}` es un ***subtipo*** de `Punto{T}` como sigue:
+
+```julia
+julia> struct Puntito{T} <: Punto{T}
+           x::T
+           y::T
+       end
+```
+
+Para cada elección de `T`, tenemos `Puntito{T}` como ***subtipo*** de `Punto{T}`:
+
+```julia
+julia> Puntito{Float64} <: Punto{Float64}
+true
+
+julia> Puntito{Int64} <: Punto{Int64}
+true
+```
+
+Esta relación también es *invariante*:
+
+```julia
+julia> Puntito{Float64} <: Punto{Real}
+false
+
+julia> Puntito{Float64} <: Punto{<:Real}
+true
+```
+
+¿Para qué sirven los tipos abstractos paramétricos como `Punto`? Si creamos una implementación tipo punto que sólo requiere una única coordenada porque el punto está en la recta diagonal `x = y`:
+
+```julia
+julia> struct DiagonalPunto{T} <: Punto{T}
+           x::T
+       end
+```
+
+Ahora tanto `Puntito{Float64}` como `DiagonalPunto{Float64}` son implementaciones de la abstracción `Punto{Float64}`, y de forma similar para cualquier otra elección posible del tipo `T`. **Esto permite programar hacia una interfaz común compartida por todos los objetos** `Punto`, funcional tanto para `Puntito` como para `DiagonalPunto`.
+
+Hay situaciones en las que puede no tener sentido que los ***parámetros*** de tipo abarquen libremente todos los tipos posibles. En tales situaciones, **uno puede restringir el rango** de `T`:
+
+```julia
+julia> abstract type Punto{T<:Real} end
+```
+
+Con esta declaración, es aceptable utilizar cualquier tipo `T` que sea un ***subtipo*** de `Real`, excluyendo tipos que no lo sean:
+
+```julia
+julia> Punto{Float64}
+Punto{Float64}
+
+julia> Punto{Real}
+Punto{Real}
+
+julia> Punto{AbstractString}
+ERROR: TypeError: in Punto, in T, expected T<:Real, got Type{AbstractString}
+
+julia> Punto{1}
+ERROR: TypeError: in Punto, in T, expected T<:Real, got a value of type Int64
+```
+
+De la misma manera, los *parámetros* de los ***tipos compuestos paramétricos*** pueden restringirse como sigue:
+
+```julia
+julia> struct Puntito{T<:Real} <: Punto{T}
+          x::T
+          y::T
+       end
+```
+
+Un ejemplo profesional de cómo toda esta maquinaria de ***tipos paramétricos*** puede ser útil es la definición en Julia del ***tipo inmutable*** `Rational` que representa una relación exacta de enteros:
+
+```julia
+struct Rational{T<:Integer} <: Real
+    num::T
+    den::T
+end
+```
+
+Sólo tiene sentido tomar cocientes de valores enteros, por lo que el ***tipo de parámetro*** `T` está restringido a ser ***subtipo*** de `Integer`. El cociente de enteros representa un valor en la recta de números reales, por lo que cualquier `Rational` es una instancia del ***tipo abstracto*** `Real`.
 
 ## Métodos de funciones: Despacho múltiple
+
 ***
 
-## Referencias 
+## Referencias
 
 * [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/). Curso impartido por el MIT, versión del 2021.
 * [Documentación Oficial](https://docs.julialang.org/en/v1/) de Julia.
