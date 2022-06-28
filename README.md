@@ -77,6 +77,13 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Tipos paramétricos](#tipos-paramétricos)
       * [Tipos compuestos paramétricos](#tipos-compuestos-paramétricos)
       * [Tipos abstractos paramétricos](#tipos-abstractos-paramétricos)
+      * [Tipos tupla](#tipos-tupla)
+      * [Tipos tupla de argumentos variables](#tipos-tupla-de-argumentos-variables)
+      * [Tipos tupla con nombre](#tipos-tupla-con-nombre)
+      * [Tipos primitivos paramétricos](#tipos-primitivos-paramétricos)
+    * [Tipos `UnionAll`](#tipos-unionall)
+    * [Tipos singleton](#tipos-singleton)
+    * [Operaciones sobre tipos](#operaciones-sobre-tipos)
   * [Métodos de funciones: Despacho multiple](#métodos-de-funciones-despacho-múltiple)                           **↓ Pendiente ↓**
   * [Constructores](#)
   * [Álcance o Scope de la variables](#)
@@ -2785,6 +2792,213 @@ end
 ```
 
 Sólo tiene sentido tomar cocientes de valores enteros, por lo que el ***tipo de parámetro*** `T` está restringido a ser ***subtipo*** de `Integer`. El cociente de enteros representa un valor en la recta de números reales, por lo que cualquier `Rational` es una instancia del ***tipo abstracto*** `Real`.
+
+#### Tipos tupla
+
+Las ***tuplas*** son una abstracción de los **argumentos de una función**, sin la función. Los aspectos más destacados de los argumentos de una función son su orden y sus tipos. Por lo tanto, un ***tipo tupla*** es similar a un **tipo inmutable parametrizado** donde cada parámetro es el tipo de un campo. Por ejemplo, un ***tipo tupla*** de 2 elementos se asemeja al siguiente ***tipo inmutable***:
+
+```julia
+struct Tupla2{A,B}
+    a::A
+    b::B
+end
+```
+
+Sin embargo, hay tres diferencias principales:
+
+* Los ***tipos tupla*** pueden tener un número arbitrario de parámetros.
+* Los ***tipos tupla*** son covariantes en sus parámetros, es decir, `Tuple{Int}` es un ***subtipo*** de `Tuple{Any}`. Por lo tanto, `Tuple{Any}` se considera un ***tipo abstracto***, y los ***tipos tupla*** sólo son ***concretos*** si sus parámetros lo son.
+* Las tuplas no tienen nombres de campo; sólo se accede a los campos por el índice.
+
+Los valores de las tuplas se escriben entre paréntesis y separados por comas. Cuando se construye una tupla, se genera un tipo de tupla apropiado según el caso:
+
+```julia
+julia> typeof((1, "abc",2.5))
+Tuple{Int64, String, Float64}
+```
+
+Se observa implicaciones de covarianza (que la relación jerárquica de ***subtipos*** de los argumentos se conserva ante la aplicación de `Tuple`):
+
+```julia
+julia> Tuple{Int,AbstractString} <: Tupla{Real,Any}
+true
+
+julia> Tuple{Int,AbstractString} <: Tupla{Real,Real}
+false
+
+julia> Tuple{Int,AbstractString} <: Tupla{Real,}
+false
+```
+
+#### Tipos tupla de argumentos variables
+
+El último parámetro de un ***tipo tupla*** puede ser un valor especial `Vararg`, que denota un número arbitrario de elementos:
+
+```julia
+julia> mitupla = Tuple{AbstractString,Vararg{Int}}
+Tuple{AbstractString, Vararg{Int64}}
+
+julia> isa(("1",), mitupla)
+true
+
+julia> isa(("1", 1), mitupla)
+true
+
+julia> isa(("1", 1, 2), mitupla)
+true
+
+julia> isa(("1", 1, 2, 3.0), mitupla)
+false
+```
+
+`Vararg{T}` corresponde a cero o más elementos del ***tipo `T`***. Los ***tipos tupla*** `Vararg` se utilizan para representar los argumentos aceptados por los métodos `varargs`.
+
+El valor especial `Vararg{T,N}`, cuando se utiliza como último parámetro de un ***tipo tupla*** corresponde exactamente a **N** elementos del tipo `T`. `NTuple{N,T}` es un alias para `Tuple{Vararg{T,N}}`, es decir, un ***tipo tupla*** que contiene exactamente **N** elementos del ***tipo `T`***.
+
+#### Tipos tupla con nombre
+
+Las ***tuplas con nombre*** son instancias del tipo `NamedTuple`, que **tiene dos parámetros**: una ***tupla de símbolos*** con los nombres de los campos, y un ***tipo tupla*** con los tipos de cada campo.
+
+```julia
+julia> typeof((parametro1=5, parametro2="hola"))
+NamedTuple{(:parametro1, :parametro2), Tuple{Int64, String}}
+```
+
+El ***macro*** `@NamedTuple` proporciona una sintaxis más conveniente similar a `struct` para declarar tipos `NamedTuple` mediante declaraciones `clave::Tipo`, donde si el `::Tipo` es omitido, entonces corresponde a `::Any`.
+
+```julia
+julia> @NamedTuple{numero::Int, cadena::String}
+NamedTuple{(:numero, :cadena), Tuple{Int64, String}}
+
+julia> @NamedTuple begin
+           nombre::Int
+           cadena::String
+       end
+NamedTuple{(:nombre, :cadena), Tuple{Int64, String}}
+```
+
+El tipo `NamedTuple` puede utilizarse como constructor, aceptando un único argumento `Tuple`. El tipo `NamedTuple` construido puede ser un ***tipo concreto*** con ambos parámetros especificados, o un tipo que especifica sólo los nombres de los campos:
+
+```julia
+julia> @NamedTuple{precio::Float32, concepto::String}((1, ""))
+(precio = 1.0f0, concepto = "")
+
+julia> NamedTuple{(:edad, :nombre)}((15, "Juan"))
+(edad = 1, nombre = "")
+```
+
+Si se especifican los tipos de los campos, se convierten los argumentos. En caso contrario, se utilizan directamente los tipos de los argumentos.
+
+#### Tipos primitivos paramétricos
+Los ***tipos primitivos*** también pueden ser declarados ***paramétricamente***. Por ejemplo, los punteros se representan como tipos primitivos paramétricos como sigue:
+
+```julia
+# Sistema de 32 bits:
+julia> primitive type Ptr{T} 32 end
+
+# Sistema de 64 bits:
+julia> primitive type Ptr{T} 64 end
+```
+
+El parámetro de ***tipo*** `T` no se utiliza en la definición del tipo en sí, sólo es una etiqueta abstracta que define una familia entera de tipos con estructura idéntica, diferenciada sólo por su parámetro de tipo. Así, `Ptr{Float64}` y `Ptr{Int64}` son tipos distintos, aunque tengan representaciones idénticas. Y por supuesto, todos los tipos de punteros específicos son ***subtipos*** del tipo `Ptr`:
+
+```julia
+julia> Ptr{Float64} <: Ptr
+true
+
+julia> Ptr{Int64} <: Ptr
+true
+```
+
+### Tipos `UnionAll`
+
+El **tipo** `UnionAll` expresa la unión iterada de ***tipos*** para todos los valores de algún parámetro.
+
+Los ***tipos*** `UnionAll` se escriben normalmente utilizando la palabra reservada `where`. Por ejemplo, `Ptr` podría escribirse como `Ptr{T} where T` y significa ***todos los valores cuyo tipo es*** `Ptr{T}` ***para algún valor de*** `T`. En este contexto, el ***parámetro*** `T` también se le llama *variable de tipo*, ya que abarca varios tipos. Cada `where` introduce una *variable de tipo*, por lo que las expresiones se anidan para ***tipos con múltiples parámetros***, por ejemplo: `Array{T,N} where N where T`.
+
+La sintaxis de aplicación de ***tipos*** `A{B,C}` requiere que `A` sea un ***tipo*** `UnionAll`, y primero sustituye `B` por la ***variable de tipo*** más externa en `A`. Se espera que el resultado sea otro tipo `UnionAll`, en el que se sustituye `C`. Así que `A{B,C}` es equivalente a `A{B}{C}`. Esto explica por qué es posible instanciar parcialmente un tipo, como en `Array{Float64}`: el primer valor del parámetro se ha fijado, pero el segundo todavía abarca todos los valores posibles. Utilizando la sintaxis `where` explícitamente, se puede fijar cualquier subconjunto de parámetros. Por ejemplo, el tipo de todas las matrices unidimensionales puede escribirse como `Array{T,1} where T`.
+
+Las ***variables de tipo*** pueden restringirse con ***relaciones de subtipo***. `Array{T} where T<:Integer` se refiere a todos los arreglos cuyos elementos son de algún tipo de `Integer`. La sintaxis `Array{<:Integer}` es una abreviatura conveniente para `Array{T} where T<:Integer`. Las ***variables de tipo*** pueden tener límites *inferiores* y *superiores*. `Array{T} where Int<:T<:Number` se refiere a todas los arreglos de `Number` que pueden contener `Int` (ya que `T` debe ser al menos tan grande como `Int`). La sintaxis donde `T>:Int` también funciona para especificar sólo el límite inferior de una variable de tipo, y `Array{>:Int}` es equivalente a `Array{T} where T>:Int`.
+
+Dado que las expresiones `where` se anidan, los límites de las ***variables de tipo*** pueden referirse a ***variables de tipo externas***. Por ejemplo `Tuple{T, Array{S}} where S<:AbstractArray{T} where T<:Real` se refiere a 2 tuplas cuyo primer elemento es algún `Real`, y cuyo segundo elemento es un `Array` de cualquier ***tipo*** cuyos elementos son del ***tipo*** del primer elemento de la tupla.
+
+La propia palabra clave `where` puede anidarse dentro de una declaración más compleja. Por ejemplo, considere los dos ***tipos*** creados por las siguientes declaraciones:
+
+```julia
+julia> const T1 = Array{Array{T, 1} where T, 1}
+Vector{Vector} (alias for Array{Array{T, 1} where T, 1})
+
+julia> const T2 = Array{Array{T, 1}, 1} where T
+Array{Vector{T}, 1} where T
+```
+
+El tipo `T1` define un arreglo unidimensional de arreglos unidimensionales; cada uno de los arreglos interiores está formado por objetos del mismo tipo, pero este tipo puede variar de un arreglo interior a otro. Por otro lado, el tipo `T2` define un arreglo unidimensional de arreglos unidimensionales, todos cuyas arreglos internos deben tener el mismo tipo. Nótese que `T2` es un tipo abstracto, por ejemplo, `Array{Array{Int,1},1} <: T2`, mientras que `T1` es un tipo concreto. Como consecuencia, `T1` puede ser construido con un constructor de cero argumentos `a = T1()`, pero `T2` no.
+
+Hay una sintaxis conveniente para nombrar tales tipos, similar a la forma corta de la sintaxis de definición de funciones:
+
+```julia
+Vector{T} = Array{T, 1}
+```
+
+Esto es equivalente a `const Vector = Array{T, 1} where T`. Escribir `Vector{Float64}` es equivalente a escribir `Array{Float64, 1}`, y el *tipo paraguas* `Vector` tiene como instancias todos los objetos `Array` donde el segundo parámetro es el número de dimensiones del array, que en este caso es 1, independientemente de cuál sea el *tipo del elemento*. En los lenguajes en los que los tipos paramétricos deben especificarse siempre en su totalidad, esto no es especialmente útil, pero en Julia, esto permite escribir sólo `Vector` para el ***tipo abstracto*** incluyendo todos los arreglo densos unidimensionales de cualquier tipo de elemento.
+
+### Tipos singleton
+
+Los ***tipos compuestos inmutables sin campos*** se denominan ***singletones***. Formalmente, si
+
+* T es un tipo compuesto inmutable (es decir, definido con struct)
+* `a isa T && b isa T` implica `a === b`,
+
+entonces `T` es un ***tipo singleton***.
+
+### Operaciones sobre tipos
+
+Dado que los tipos en Julia son en sí mismos objetos, las funciones ordinarias pueden operar sobre ellos. Ya se han introducido algunas funciones especialmente útiles para trabajar o explorar tipos, como el operador `<:`, que indica si su operando izquierdo es un ***subtipo*** de su operando derecho.
+
+La función `isa` comprueba si un objeto es de un ***tipo*** determinado y devuelve `true` o `false`:
+
+```julia
+julia> isa(1, Int)
+true
+
+julia> isa(1, AbstractFloat)
+false
+```
+
+La función `typeof`, devuelve el ***tipo de su argumento***. Los ***tipos*** son objetos que tienen ***tipos***, y podemos preguntar cuáles son sus ***tipos***:
+
+```julia
+julia> typeof(Rational{Int})
+DataType
+
+julia> typeof(Union{Real,String})
+Union
+```
+
+Otra operación que se aplica a algunos tipos es el `supertype`, que revela el ***supertipo*** de un ***tipo***.
+
+```julia
+julia> supertype(Float64)
+AbstractFloat
+
+julia> supertype(Number)
+Any
+
+julia> supertype(AbstractString)
+Any
+
+julia> supertype(Any)
+Any
+```
+
+Si se aplica `supertype` a otros objetos de tipo (o a objetos que no son de tipo), se produce un `MethodError`:
+
+```julia
+julia> supertype(Union{Float64, Int64})
+ERROR: MethodError: no method matching supertype(::Type{Union{Float64, Int64}})
+Closest candidates are:
+[...]
+```
 
 ## Métodos de funciones: Despacho múltiple
 
