@@ -84,6 +84,8 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Tipos `UnionAll`](#tipos-unionall)
     * [Tipos singleton](#tipos-singleton)
     * [Operaciones sobre tipos](#operaciones-sobre-tipos)
+    * [Impresion bonita personalizada](#impresión-bonita-personalizada)
+    * [Tipos *valores*](#tipos-valores)
   * [Métodos de funciones: Despacho multiple](#métodos-de-funciones-despacho-múltiple)                           **↓ Pendiente ↓**
   * [Constructores](#)
   * [Álcance o Scope de la variables](#)
@@ -2999,6 +3001,108 @@ ERROR: MethodError: no method matching supertype(::Type{Union{Float64, Int64}})
 Closest candidates are:
 [...]
 ```
+
+### Impresión bonita personalizada
+
+A menudo, se quiere personalizar cómo se muestran las ***instancias de tipo***. Esto se consigue sobrecargando la función `show`. Por ejemplo, supongamos que definimos un tipo para representar números complejos en forma polar:
+
+```julia
+julia> struct Polar{T<:Real} <: Number
+           r::T
+           θ::T
+       end
+
+julia> Polar(r::Real, θ::Real) = Polar(promote(r,θ)...)
+Polar
+```
+
+Se ha añadido una función constructora personalizada que toma diferentes tipos de argumentos `Real` y se promueven a un tipo común. Por defecto, las instancias de este tipo se muestran de forma bastante simple, con información sobre el nombre del tipo y los valores del campo, por ejemplo: `Polar{Float64}(3.0,4.0)`.
+
+Si en cambio queremos que se muestre como `3.0 * exp(4.0im)`, definiríamos el siguiente método para imprimir el objeto `Polar` en un objeto de salida `IO` (que puede representae un archivo, terminal, buffer, etc):
+
+```julia
+julia> Base.show(io::IO, z::Polar) = print(io, z.r, " * exp($(z.θ)im)")
+```
+
+Es posible un control más preciso de la visualización de los objetos `Polar`. A veces se quiere un formato de impresión multilínea *verboso* para mostrar un solo objeto en el REPL y otros entornos interactivos, y aveces también un formato más compacto de una sola línea utilizado para imprimir o para mostrar el objeto como parte de otro arreglos, por ejemplo. Aunque por defecto se llama a `show(io, z)` en ambos casos, se puede definir un **formato multilínea** diferente para mostrar un objeto sobrecargando una forma de tres argumentos de `show` que toma el tipo `MIME text/plain` como su segundo argumento, por ejemplo:
+
+```julia
+Base.show(io::IO, ::MIME"text/plain", z::Polar{T}) where{T} = 
+      print(io, "Polar{$T} número complejo:\n   ", z)
+```
+
+Note aquí, que `print(..., z)` llamará al metodo `show(io, z)` anteriormente definido. El resultado entonces será:
+
+```julia
+julia> Polar(3, 4.0)
+Polar{Float64} número complejo:
+   3.0 * exp(4.0im)
+
+julia> [Polar(3, 4.0), Polar(4.0,5.3)]
+2-element Vector{Polar{Float64}}:
+ 3.0 * exp(4.0im)
+ 4.0 * exp(5.3im)
+```
+donde la forma `show(io, z)` de una sola línea se sigue utilizando para un arreglo de valores `Polar`. Técnicamente, el REPL llama a `display(z)` para mostrar el resultado de la ejecución de una línea, que por defecto es `show(stdout, MIME("text/plain"), z)`, que a su vez es `show(stdout, z)`, pero no se debería definir nuevos métodos de `display` a menos que estés definiendo un nuevo manejador de visualización multimedia (ver  [Multimedia I/O](https://docs.julialang.org/en/v1/base/io-network/#Multimedia-I/O)).
+
+Además, también se pueden definir métodos de visualización para otros tipos MIME con el fin de permitir una visualización más rica (HTML, imágenes, etcétera) de los objetos en entornos que lo soporten (por ejemplo, IJulia). Por ejemplo, podemos definir la visualización en formato HTML de los objetos `Polar`, con superíndices y cursiva, mediante:
+
+```julia
+julia> Base.show(io::IO, ::MIME"text/html", z::Polar{T}) where {T} =
+           println(io, "Número complejo tipo <code>Polar{$T}</code>: ",
+                   z.r, " <i>e</i><sup>", z.Θ, " <i>i</i></sup>")
+```
+Un objeto `Polar` se mostrará automáticamente usando HTML en un entorno que soporte la visualización de HTML, pero se puede llamar a `show` manualmente para obtener una salida HTML:
+
+```julia
+julia> show(stdout, "text/html", Polar(3.0,4.0))
+Número complejo tipo <code>Polar{Float64}</code>: 3.0 <i>e</i><sup>4.0 <i>i</i></sup>
+```
+Un renderizador HTML mostraría esto como `Número complejo tipo Polar{Float64}:` $3.0 e^{4.0 i}$.
+
+### Tipos "valores"
+
+En Julia, no se puede despachar sobre un valor como `true` o `false`. Sin embargo, puedes despachar sobre ***tipos paramétricos***, y Julia te permite incluir valores de *bits planos* (Tipos, Símbolos, Enteros, números de punto flotante, tuplas, etc.) como ***parámetros de tipo***. Un ejemplo común es el parámetro de dimensionalidad en `Array{T,N}`, donde `T` es un tipo (por ejemplo, `Float64`) pero `N` es sólo un valor tipo `Int`.
+
+Se pueden crear ***tipos*** propios personalizados que **toman valores como parámetro**s, y utilizarlos para controlar el envío de *tipos personalizados*. A modo de ilustración de esta idea, introduzcamos un ***tipo paramétrico*** `Valor{x}`, y un constructor `Valor(x) = Valor{x}()`, que sirve como forma habitual de explotar esta técnica para los casos en los que no se necesita una jerarquía más elaborada.
+
+`Valor` se define como:
+
+```julia
+julia> struct Valor{x}
+       end
+
+julia> Valor(x) = Valor{x}()
+Valor
+```
+
+No hay más que esto en la implementación de `Valor`. Algunas funciones de la biblioteca estándar de Julia aceptan instancias de `Valor` como argumentos, también se puede utilizar para escribir funciones personalizadas. Por ejemplo:
+
+```julia
+julia> juzga(::Valor{true}) = "Esto es verdadero"
+juzga (generic function with 1 method)
+
+julia> juzga(::Valor{false}) = "Esto es definitivamente falso"
+juzga (generic function with 2 methods)
+
+julia> juzga(Valor(true))
+"Esto es verdadero"
+
+julia> juzga(Valor(false))
+"Esto es definitivamente falso"
+```
+
+Para la consistencia de Julia, el llamada de la función personalizada `juzga` siempre se le debe pasar una ***instancia*** del tipo `Valor` en lugar de utilizarlo como ***tipo***, es decir, utilizar `foo(Valor(:bar))` en lugar de `foo(Val{:bar})`.
+
+```julia
+julia> typeof(Valor(true))            # Aquí se envia un objeto instanciado de tipo Valor{true}
+Valor{true}
+
+julia> typeof(Valor{true})            # En cambio aquí, se está enviando un objeto tipo DataType
+DataType
+```
+
+Vale la pena señalar que es muy fácil utilizar mal los ***tipos paramétricos de "valor"***, incluyendo `Valor`; en casos desfavorables, puede fácilmente terminar haciendo que el rendimiento del código sea mucho peor. En particular, nunca se debería escribir código como el ilustrado arriba. Para más información sobre los usos apropiados de `Valor`, por favor lea la extensa discusión sobre [consejos de rendimiento](https://docs.julialang.org/en/v1/manual/performance-tips/#man-performance-value-type).
 
 ## Métodos de funciones: Despacho múltiple
 
