@@ -3060,9 +3060,9 @@ Número complejo tipo <code>Polar{Float64}</code>: 3.0 <i>e</i><sup>4.0 <i>i</i>
 ```
 Un renderizador HTML mostraría esto como `Número complejo tipo Polar{Float64}:` $3.0 e^{4.0 i}$.
 
-### Tipos "valores"
+### Tipos *valores*
 
-En Julia, no se puede despachar sobre un valor como `true` o `false`. Sin embargo, puedes despachar sobre ***tipos paramétricos***, y Julia te permite incluir valores de *bits planos* (Tipos, Símbolos, Enteros, números de punto flotante, tuplas, etc.) como ***parámetros de tipo***. Un ejemplo común es el parámetro de dimensionalidad en `Array{T,N}`, donde `T` es un tipo (por ejemplo, `Float64`) pero `N` es sólo un valor tipo `Int`.
+En Julia, no se puede despachar sobre un valor como `true` o `false`. Sin embargo, puedes despachar sobre ***tipos paramétricos***, y Julia te permite incluir valores de *bits planos* (tipos, símbolos, enteros, números de punto flotante, tuplas, etc.) como ***parámetros de tipo***. Un ejemplo común es el parámetro de dimensionalidad en `Array{T,N}`, donde `T` es un tipo (por ejemplo, `Float64`) pero `N` es sólo un valor tipo `Int`.
 
 Se pueden crear ***tipos*** propios personalizados que **toman valores como parámetro**s, y utilizarlos para controlar el envío de *tipos personalizados*. A modo de ilustración de esta idea, introduzcamos un ***tipo paramétrico*** `Valor{x}`, y un constructor `Valor(x) = Valor{x}()`, que sirve como forma habitual de explotar esta técnica para los casos en los que no se necesita una jerarquía más elaborada.
 
