@@ -15,6 +15,10 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Números racionales](#números-racionales)
     * [Números complejos](#números-complejos)
     * [Strings](#strings)
+  * [Estructura de datos](#estructura-de-datos)
+    * [Vectores y arreglos](#vectores-y-arreglos)
+    * [Tuplas](#tuplas)
+    * [Diccionarios](#diccionarios)
   * [Operadores matemáticos y funciones elementales](#operadores-matemáticos-y-funciones-elementales)
     * [Operadores aritméticos](#operadores-aritméticos)
     * [Operadores booleanos](#operadores-booleanos)
@@ -26,21 +30,20 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Bloque function](#bloque-function)
     * [Funciones por asignación](#funciones-por-asignación)
     * [Funciones anónimas](#funciones-anónimas)
-    * [Argumentos keywords](#argumentos-keyword)
-    * [Tipado de argumentos](#tipado-de-argumentos)
+    * [Desestructurando argumentos](#desestructurando-argumentos)
+    * [Funciones con número variable de argumentos](#funciones-con-número-variable-de-argumentos)
+    * [Argumentos opcionales](#argumentos-opcionales)
+    * [Argumentos de palabra clave](#argumentos-de-palabra-clave)
+    * [Declaración de tipo de argumentos](#declaración-de-tipo-de-argumentos)
+    * [Return nothing](#return-nothing)
     * [Vectorización de funciones](#vectorización-de-funciones)
     * [Composición de funciones](#composición-de-funciones)
-    * [Return nothing](#return-nothing)
   * [Bloques de control de flujo](#bloques-de-control-de-flujo-condicionales-ciclos-y-otros)
     * [Condicionales](#condicionales)
     * [Evaluación short-circuit](#evaluación-short-circuit)
     * [Ciclos while y for](#ciclos-while-y-for)
     * [Bloque de expresiones compuestas](#bloque-de-expresiones-compuestas)
     * [Bloque do](#bloque-do)
-  * [Estructura de datos](#estructura-de-datos)
-    * [Vectores y arreglos](#vectores-y-arreglos)
-    * [Tuplas](#tuplas)
-    * [Diccionarios](#diccionarios)
 * [Julia Intermedio](#julia-intermedio)
   * [Arreglos multidimensionales](#arreglos-multidimensionales)
     * [Funciones básicas para arreglos](#funciones-básicas-para-arreglos)
@@ -558,6 +561,385 @@ julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
 "El resultado de sumar 1 y 2 es 3"
 ```
 
+## Estructura de Datos
+
+### Vectores y Arreglos
+
+Los vectores son colecciones de elementos ordenados, los cuales pueden estar duplicados y ser de diferente tipo de dato cada uno. Los vectores son mutables, esto es, pueden agregarse elementos y eliminarlos. Es un objeto iterable y se puede acceder a sus elementos mediante indexación. Es muy similar a las listas en Python.
+
+Hay varias formas de declarar un vector:
+
+```julia
+julia> a = [valor1, valor2, valor3, etc]
+
+julia> b = Vector{T}([valor1, valor2, valor3, etc])
+
+julia> c = Array{T, 1}([valor1, valor2, valor3, etc])
+```
+
+La primera forma es la forma más directa, donde Julia identifica el mejor tipo de vector que se definirá dependiendo del tipo de dato de los elementos.
+
+La segunda forma, se define el objeto ***Vector***, donde *T* es el tipo de dato de los elementos que contendrá la lista. En este caso, los elementos futuros no pueden tener un tipo de dato distinto al declarado, por lo que hay que tener precaución.
+
+La tercerda forma, se define al vector como un objeto ***Array*** de una dimensión. De la misma forma que el caso anterios, *T* es el tipo de dato de los elementos del vector. Realmente en el fondo, *Vector* es un alias de *Array* de una dimensión.
+
+Como se mencionó con anterioridad, se pueden acceder a los valores de los vectores mediante la indexización usando los ***[]***. Se puede pasar el índice, número natural, o un rango, siempre y cuando tenga sentido. Julia es un lenguaje **1-indexado**, lo que significa que el índice del primer elemento es uno, a diferencia de lenguajes de programación como Python o JavaScript, que son 0-indexados, su primer elemento se indexa  a partir del cero.
+
+```julia
+julia> a = ["Hola", "¿Cómo estás?", "Muy bien", "Igualmente", "Adiós"]
+5-element Vector{String}:
+ "Hola"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+
+ julia> a[1]                                    # Accediendo al primer elemento
+ "Hola"
+
+ julia> a[2:4]                                  # Accediendo con un rango de índices
+ 3-element Vector{String}:
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+
+julia> a[end]                                   # Accediendo al último elemento
+"Adiós"
+```
+
+Las vectores se pueden modificar sobrescribiendo sobre algun elemento con un determinado índice:
+
+```julia
+julia> a[1] = "Buenos días"                     # Se sobreescribe directamente en el primer elemento
+
+julia> a
+5-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+```
+
+También se pueden agregar o quitar elementos al final del vector, de la siguiente forma:
+
+```julia
+julia> push!(a, "Postdata")                     # Agrega un elemento al final del vector
+6-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+ "Postdata"
+
+julia> pop!(a)                                  # Elimina el último elemento del vector
+5-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+```
+
+O se puede agregar o quitar elementos al principio del vector como sigue:
+
+```julia
+julia> pushfirst!(a, "Antes que nada")          # Agrega un elemento al principio del vector
+6-element Vector{String}:
+ "Antes que nada"
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+
+julia> popfirts!(a)                             # Elimina el primer elemento del vector
+5-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+```
+
+También se pueden agregar los elementos de una lista a otra ya existente con la función **append** como sigue:
+
+```julia
+julia> append!(a, ["Buenas tardes", "Buenas noches"])
+7-element Vector{String}:
+ "Buenos días"
+ "¿Cómo estás?"
+ "Muy bien"
+ "Igualmente"
+ "Adiós"
+ "Buenas tardes"
+ "Buenas noches"
+```
+
+Como se mencionó anteriormente, los *vectores* son un caso particular de los *Array*, de una dimensión. Ahora, los *Array* de dos dimensiones, en Julia se le llama ***Matrices***, ya que representan datos ordenados en filas y columnas. Para definir las matrices o arreglos de dos dimensiones, los elementos de una misma fila se separan solo por espacio en blanco, mientras que para separar las filas se usa ; de la siguiente forma:
+
+```julia
+julia> b = [1 2 3; 4 5 6]
+2×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+```
+
+Para acceder a los elementos de la matriz, tenemos que usar dos índices, el primero para la fila, el segundo para la columna:
+
+```julia
+julia> b[1, 2]
+2
+julia> b[2, 1]
+4
+```
+
+Para agregar nuevos datos al final de la matrix, y modificando así su dimensión matricial, se realiza de la siguiente forma
+
+```julia
+julia> c = [b; [7 8 9]]                             # Se agrega como una nueva fila
+3×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+ 7  8  9
+
+julia> c = vcat(b, [7 8 9])                         # Se agrega como una fila al final
+3×3 Matrix{Int64}:
+ 1  2  3
+ 4  5  6
+ 7  8  9
+
+julia> c = hcat(b, [7; 8])                          # Se agrega como una nueva columna al final
+2×4 Matrix{Int64}:
+ 1  2  3  7
+ 4  5  6  8
+```
+
+Los arreglos 3-dimensional, son arreglos de arreglos que se extienden una dimensión más. Para crearlos, se requiere usar la función ***cat*** o ***reshape*** de la siguiente forma:
+
+```julia
+julia> d = cat([1 2; 3 4], [5 6; 7 8], dims=3)
+2×2×2 Array{Int64, 3}:
+[:, :, 1] =
+ 1  2
+ 3  4
+
+[:, :, 2] =
+ 5  6
+ 7  8
+```
+
+Para acceder a sus elementos, se requieren tres índices:
+
+```julia
+julia> d[1,2,2]
+6
+
+julia> d[2,1,1]
+3
+```
+
+### Tuplas
+
+Otra estructura de datos son las ***tuplas***, los cuales son contenedores de longitud fija y cuyos valores no se pueden modificar (son **inmutables**). Pero al igual que los vectores, sus valores se pueden acceder via ***índices***. Las tuplas se definen con paréntesis y comas, como sigue:
+
+```julia
+julia> (1,)
+(1,)
+
+julia> (1, 1 + 1)
+(1, 2)
+
+julia> a = (2, "Hola", 3.0)
+(2, "Hola", 3.0)
+
+julia> typeof(a)
+Tuple{Int64, String, Float64}
+
+julia> a[2]
+"Hola"
+```
+
+Note que para la tupla unidimensional, se requiere definirlo como $(1,)$ y no como $(1)$ ya que este último significa simplemente el valor 1 entre paréntesis.
+
+Opcionalmente, los elementos de las tuplas se pueden nombrar, en tal caso, el objeto se llamará ***tupla nombrada***, cuyos valores se pueden regresar ya sea por **índice** o por **notación punto** usando el nombre de su argumento. Las ***tuplas nombradas*** se construye como sigue:
+
+```julia
+julia> b = (nombre="Juan", apellido="Pérez", edad=15)
+(nombre="Juan", apellido="Pérez", edad=15)
+
+julia>  for element in b
+            println(element)
+        end
+Juan
+Pérez
+15
+
+julia> b.nombre                     # Accediendo al valor por su nombre mediante la notación punto
+"Juan"
+
+julia> b.edad
+15
+```
+
+Para destructurar una tupla, podemos asignar a una serie de variables para obtener en cada una de ellas el valor de los elementos de la tupla, de la siguiente forma:
+
+```julia
+julia> mitupla = ("Juan", 7, 15.50);
+
+julia> a, b, c = mitupla;
+
+julia> a
+"Juan"
+
+julia> b
+7
+
+julia> c
+15.50
+```
+
+Al igual que en Python, podemos usar el guión bajo `_` para ignorar alguna posición de la tupla y que no sea asignada a alguna variable:
+
+```julia
+julia> a, _, c = mitupla;
+```
+
+Si durante la asignación, la última variable tiene el *sufijo* `...` (conocido como *slurping* sorbedor), entonces, a esa última variable se le asignará un iterador *perezoso* (*lazy iterator*, que ejecutará sólo cuando se le llame), con el resto de elementos del objeto a la derecha se la asignación.
+
+```julia
+julia> a, b... = 1:5;
+
+julia> a
+1
+
+julia> b
+4-element Vector{Int64}:
+ 2
+ 3
+ 4
+ 5
+```
+
+### Diccionarios
+
+Los diccionarios en Julia, al igual que en Python, son colecciones de pares clave-valor (key-value), donde cada valor puede ser accedido por su clave, en lugar de índices, ya que en general, los diccionarios son desordenados. Cada diccionario debe tener claves diferentes, preferentemente deben ser strings, enteros o simbolos (:*simbolo*), mientras que en los valores no hay restricciones.
+
+Un diccionario es definido mediante un constructor ya incluido **Dict()**, y separando la clave con el valor mediante el símbolo **=>** siguiendo la siguiente estructura y síntaxis:
+
+```julia
+julia> a = Dict("nombre" => "Juan", "apellido" => "Pérez", "edad" => 15, :Δ => "Hola")
+Dict{Any, Any} with 4 entries:
+  "edad"     => 15
+  "nombre"   => "Juan"
+  "apellido" => "Pérez"
+  :Δ => "Hola"
+
+julia> a["nombre"]
+Juan
+
+julia> a["edad"]
+15
+
+julia> a[:Δ]
+"Hola"
+```
+
+Julia provee una función muy útil definida de base **get(diccionario, clave, default)**, que nos ayuda a traer el valor asociado a una clave, y en caso de no existir, lanzar un valor o mensaje por default:
+
+```julia
+julia> get(a, "nombre", "Beto")
+"Juan"
+
+julia> get(a, "domicilio", "Domicilio no registrado")
+"Domicilio no registrado"
+```
+
+Al igual que en Python, existen funciones para obtener todas las claves o valores de un diccionario en un objeto iterable . Estas son **keys()** y **values** con la siguiente síntaxis:
+
+```julia
+julia> claves = keys(a)
+KeySet for a Dict{Any, Any} with 4 entries. Keys:
+  "edad"
+  "nombre"
+  "apellido"
+  :Δ
+
+julia> collect(claves)
+4-element Vector{Any}:
+ "edad"
+ "nombre"
+ "apellido"
+ :Δ
+
+julia> valores = values(a)
+ValueIterator for a Dict{Any, Any} with 4 entries. Values:
+  15
+  "Juan"
+  "Pérez"
+  "Hola"
+
+julia> collect(valores)
+4-element Vector{Any}:
+ 15
+ "Juan"
+ "Pérez"
+ "Hola"
+```
+
+Tanto los objetos regresados por las funciones *keys()* y *values()* pueden ser utilizados como iterables en ciclos *for*, se puede acceder a dichos elementos clave-valor directamente (como en Python con el método .items()) con la siguiente síntaxis:
+
+```julia
+julia>  for (clave, valor) in a
+            println(clave, " => ", valor)
+        end
+edad => 15
+nombre => Juan
+apellido => Pérez
+Δ => Hola
+```
+
+Los diccionarios se pueden modificar. Las tres principales modificaciones son: Agregar nuevos elementos clave-valor, actualizar el valor de claves ya existentes, y borrar claves-valor.
+
+```julia
+julia> a["ciudad"] = "Monterrey"                # Agregando un nuevo par clave - valor
+"Monterrey"
+
+julia> a["ciudad"] = "Guadalajara"              # Actualizamos el valor de una clave
+"Guadalajara"
+
+julia> println(a)
+Dict{Any, Any}("ciudad" => "Guadalajara", "edad" => 15, "nombre" => "Juan", "apellido" => "Pérez", :Δ => "Hola")
+
+julia> delete!(a, "ciudad")                     # Borrar un par clave - valor
+Dict{Any, Any} with 4 entries:
+  "edad"     => 15
+  "nombre"   => "Juan"
+  "apellido" => "Pérez"
+  :Δ         => "Hola"
+```
+
+Se pueden unir dos o más diccionarios mediante la función ***merge()***. Esto crea un nuevo diccionario, o se puede modificar el primer diccionario con ***merge!***, como sigue:
+
+```julia
+julia> domicilio = Dict("ciudad" => "Guadalajara", "estado" => "Jalisco", "pais" => "México")
+Dict{String, String} with 3 entries:
+  "ciudad" => "Guadalajara"
+  "pais"   => "México"
+  "estado" => "Jalisco"
+
+julia> merge(a, domicilio)
+Dict{Any, Any} with 7 entries:
+  "ciudad"   => "Guadalajara"
+  "edad"     => 15
+  "pais"     => "México"
+  "nombre"   => "Juan"
+  "apellido" => "Pérez"
+  "estado"   => "Jalisco"
+  :Δ         => "Hola"
+```
+
 ## Operadores matemáticos y funciones elementales
 
 Julia provee con un colección completa de operadores aritméticos y bit a bit en todos los tipos de primitivos. Así como una colección de funciones matemáticas éstandar implementadas eficientemente.
@@ -682,7 +1064,7 @@ julia> sqrt.(vec)
 
 ### Bloque function
 
-Las funciones en Julia son objetos que toman una tupla de valores y retornan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
+Las funciones en Julia son objetos que toman una **tupla de valores-argumento** y retornan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
 
 La síntaxis básica para declarar funciones en Julia es la siguientes:
 
@@ -741,21 +1123,226 @@ julia> (x, y) -> x^2 - 2x + y
 
 Existe una tercera forma para declarar funciones anónimas, es por medio del [Bloque do](#bloque-do), que se describirá más adelante.
 
-### Argumentos keyword
+### Desestructurando argumentos
 
-Se pueden incluir **keyword arguments** en las funciones (al igual que en Python), separandolos de los argumentos posicionales con `;` de la siguiente forma:
+Al igual que vimos en la sección de [tuplas](#tuplas), se pueden desestructurar los argumentos de una función. Si los argumentos de una función se escriben como una tupla, es decir `(x, y)`, en lugar de un sólo elemento, entonces, las variables serán asignada siguiendo la desestructuración de tupla `(x, y) = *tupla argumento*`. Por ejemplo:
 
 ```julia
-julia>  function f(x, y; radio=1.0, eje=1.0)
-            return x + y * radio / eje
+julia>  function minimomaximo(x, y)
+            if x > y
+                return (y, x)
+            else
+                return (x, y)
+            end
+        end
+
+julia>  function diferencia((minimo, maximo))                 # Cada argumento se le asignará el respectivo
+            return maximo - minimo                            # valor de la tupla de entrada.
+        end
+
+julia> diferencia(minimomaximo(10, 6))
+4
+```
+Note que en la definición de la función `diferencia`, se requiere un par extra de paréntesis, ya que sin ellos, la función tomaría dos argumentos, en lugar de un solo argumento tupla.   
+
+Esto también sirve para funciones anónimas, como sigue:
+
+```julia
+julia> map( ((x, y),) -> x + y , [(1, 2), (3, 4)])              # No puede ser (x, y) -> x + y
+2-element Array{Int64,1}:                                       # ya que esa sería una función anónima 
+ 3                                                              # de dos argumentos
+ 7                                                        
+```
+Aquí, la declaración de la función anónima requiere una coma extra para funcionar.
+
+### Funciones con número variable de argumentos
+
+A menudo es conveniente poder escribir funciones tomando un número arbitrario de argumentos. Estas funciones se conocen tradicionalmente como funciones ***varargs***. Puede definirse una función ***varargs*** colocando en el último argumento posicional el sufijo de puntos suspensivos `...`, como sigue:
+
+```julia
+julia>  function toarray(a, b...)
+            return [a, b...]
+        end
+
+julia> toarray(1)
+1-element Vector{Int64}:
+ 1
+
+julia> toarray(1, 2)
+2-element Vector{Int64}:
+ 1
+ 2
+
+julia> toarray(1, 2, 3)
+3-element Vector{Int64}:
+ 1
+ 2
+ 3
+```
+
+Es posible restringir el número de argumentos el número de valores que se pasan dentro de la función de argumentos variables. Pero eso es un tema para la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
+
+Ahora, en el caso contrario, donde tengamos una variable con un objeto iterable (no necesariamente una tupla) cuyos elementos los queremos pasar a una función de elementos fijos, puede utilizarse los `...` como desestructurador, pero no en la definición de la función, sino en la llamada, como sigue:
+
+```julia
+julia>  function sumatriple(a, b, c)
+            return a + b + c
+        end
+
+julia> sumatriple(1, 2, 3)
+6
+
+julia> z = (1, 2, 3);
+
+julia>  sumatriple(z)
+ERROR: MethodError: no method matching sumatriple(::Tuple{Int64, Int64, Int64})
+...
+
+julia>  sumatriple(z...)
+6
+```
+
+Di hay una cantidad incorrecta de elementos en el objeto a desestructurar, la llamada a la función fallará, tal como lo haría si se proporcionaran demasiados argumentos explícitamente.
+
+### Argumentos opcionales
+
+A menudo es posible proporcionar ***valores predeterminados*** para los argumentos de función. Esto puede evitar que los usuarios tengan que pasar todos los argumentos en cada llamada. Por ejemplo:
+
+```julia
+julia>  function saludo(nombre::String, mensaje::String = "Buenos días", numero::Int64 = 1)
+            println("$mensaje, $nombre. Eres el No. $numero")
+        end
+saludo (generic function with 3 methods)
+
+julia>  saludo("Juan")
+Buenos días, Juan. Eres el No. 1
+
+julia>  saludo("Juan", "Que onda")
+Que onda, Juan. Eres el No. 1
+
+julia>  saludo("Juan", "Que onda", 5)
+Que onda, Juan. Eres el No. 5
+```
+En Julia, a diferencia de lo que sucede en Python, **los argumentos opcionales siguen siendo posicionales y no puede ser pasados por nombre**. Por ejemplo:
+
+```julia
+julia> saludo("Juan", mensaje="Buenas noches")
+ERROR: MethodError: no method matching saludo(::String; mensaje="Buenas noches")
+...
+```
+
+Los argumentos opcionales son en realidad una sintaxis conveniente para escribir múltiples definiciones de métodos con diferentes números de argumentos. De hecho, note que el mensaje de salida en la definición de la función `saludo`, nos indica que definimos tres métodos diferentes de la función. Cada método corresponde uno de los tres casos, cuando proporcionamos valores a uno, dos o tres argumentos. Esto se verá con más detalle en la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
+
+### Argumentos de palabra clave
+
+Cuando una función recibe un gran número de argumentos, es dificil recordar la posición precisa de cada uno de ellos y puede ser dificil su invocación. Los ***argumentos de palabra clave*** (***Keyword arguments***, al igual que en Python) pueden facilitar el llamado de las funciones, ya que **permiten identificar cada argumento por su nombre en lugar de sólo por su posición**.
+
+Los ***argumentos de palabra clave*** se definen en la función separandolos de los ***argumentos posicionales*** mediante *punto y coma* `;` de la siguiente forma:
+
+```julia
+julia>  function f(x, y; radio=1.0, eje=1.0)            # Los argumentos x, y son posicionales
+            return x + y * radio / eje                  # pero radio y eje son argumentos de palabra clave.
         end
 ```
 
-### Tipado de argumentos
+Cuando la función es invocada, el *punto y coma* entre los argumentos es opcional. Es decir, `f(x, y; radio=3.0)` es lo mismo que `f(x, y, radio=3.0)`. Los valores por defecto de argumentos de palabra clave se pasan a la función, si no se proporciona su correspondiente valor durante su invocación.
+
+Es posible especificar explicitamente el ***tipo*** de los argumentos de palabra clave, como sigue:
+
+```julia
+julia>  function f(; x::Int=1, y::Float64=0.0)
+            # código
+        end
+```
+
+También, los ***argumentos de palabra clave*** pueden ser implementados en ***funciones con número de argumentos variables*** de la siguiente manera:
+
+```julia
+julia>  function f(a, b...; radio::Float64=1.0)
+            # código
+        end
+```
+
+Al igual que en Python, se puede recibir ***argumentos de palabra clave*** adicionales sin especificar su número, utilizando el sufijo de desestructuración `...`, como sigue:
+
+```julia
+julia>  function f(a; x=1.0, kwargs...)
+            # código
+        end
+```
+
+Dentro de `f`, `kwargs` será un ***iterador clave-valor inmutable*** sobre una ***tupla nombrada***. Las ***tuplas nombradas***, así como los ***diccionarios*** con claves del tipo `Symbol`, pueden pasarse como ***conjunto de argumentos de palabra clave*** utilizando explicitamente el *punto y coma* `;` en la invocación de la función. Por ejemplo:
+
+```julia
+julia> function f(r; kwargs...)
+           println("Argumento posicional: ", r)
+           println("Argumento palabra-clave: ", kwargs)
+       end
+f (generic function with 1 method)
+
+julia> tupla = (saludo="Hola", despedida="adiós");
+
+julia> diccionario = Dict(:nombre => "Juan", :edad => "18");        # Diccionario con claves tipo Symbol
+
+julia> f(1; tupla...)
+Argumento posicional: 1
+Argumento palabra-clave: Base.Pairs(:saludo => "Hola", :despedida => "adiós")
+
+julia> f(1; diccionario...)
+Argumento posicional: 1
+Argumento palabra-clave: Base.Pairs(:edad => "18", :nombre => "Juan")
+```
+
+Otra diferencia con Python, es que los ***argumentos de palabra clave*** pueden o no llevar un valor por defecto. Esto es:
+
+```julia
+julia>  function g(x; y)
+            println("Argumento Posicional: ", x)
+            println("Argumento Palabra clave: ", y)
+        end
+
+julia>  g(1)
+ERROR: UndefKeywordError: keyword argument y not assigned
+...
+
+julia>  g(1, y=1.0)
+Argumento Posicional: 1
+Argumento Palabra clave: 1.0
+```
+También se pueden pasar expresiones `clave => valor` después de un *punto y coma* `;`. Por ejemplo
+
+```julia
+julia>  g(1; :y => 1.5)
+Argumento Posicional: 1
+Argumento Palabra clave: 1.5
+```
+
+Es decir `g(1; :y => 1.5)` es equivalente a `g(1, y=1.5)`. Esto es útil en situaciones en las que el nombre de la palabra clave se calcula en tiempo de ejecución.
+
+Otra caracteristica curiosa, cuando aparece un identificador simple o una *expresión de punto* después de un punto y coma en la invocación de la función, el nombre del ***argumento de palabra clave*** está implícito en el identificador o el nombre del campo. Esto es:
+
+```julia
+julia>  y = 2.0;
+
+julia> g(1.0; y)                                    # Esto es equivalente a g(1.0; y=y) [Un poco 
+Argumento Posicional: 1.0                           # similar a lo que se tiene en JavaScript]
+Argumento Palabra clave: 2.0
+
+julia>  tupla = (a=5, y=8)
+(a = 5, y = 8)
+
+julia>  g(1; tupla.y)                               # Esto es equivalente a g(1; y=tupla.y)
+Argumento Posicional: 1
+Argumento Palabra clave: 8
+```
+
+La naturaleza de los ***argumentos de palabra clave*** hace posible especificar el mismo argumento más de una vez. Por ejemplo, en la llamada `plot(x, y; opciones..., ancho=2)` es posible que la estructura del objeto `opciones` también contenga un valor `ancho`. En tal caso, la **ocurrencia más a la derecha** tiene prioridad; en el caso del ejemplo, es seguro que `ancho` tendra el valor `2`. Sin embargo, especificar explícitamente el **mismo** ***argumento de palabra clave*** **varias veces**, por ejemplo `plot(x, y, ancho=2, ancho=3)`, no está permitido y da lugar a un error de sintaxis.
+
+### Declaración de tipo de argumentos
 
 Es posible indicar el tipo de dato de los argumentos (tanto de los argumentos posicionales como los keyword), al igual que el tipo de dato que retorna la función.
 
-La síntaxis para declarar el tipo de dato se realiza con los cuadripuntos **::** (similares a Fortran), de la siguiente forma:
+La síntaxis para declarar el tipo de dato se realiza con los cuadripuntos `::` (similares a Fortran), de la siguiente forma:
 
 ```julia
 julia>  function prediccion(x::Float64; n::Int64 = 5, p::Float64 = 0.5)::Float64
@@ -766,6 +1353,17 @@ julia>  function prediccion(x::Float64; n::Int64 = 5, p::Float64 = 0.5)::Float64
 Julia se asegurará de convertir el resultado al tipo de dato que declara como salida de la función.
 
 Si bien, el tipado de argumentos no da ninguna ventaja en el desempeño del código, será sumamente útil para aplicaciones más avanzadas de Julia (veáse el [Despacho múltiple](#métodos-de-funciones-despacho-múltiple)).
+
+### Return nothing
+
+Finalmente, las funciones que no regresan algún valor y sólo realizan cambios, por convención se retorna la expresión ***nothing*** como sigue:
+
+```julia
+julia>  function imprime(nombre)
+            println("Buenos días, $nombre")
+            return nothing
+        end
+```
 
 ### Vectorización de funciones
 
@@ -802,17 +1400,6 @@ julia> (sqrt ∘ sum)(x)      # Al estilo matemático
 
 julia> x |> sum |> sqrt     # Utilizando pipe al estilo programador
 3.872983346207417
-```
-
-### Return nothing
-
-Finalmente, las funciones que no regresan algún valor y sólo realizan cambios, por convención se retorna la expresión ***nothing*** como sigue:
-
-```julia
-julia>  function imprime(nombre)
-            println("Buenos días, $nombre")
-            return nothing
-        end
 ```
 
 ## Bloques de Control de Flujo: Condicionales, Ciclos y Otros
@@ -995,345 +1582,6 @@ julia>  map(numeros) do x
 
 La instrucción `do x` crea una función anónima con un argumento, `x -> ...` . Así, la instrucción `do x, y` creará una función anónima de dos argumentos, `(x, y) -> ...` . En cambio, la expresión `do (x, y)` creará una función anónima cuyo único argumento será una tupla que será deconstruida. Finalmente, la simple instrucción `do` definirá una función anónima sin argumentos `()-> ...` .
 
-## Estructura de Datos
-
-### Vectores y Arreglos
-
-Los vectores son colecciones de elementos ordenados, los cuales pueden estar duplicados y ser de diferente tipo de dato cada uno. Los vectores son mutables, esto es, pueden agregarse elementos y eliminarlos. Es un objeto iterable y se puede acceder a sus elementos mediante indexación. Es muy similar a las listas en Python.
-
-Hay varias formas de declarar un vector:
-
-```julia
-julia> a = [valor1, valor2, valor3, etc]
-
-julia> b = Vector{T}([valor1, valor2, valor3, etc])
-
-julia> c = Array{T, 1}([valor1, valor2, valor3, etc])
-```
-
-La primera forma es la forma más directa, donde Julia identifica el mejor tipo de vector que se definirá dependiendo del tipo de dato de los elementos.
-
-La segunda forma, se define el objeto ***Vector***, donde *T* es el tipo de dato de los elementos que contendrá la lista. En este caso, los elementos futuros no pueden tener un tipo de dato distinto al declarado, por lo que hay que tener precaución.
-
-La tercerda forma, se define al vector como un objeto ***Array*** de una dimensión. De la misma forma que el caso anterios, *T* es el tipo de dato de los elementos del vector. Realmente en el fondo, *Vector* es un alias de *Array* de una dimensión.
-
-Como se mencionó con anterioridad, se pueden acceder a los valores de los vectores mediante la indexización usando los ***[]***. Se puede pasar el índice, número natural, o un rango, siempre y cuando tenga sentido. Julia es un lenguaje **1-indexado**, lo que significa que el índice del primer elemento es uno, a diferencia de lenguajes de programación como Python o JavaScript, que son 0-indexados, su primer elemento se indexa  a partir del cero.
-
-```julia
-julia> a = ["Hola", "¿Cómo estás?", "Muy bien", "Igualmente", "Adiós"]
-5-element Vector{String}:
- "Hola"
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
- "Adiós"
-
- julia> a[1]                                    # Accediendo al primer elemento
- "Hola"
-
- julia> a[2:4]                                  # Accediendo con un rango de índices
- 3-element Vector{String}:
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
-
-julia> a[end]                                   # Accediendo al último elemento
-"Adiós"
-```
-
-Las vectores se pueden modificar sobrescribiendo sobre algun elemento con un determinado índice:
-
-```julia
-julia> a[1] = "Buenos días"                     # Se sobreescribe directamente en el primer elemento
-
-julia> a
-5-element Vector{String}:
- "Buenos días"
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
- "Adiós"
-```
-
-También se pueden agregar o quitar elementos al final del vector, de la siguiente forma:
-
-```julia
-julia> push!(a, "Postdata")                     # Agrega un elemento al final del vector
-6-element Vector{String}:
- "Buenos días"
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
- "Adiós"
- "Postdata"
-
-julia> pop!(a)                                  # Elimina el último elemento del vector
-5-element Vector{String}:
- "Buenos días"
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
- "Adiós"
-```
-
-O se puede agregar o quitar elementos al principio del vector como sigue:
-
-```julia
-julia> pushfirst!(a, "Antes que nada")          # Agrega un elemento al principio del vector
-6-element Vector{String}:
- "Antes que nada"
- "Buenos días"
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
- "Adiós"
-
-julia> popfirts!(a)                             # Elimina el primer elemento del vector
-5-element Vector{String}:
- "Buenos días"
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
- "Adiós"
-```
-
-También se pueden agregar los elementos de una lista a otra ya existente con la función **append** como sigue:
-
-```julia
-julia> append!(a, ["Buenas tardes", "Buenas noches"])
-7-element Vector{String}:
- "Buenos días"
- "¿Cómo estás?"
- "Muy bien"
- "Igualmente"
- "Adiós"
- "Buenas tardes"
- "Buenas noches"
-```
-
-Como se mencionó anteriormente, los *vectores* son un caso particular de los *Array*, de una dimensión. Ahora, los *Array* de dos dimensiones, en Julia se le llama ***Matrices***, ya que representan datos ordenados en filas y columnas. Para definir las matrices o arreglos de dos dimensiones, los elementos de una misma fila se separan solo por espacio en blanco, mientras que para separar las filas se usa ; de la siguiente forma:
-
-```julia
-julia> b = [1 2 3; 4 5 6]
-2×3 Matrix{Int64}:
- 1  2  3
- 4  5  6
-```
-
-Para acceder a los elementos de la matriz, tenemos que usar dos índices, el primero para la fila, el segundo para la columna:
-
-```julia
-julia> b[1, 2]
-2
-julia> b[2, 1]
-4
-```
-
-Para agregar nuevos datos al final de la matrix, y modificando así su dimensión matricial, se realiza de la siguiente forma
-
-```julia
-julia> c = [b; [7 8 9]]                             # Se agrega como una nueva fila
-3×3 Matrix{Int64}:
- 1  2  3
- 4  5  6
- 7  8  9
-
-julia> c = vcat(b, [7 8 9])                         # Se agrega como una fila al final
-3×3 Matrix{Int64}:
- 1  2  3
- 4  5  6
- 7  8  9
-
-julia> c = hcat(b, [7; 8])                          # Se agrega como una nueva columna al final
-2×4 Matrix{Int64}:
- 1  2  3  7
- 4  5  6  8
-```
-
-Los arreglos 3-dimensional, son arreglos de arreglos que se extienden una dimensión más. Para crearlos, se requiere usar la función ***cat*** o ***reshape*** de la siguiente forma:
-
-```julia
-julia> d = cat([1 2; 3 4], [5 6; 7 8], dims=3)
-2×2×2 Array{Int64, 3}:
-[:, :, 1] =
- 1  2
- 3  4
-
-[:, :, 2] =
- 5  6
- 7  8
-```
-
-Para acceder a sus elementos, se requieren tres índices:
-
-```julia
-julia> d[1,2,2]
-6
-
-julia> d[2,1,1]
-3
-```
-
-### Tuplas
-
-Otra estructura de datos son las ***tuplas***, los cuales son contenedores de longitud fija y cuyos valores no se pueden modificar (son inmutables). Pero al igual que los vectores, sus valores se pueden acceder via índices. Las tuplas se definen con paréntesis y comas, como sigue:
-
-```julia
-julia> (1,)
-(1,)
-
-julia> (1, 1 + 1)
-(1, 2)
-
-julia> a = (2, "Hola", 3.0)
-(2, "Hola", 3.0)
-
-julia> typeof(a)
-Tuple{Int64, String, Float64}
-
-julia> a[2]
-"Hola"
-```
-
-Note que para la tupla unidimensional, se requiere definirlo como $(1,)$ y no como $(1)$ ya que este último significa simplemente el valor 1 entre paréntesis.
-
-Opcionalmente, los elementos de las tuplas se pueden nombrar, en tal caso, el objeto se llamará ***tupla nombrada***, y se construye como sigue:
-
-```julia
-julia> b = (nombre="Juan", apellido="Pérez", edad=15)
-(nombre="Juan", apellido="Pérez", edad=15)
-
-julia>  for element in b
-            println(element)
-        end
-Juan
-Pérez
-15
-
-julia> b.nombre                     # Accediendo al valor por su nombre mediante la notación punto
-"Juan"
-
-julia> b.edad
-15
-```
-
-### Diccionarios
-
-Los diccionarios en Julia, al igual que en Python, son colecciones de pares clave-valor (key-value), donde cada valor puede ser accedido por su clave, en lugar de índices, ya que en general, los diccionarios son desordenados. Cada diccionario debe tener claves diferentes, preferentemente deben ser strings, enteros o simbolos (:*simbolo*), mientras que en los valores no hay restricciones.
-
-Un diccionario es definido mediante un constructor ya incluido **Dict()**, y separando la clave con el valor mediante el símbolo **=>** siguiendo la siguiente estructura y síntaxis:
-
-```julia
-julia> a = Dict("nombre" => "Juan", "apellido" => "Pérez", "edad" => 15, :Δ => "Hola")
-Dict{Any, Any} with 4 entries:
-  "edad"     => 15
-  "nombre"   => "Juan"
-  "apellido" => "Pérez"
-  :Δ => "Hola"
-
-julia> a["nombre"]
-Juan
-
-julia> a["edad"]
-15
-
-julia> a[:Δ]
-"Hola"
-```
-
-Julia provee una función muy útil definida de base **get(diccionario, clave, default)**, que nos ayuda a traer el valor asociado a una clave, y en caso de no existir, lanzar un valor o mensaje por default:
-
-```julia
-julia> get(a, "nombre", "Beto")
-"Juan"
-
-julia> get(a, "domicilio", "Domicilio no registrado")
-"Domicilio no registrado"
-```
-
-Al igual que en Python, existen funciones para obtener todas las claves o valores de un diccionario en un objeto iterable . Estas son **keys()** y **values** con la siguiente síntaxis:
-
-```julia
-julia> claves = keys(a)
-KeySet for a Dict{Any, Any} with 4 entries. Keys:
-  "edad"
-  "nombre"
-  "apellido"
-  :Δ
-
-julia> collect(claves)
-4-element Vector{Any}:
- "edad"
- "nombre"
- "apellido"
- :Δ
-
-julia> valores = values(a)
-ValueIterator for a Dict{Any, Any} with 4 entries. Values:
-  15
-  "Juan"
-  "Pérez"
-  "Hola"
-
-julia> collect(valores)
-4-element Vector{Any}:
- 15
- "Juan"
- "Pérez"
- "Hola"
-```
-
-Tanto los objetos regresados por las funciones *keys()* y *values()* pueden ser utilizados como iterables en ciclos *for*, se puede acceder a dichos elementos clave-valor directamente (como en Python con el método .items()) con la siguiente síntaxis:
-
-```julia
-julia>  for (clave, valor) in a
-            println(clave, " => ", valor)
-        end
-edad => 15
-nombre => Juan
-apellido => Pérez
-Δ => Hola
-```
-
-Los diccionarios se pueden modificar. Las tres principales modificaciones son: Agregar nuevos elementos clave-valor, actualizar el valor de claves ya existentes, y borrar claves-valor.
-
-```julia
-julia> a["ciudad"] = "Monterrey"                # Agregando un nuevo par clave - valor
-"Monterrey"
-
-julia> a["ciudad"] = "Guadalajara"              # Actualizamos el valor de una clave
-"Guadalajara"
-
-julia> println(a)
-Dict{Any, Any}("ciudad" => "Guadalajara", "edad" => 15, "nombre" => "Juan", "apellido" => "Pérez", :Δ => "Hola")
-
-julia> delete!(a, "ciudad")                     # Borrar un par clave - valor
-Dict{Any, Any} with 4 entries:
-  "edad"     => 15
-  "nombre"   => "Juan"
-  "apellido" => "Pérez"
-  :Δ         => "Hola"
-```
-
-Se pueden unir dos o más diccionarios mediante la función ***merge()***. Esto crea un nuevo diccionario, o se puede modificar el primer diccionario con ***merge!***, como sigue:
-
-```julia
-julia> domicilio = Dict("ciudad" => "Guadalajara", "estado" => "Jalisco", "pais" => "México")
-Dict{String, String} with 3 entries:
-  "ciudad" => "Guadalajara"
-  "pais"   => "México"
-  "estado" => "Jalisco"
-
-julia> merge(a, domicilio)
-Dict{Any, Any} with 7 entries:
-  "ciudad"   => "Guadalajara"
-  "edad"     => 15
-  "pais"     => "México"
-  "nombre"   => "Juan"
-  "apellido" => "Pérez"
-  "estado"   => "Jalisco"
-  :Δ         => "Hola"
-```
 
 ***
 
