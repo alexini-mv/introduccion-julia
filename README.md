@@ -89,7 +89,8 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Operaciones sobre tipos](#operaciones-sobre-tipos)
     * [Impresion bonita personalizada](#impresión-bonita-personalizada)
     * [Tipos *valores*](#tipos-valores)
-  * [Métodos de funciones: Despacho multiple](#métodos-de-funciones-despacho-múltiple)                           **↓ Pendiente ↓**
+  * [Métodos de funciones: Despacho multiple](#métodos-de-funciones-despacho-múltiple)
+    * [Definiendo métodos](#definiendo-métodos)                           **↓ Pendiente ↓**
   * [Constructores](#)
   * [Álcance o Scope de la variables](#)
   * [Módulos](#)
@@ -3354,6 +3355,148 @@ Vale la pena señalar que es muy fácil utilizar mal los ***tipos paramétricos 
 
 ## Métodos de funciones: Despacho múltiple
 
+Recordemos que una función es un objeto que asigna a una tupla de argumentos un valor de retorno, o lanza una excepción si no se puede devolver un valor apropiado. Es común que la misma función se implemente de manera muy diferente para distintos tipos de argumentos. Por ejemplo, sumar dos ***enteros*** es muy diferente de sumar dos ***números de punto flotante***, ambos distintos de sumar un entero a un número de punto flotante. A pesar de sus diferencias de implementación, todas estas operaciones caen bajo el concepto general de *adición*. En consecuencia, en Julia, todos estos comportamientos pertenecen a un único objeto: la función `+`.
+
+Para facilitar el uso de muchas implementaciones diferentes del mismo concepto sin problemas, las funciones no necesitan ser definidas todas a la vez, sino que pueden ser definidas por partes proporcionando comportamientos específicos para ciertas combinaciones de ***tipos de argumentos***. La definición de un posible ***comportamiento particular*** de una función se denomina **método**. Hasta ahora, sólo se ha visto ejemplos de funciones definidas con un único método, aplicable a todos los tipos de argumentos. Sin embargo, las definiciones de los métodos pueden incluir los **tipos de los argumentos** además de su valor, y establecerse más de una única definición de método. Cuando una función se llama con una tupla particular de argumentos, se aplica el método más específico aplicable a esos argumentos. Así, el comportamiento global de una función es un mosaico de los comportamientos de sus diversas definiciones de métodos. Si el mosaico está bien diseñado, aunque las implementaciones de los métodos puedan ser muy diferentes, el comportamiento externo de la función parecerá fluido y coherente.
+
+La elección del método que se ejecuta cuando se invoca a una función se llama **despacho**. Julia permite que el proceso de ***despacho*** elija cuál de ***los métodos de función*** llamar basándose en el número de argumentos dados y sus ***tipos***. Esto es totalmente diferente a los lenguajes tradicionalmente ***Orientados a Objetos***, donde el ***despacho*** se produce basándose sólo en el primer argumento (el objeto), que a menudo tiene una sintaxis de argumento especial. El uso de todos los argumentos de una función para elegir qué método debe ser invocado, en lugar de sólo el primero, se conoce como **despacho múltiple**. El ***despacho múltiple*** es particularmente útil para el *código matemático*, donde no tiene mucho sentido considerar artificialmente que las operaciones *pertenecen* a un argumento más que a cualquiera de los otros argumentos: ¿la operación de suma en `x + y` pertenece a `x` más que a `y`? La implementación de un operador matemático depende generalmente de los tipos de todos sus argumentos. Sin embargo, incluso más allá de las operaciones matemáticas, el ***despacho múltiple*** acaba siendo un paradigma poderoso y conveniente para estructurar y organizar los programas.
+
+### Definiendo métodos
+
+Hasta ahora, se ha definido sólo funciones con un único método, y con ***tipos de argumentos*** no restringidos. Tales funciones se comportan como lo harían en los lenguajes de tipado dinámico tradicionales. Sin embargo, todas las funciones y operadores estándar de Julia, como la mencionada función `+`, tienen muchos métodos que definen su comportamiento sobre varias combinaciones posibles de tipo de argumento.
+
+Cuando se define una función, uno puede opcionalmente restringir los tipos de parámetros a los que es aplicable, usando el operador de tipo `::`,
+
+```julia
+julia>  function f(x::Float64, y::Float64)
+            return 2x + y
+        end
+f (generic function with 1 method)
+```
+Esta definición es aplicable únicamente a las llamadas en las que, tanto `x` como `y` son valores de tipo `Float64`:
+
+```julia
+julia> f(2.0, 3.0)
+7.0
+```
+Aplicar la función a cualquier otro ***tipo de argumentos*** dará como resultado un `MethodError`:
+
+```julia
+julia> f(2.0, 3)
+ERROR: MethodError: no method matching f(::Float64, ::Int64)
+Closest candidates are:
+  f(::Float64, !Matched::Float64) at none:1
+
+julia> f(Float32(2.0), 3.0)
+ERROR: MethodError: no method matching f(::Float32, ::Float64)
+Closest candidates are:
+  f(!Matched::Float64, ::Float64) at none:1
+
+julia> f(2.0, "3.0")
+ERROR: MethodError: no method matching f(::Float64, ::String)
+Closest candidates are:
+  f(::Float64, !Matched::Float64) at none:1
+
+julia> f("2.0", "3.0")
+ERROR: MethodError: no method matching f(::String, ::String)
+```
+Los argumentos deben ser precisamente de tipo `Float64`. Otros tipos numéricos, como ***números enteros*** o valores de ***punto flotante de 32 bits***, no se convierten automáticamente a ***punto flotante de 64 bits***, ni los ***strings*** se analizan como números. Debido a que `Float64` es un ***tipo concreto*** y los ***tipos concretos*** no tienen subtipos en Julia, dicha definición solo se puede aplicar a argumentos que son exactamente del tipo `Float64`. Sin embargo, a menudo puede ser útil escribir métodos más generales con tipos abstractos:
+
+```julia
+julia>  function f(x::Number, y::Number)
+            return 2x - y
+        end
+f (generic function with 2 methods)
+
+julia> f(2.0, 3)
+1.0
+```
+
+Esta última ***definición de método*** se aplica a cualquier par de argumentos que sean instancias de `Number`. No es necesario que sean del mismo tipo, siempre que cada uno sea un ***valor numérico***. El problema de manejar tipos numéricos dispares se delega en las operaciones aritméticas de la expresión `2x - y`.
+
+Para definir una función con ***múltiples métodos***, simplemente **se define la función varias veces**, con diferentes **tipos y número de argumentos**. 
+
+La primera definición de método para una función crea el ***objeto función***, y las definiciones de método posteriores añaden nuevos métodos al ***objeto función*** existente. Así, se ejecutará la **definición de método más específica** que **coincida con el número y los tipos** de los argumentos  cuando se llame a la función. 
+
+De esta forma, las dos ***definiciones de método*** anteriores, tomadas conjuntamente, definen el comportamiento de `f` sobre todos los pares de instancias del ***tipo abstracto*** `Number`, pero con un comportamiento específico para los pares de valores `Float64`. Si uno de los argumentos es un `Float64`,pero el otro no lo es, entonces no se puede llamar al método `f(Float64,Float64)` y se debe utilizará el método más general `f(Number,Number)`:
+
+```julia
+julia> f(2, 3)                      # Se invoca el método f(Number,Number)
+1
+
+julia> f(2, 3.0)                    # Se invoca el método f(Number,Number)
+1.0
+
+julia> f(2.0, 3)                    # Se invoca el método f(Number,Number)
+1.0
+
+julia> f(2.0, 3.0)                  # Se invoca el método f(Float64,Float64)
+7.0
+```
+
+La definición que retorna `2x + y` sólo se utiliza en el último caso, mientras que la definición `2x - y` se utiliza en los demás. **Nunca se realiza ningún casting o conversión automática** de los argumentos de las funciones: todas las conversiones en Julia se deben declarar explicitamente y nunca son mágicas.
+
+Para valores no numéricos, y para un número menor de dos argumentos, la función `f` permanece indefinida, y aplicarla aún generará un `MethodError`:
+
+```julia
+julia> f("hola", 3)
+ERROR: MethodError: no method matching f(::String, ::Int64)
+Closest candidates are:
+  f(!Matched::Number, ::Number) at none:1
+
+julia> f()
+ERROR: MethodError: no method matching f()
+Closest candidates are:
+  f(!Matched::Float64, !Matched::Float64) at none:1
+  f(!Matched::Number, !Matched::Number) at none:1
+```
+
+Se puede ver qué métodos existen para una función ingresando el objeto de la función en una sesión interactiva en el REPL:
+
+```julia
+julia> f
+f (generic function with 2 methods)
+```
+
+Esta salida nos dice que `f` es un objeto función con dos métodos. Para averiguar cuáles son las especificaciones de cada método, se debe usar la función `methods`:
+
+```julia
+julia> methods(f)
+# 2 methods for generic function "f":
+[1] f(x::Float64, y::Float64) in Main at REPL[1]:1
+[2] f(x::Number, y::Number) in Main at REPL[2]:1
+```
+
+que muestra que `f` tiene dos métodos, el primero que toma dos argumentos de tipo `Float64` y otro que toma argumentos de tipo `Number`. También indica el archivo y el número de línea donde se definieron los métodos: como estos métodos se definieron en la REPL, obtenemos el número de línea aparente `REPL[1]:1`.
+
+En ausencia de una declaración de tipo con `::`, el ***tipo de un parámetro*** en el método será `Any` por defecto, lo que significa que no está restringido, ya que todos los ***valores*** en Julia son instancias del ***tipo abstracto*** `Any`. Por lo tanto, podemos definir un método general para `f` así:
+
+```julia
+julia>  function f(x, y)
+            println("Cualquier cosa")
+        end
+f (generic function with 3 methods)
+
+julia> f("foo", 1)
+Cualquier cosa
+```
+Este método general **es menos específico** que cualquier otra definición de método posible para un par de valores de parámetros especificos, por lo que sólo se invocará en pares de argumentos a los que no se aplique ninguna otra ***definición de método***.
+
+Aunque parece un concepto simple, el ***despacho múltiple*** sobre los ***tipos de valores*** es quizás la característica **más poderosa y central de Julia**. El ***despacho múltiple*** junto con el ***sistema de tipos paramétricos flexible*** le dan a Julia su capacidad para expresar de manera abstracta algoritmos de alto nivel desacoplados de los detalles de implementación, y generar código especializado eficiente para manejar cada caso en tiempo de ejecución.
+
+Las operaciones principales suelen tener docenas de métodos:
+
+```julia
+julia> methods(+)
+# 208 methods for generic function "+":
+[1] +(x::T, y::T) where T<:Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8} in Base at int.jl:87
+[2] +(c::Union{UInt16, UInt32, UInt64, UInt8}, x::BigInt) in Base.GMP at gmp.jl:529
+[3] +(c::Union{Int16, Int32, Int64, Int8}, x::BigInt) in Base.GMP at gmp.jl:535
+[4] +(c::Union{UInt16, UInt32, UInt64, UInt8}, x::BigFloat) in Base.MPFR at mpfr.jl:397
+[5] +(c::Union{Int16, Int32, Int64, Int8}, x::BigFloat) in Base.MPFR at mpfr.jl:405
+[6] +(c::Union{Float16, Float32, Float64}, x::BigFloat) in Base.MPFR at mpfr.jl:413
+...
+```
 ***
 
 ## Referencias
