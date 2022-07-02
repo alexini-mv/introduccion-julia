@@ -97,7 +97,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
       * [Despacho iterado](#despacho-iterado)
       * [Separar la lógica de conversión y la del núcleo](#separar-la-lógica-de-conversión-y-la-del-núcleo)
     * [Métodos de argumentos variables restringidos paramétricamente](#métodos-de-argumentos-variables-restringidos-paramétricamente)
-    * [Argumentos ppcionales y de palabra clave](#argumentos-opcionales-y-de-palabra-clave)
+    * [Argumentos opcionales y de palabra clave](#argumentos-opcionales-y-de-palabra-clave)
                              **↓ Pendiente ↓**
   * [Constructores](#)
   * [Álcance o Scope de la variables](#)
