@@ -90,7 +90,15 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Impresion bonita personalizada](#impresión-bonita-personalizada)
     * [Tipos *valores*](#tipos-valores)
   * [Métodos de funciones: Despacho multiple](#métodos-de-funciones-despacho-múltiple)
-    * [Definiendo métodos](#definiendo-métodos)                           **↓ Pendiente ↓**
+    * [Definiendo métodos](#definiendo-métodos)
+    * [Ambigüedades en métodos](#ambigüedades-en-métodos)
+    * [Métodos paramétricos](#métodos-paramétricos)
+    * [Patrones de diseño con métodos paramétricos](#patrones-de-diseño-con-métodos-paramétricos)
+      * [Despacho iterado](#despacho-iterado)
+      * [Separar la lógica de conversión y la del núcleo](#separar-la-lógica-de-conversión-y-la-del-núcleo)
+    * [Métodos de argumentos variables restringidos paramétricamente](#métodos-de-argumentos-variables-restringidos-paramétricamente)
+    * [Argumentos ppcionales y de palabra clave](#argumentos-opcionales-y-de-palabra-clave)
+                             **↓ Pendiente ↓**
   * [Constructores](#)
   * [Álcance o Scope de la variables](#)
   * [Módulos](#)
@@ -3497,6 +3505,255 @@ julia> methods(+)
 [6] +(c::Union{Float16, Float32, Float64}, x::BigFloat) in Base.MPFR at mpfr.jl:413
 ...
 ```
+
+### Ambigüedades en métodos
+
+Es posible definir un conjunto de ***métodos de una función*** de modo que no haya un único método más específico aplicable a algunas combinaciones de argumentos:
+
+```julia
+julia> g(x::Float64, y) = 2x + y                      # Sólo el primer argumento debe ser Float64
+g (generic function with 1 method)
+
+julia> g(x, y::Float64) = x + 2y                      # Sólo el segundo argumento debe ser Float64
+g (generic function with 2 methods)
+
+julia> g(2.0, 3)
+7.0
+
+julia> g(2, 3.0)
+8.0
+
+julia> g(2.0, 3.0)                                    # Si ambos son Float64, no existe método especifico
+ERROR: MethodError: g(::Float64, ::Float64) is ambiguous. Candidates:
+  g(x::Float64, y) in Main at REPL[1]:1
+  g(x, y::Float64) in Main at REPL[2]:1
+Possible fix, define
+  g(::Float64, ::Float64)
+```
+
+La invocación de `g(2.0, 3.0)` podría manejarse mediante el método `g(Float64, Any)` o `g(Any, Float64)`, y **ninguno es más específico que el otro**. En tales casos, Julia genera un `MethodError` en lugar de elegir un método arbitrariamente. Puede evitar ambigüedades de métodos especificando un método apropiado para el caso combinado:
+
+```julia
+julia> g(x::Float64, y::Float64) = 2x + 2y
+g (generic function with 3 methods)
+
+julia> g(2.0, 3.0)
+10.0
+```
+
+Es recomendable definir primero el *método desambiguador** ya que de lo contrario la ambigüedad existe, aunque sea de forma transitoria, hasta que se defina el método más específico.
+
+
+En casos más complejos, la resolución de las ambigüedades de los métodos implica un cierto elemento de diseño.
+
+### Métodos paramétricos
+
+Las definiciones de métodos pueden tener opcionalmente ***parámetros de tipo*** que dentro de los argumentos de la función, por ejemplo:
+
+```julia
+julia>  mismo_tipo(x::T, y::T) where T = true
+mismo_tipo (generic function with 1 method)
+
+julia>  mismo_tipo(x, y) = false
+mismo_tipo (generic function with 2 methods)
+```
+
+El primer método se aplica siempre que ambos argumentos sean del mismo ***tipo concreto***, independientemente del ***tipo*** que sea, mientras que el segundo método actúa como un método general, cubriendo todos los demás casos. Así, en conjunto, se define una función booleana que comprueba si sus dos argumentos son del mismo tipo:
+
+```julia
+julia> mismo_tipo(1, 2)
+true
+
+julia> mismo_tipo(1.0, 2.0)
+true
+
+julia> mismo_tipo(1, 2.0)
+false
+
+julia> mismo_tipo("Hola", "adios")
+true
+```
+
+Este estilo de definición del comportamiento de la función por despacho es bastante común en Julia. Los ***parámetros de tipo de método*** no están restringidos a ser usados sólo como ***tipos de argumentos***, pueden ser usados en cualquier lugar donde un valor estaría dentro de los argumentos o en el cuerpo de la función. Por ejemplo, el ***parámetro de tipo de método*** `T` se utiliza como el ***parámetro de tipo*** para ***tipo paramétrico*** `Vector{T}` en los argumentos del método:
+
+```julia
+julia> adjuntar(v::Vector{T}, y::T) where T = [v..., y]
+adjuntar (generic function with 1 method)
+
+julia> adjuntar([1, 2, 3], 4)
+4-element Vector{Int64}:
+ 1
+ 2
+ 3
+ 4
+
+julia> adjuntar([1, 2, 3], 4.0)
+ERROR: MethodError: no method matching adjuntar(::Vector{Int64}, ::Float64)
+Closest candidates are:
+  adjuntar(::Vector{T}, ::T) where T at REPL[12]:1
+
+julia> adjuntar([1.0, 2.0, 3.0], 4.0)
+4-element Vector{Float64}:
+ 1.0
+ 2.0
+ 3.0
+ 4.0
+```
+Como se observa, el ***tipo*** del elemento a adjuntar debe coincidir con el ***tipo*** de los elementos del vector al que se adjunta, de lo contrario, se generará un `MethodError`. En el siguiente ejemplo, el ***parámetro de tipo de método*** `T` se utiliza como valor de retorno:
+
+```julia
+julia> tipo_de_dato(x::T) where T = "El valor $x es de tipo $T"
+tipo_de_dato (generic function with 1 method)
+
+julia> tipo_de_dato(1)
+"El valor 1 es de tipo Int64"
+
+julia> tipo_de_dato(1.0)
+"El valor 1.0 es de tipo Float64"
+
+julia> tipo_de_dato(true)
+"El valor true es de tipo Bool"
+
+julia> tipo_de_dato("HOLA")
+"El valor HOLA es de tipo String"
+```
+Se puede poner restricciones de ***subtipo*** a los ***parámetros de tipo en los métodos***:
+
+```julia
+julia> mismo_tipo_numerico(x::T, y::T) where T<:Number = true
+mismo_tipo_numerico (generic function with 1 method)
+
+julia> mismo_tipo_numerico(x::Number, y::Number) = false
+mismo_tipo_numerico (generic function with 2 methods)
+
+julia> mismo_tipo_numerico(1, 2)
+true
+
+julia> mismo_tipo_numerico(1, 2.0)
+false
+
+julia> mismo_tipo_numerico("hola", 2.5)
+ERROR: MethodError: no method matching mismo_tipo_numerico(::String, ::Float64)
+Closest candidates are:
+  mismo_tipo_numerico(::T, ::T) where T<:Number at REPL[27]:1
+  mismo_tipo_numerico(::Number, ::Number) at REPL[28]:1
+```
+
+La función `mismo_tipo_numerico` se comporta de forma muy parecida a la función `mismo_tipo` definida anteriormente, pero sólo está definida para valores numéricos.
+
+Los ***métodos paramétricos*** permiten la misma sintaxis que las expresiones `where` utilizadas para escribir tipos. Si sólo hay un `parámetro de tipo`, las llaves que lo encierran (`where {T}`) se pueden omitir, pero a menudo se prefieren para mayor claridad. Para parámetros múltiples pueden separarse con comas dentro de llaves, por ejemplo, `where {T, S<:Real}`, o escribirse utilizando `where` **anidados**, por ejemplo, `where S<:Real where T`.
+
+### Patrones de diseño con métodos paramétricos
+
+Aunque la lógica de despacho complejo no es necesaria para el rendimiento o la usabilidad, a veces puede ser la mejor manera de expresar algún algoritmo. Aquí se muestran algunos patrones de diseño comunes que surgieren.
+
+### Despacho iterado
+
+Para despachar una *lista de argumentos paramétricos* de varios niveles, a menudo es mejor **separar cada nivel de despacho en funciones distintas**. 
+
+Por ejemplo, intentar despachar sobre el *tipo de elemento* de un arreglo a menudo se encontraran situaciones ambiguas. En su lugar, el código comúnmente despachará primero en el ***tipo del contenedor***, y luego recurrirá a un método más específico. En la mayoría de los casos, los algoritmos se prestan convenientemente a este enfoque jerárquico, mientras que en otros casos, este rigor debe resolverse manualmente. Esta bifurcación de despacho puede observarse, por ejemplo, en la lógica para sumar dos matrices:
+
+```julia
+# El primer despacho selecciona el método con el map para sumar elemento a elemento.
+julia>  +(a::Matrix, b::Matrix) = map(+, a, b)
+
+# Entonces el despacho maneja cada par de elementos y selecciona el apropiado 
+# promoviendo a un tipo común entre los elementos para el cálculo.
+julia>  +(a, b) = +(promote(a, b)...)
+
+# Una vez que los elementos tienen el mismo tipo, se pueden sumar.
+# Por ejemplo, mediante operaciones primitivas expuestas por el procesador.
+julia>  +(a::Float64, b::Float64) = Core.add(a, b)
+```
+
+### Separar la lógica de conversión y la del núcleo
+
+Una forma de reducir significativamente los tiempos de compilación y la complejidad de las pruebas es aislar la lógica de conversión (promoción) al tipo deseado y el cálculo en si mismo. Esto permite al compilador especializar y alinear la lógica de conversión independientemente del resto del cuerpo del función más grande.
+
+Es un patrón común que se ve cuando se convierte de una ***clase de tipos*** más grande a un ***tipo de argumento específico*** que es realmente soportado por el algoritmo:
+
+```julia
+función_compleja(arg::Int) = # Código de la función especializada para enteros
+función_compleja(arg::Any) = complexfunction(convert(Int, arg))
+
+matmul(a::T, b::T) = # Código de la función más especializada
+matmul(a, b) = matmul(promote(a, b)...)
+```
+
+### Métodos de argumentos variables restringidos paramétricamente
+
+Los ***parámetros de una función*** también se pueden usar para restringir el ***número de argumentos*** que se pueden proporcionar a una función (`varargs`). La notación `Vararg{T,N}` se usa para indicar tal restricción. Por ejemplo:
+
+```julia
+julia>  function mifuncion(a, b, x::Vararg{Any,2}) 
+            return [a, b, x]
+        end
+mifuncion (generic function with 1 method)
+
+julia> mifuncion(1, 2, 3)
+ERROR: MethodError: no method matching mifuncion(::Int64, ::Int64, ::Int64)
+Closest candidates are:
+  mifuncion(::Any, ::Any, ::Any, ::Any) at REPL[24]:1
+
+julia> mifuncion(1, 2, 3, 4)
+3-element Vector{Any}:
+ 1
+ 2
+  (3, 4)
+
+julia> mifuncion(1, 2, 3, 4, 5)
+ERROR: MethodError: no method matching mifuncion(::Int64, ::Int64, ::Int64, ::Int64, ::Int64)
+Closest candidates are:
+  mifuncion(::Any, ::Any, ::Any, ::Any) at REPL[24]:1
+```
+
+Es más útil restringir el número en los métodos `varargs` por un parámetro. Por ejemplo:
+
+```julia
+function getindex(A::AbstractArray{T,N}, indices::Vararg{Number,N}) where {T,N}
+```
+se llamará sólo cuando el número de índices coincida exactamente con la dimensionalidad del arreglo.
+
+Cuando sólo sea necesario restringir el ***tipo de los argumentos variables suministrados***, `Vararg{T}` puede escribirse de forma equivalente como `T...`. Por ejemplo, `f(x::Int...)` es una abreviatura de `f(x::Vararg{Int})`.
+
+### Argumentos opcionales y de palabra clave
+
+Como se mencionó brevemente en la sección de [Funciones](#argumentos-opcionales), los argumentos opcionales se implementan como una sintaxis abreviada para las definiciones de ***métodos múltiples***. Por ejemplo, la siguiente definición:
+
+```julia
+julia>  function f(a=1, b=2) 
+            return a + 2b
+        end
+```
+sintetiza la definiciones de los siguientes tres métodos:
+
+```julia
+julia>  function f(a, b)
+            return a + 2b
+        end
+
+julia>  function f(a)
+            return f(a, 2)
+        end
+      
+julia>  function f()
+            return f(1,2)
+        end
+```
+
+Esto significa que llamar a `f()` es equivalente a llamar a `f(1,2)`. En este caso el resultado es 5, porque `f(1,2)` invoca el primer método de `f`. Sin embargo, esto no es siempre necesario. Si se define un cuarto método **más especializado** para los enteros:
+
+```julia
+julia>  function f(a::Int, b::Int)
+            return a - 2b
+        end
+```
+
+entonces el resultado tanto de `f()` como de `f(1,2)` es -3. En otras palabras, **los argumentos opcionales están ligados a una función, no a un método específico** de esa función. Depende del ***tipo de los argumentos opcionales*** para elegir e invocar el método. Cuando los ***argumentos opcionales*** se definen en términos de una variable global, el ***tipo del argumento opcional*** puede incluso cambiar en tiempo de ejecución.
+
+Por otra parte, los ***argumentos de palabras clave*** se comportan de forma bastante diferente a los ***argumentos posicionales ordinarios***. En particular, **no participan** en el ***despacho de método***. Los **métodos se despachan sólo tomando en cuenta a los argumentos posicionales**, y los ***argumentos de palabra clave*** se procesan después de identificar el método apropiado.
+
+
 ***
 
 ## Referencias
