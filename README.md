@@ -98,8 +98,14 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
       * [Separar la lógica de conversión y la del núcleo](#separar-la-lógica-de-conversión-y-la-del-núcleo)
     * [Métodos de argumentos variables restringidos paramétricamente](#métodos-de-argumentos-variables-restringidos-paramétricamente)
     * [Argumentos opcionales y de palabra clave](#argumentos-opcionales-y-de-palabra-clave)
-                             **↓ Pendiente ↓**
-  * [Constructores](#)
+    * [Objetos similares a funciones](#objetos-similares-a-funciones)
+    * [Diseño de métodos y prevención de ambigüedades](#diseño-de-métodos-y-prevención-de-ambigüedades)
+      * [Argumentos Tuple y NTuple](#argumentos-tuple-y-ntuple) 
+      * [Ortogonalización del diseño](#ortogonalización-del-diseño) 
+      * [Despachar sobre un argumento a la vez](#despachar-sobre-un-argumento-a-la-vez)
+      * [Contenedores abstractos y tipos de elementos](#contenedores-abstractos-y-tipos-de-elementos)
+      * [Métodos en cascada con argumentos por defecto](#métodos-en-cascada-con-argumentos-por-defecto) 
+  * [Constructores](#)  **↓ Pendiente ↓**
   * [Álcance o Scope de la variables](#)
   * [Módulos](#)
   * [Documentación](#)
@@ -3647,7 +3653,7 @@ Los ***métodos paramétricos*** permiten la misma sintaxis que las expresiones 
 
 Aunque la lógica de despacho complejo no es necesaria para el rendimiento o la usabilidad, a veces puede ser la mejor manera de expresar algún algoritmo. Aquí se muestran algunos patrones de diseño comunes que surgieren.
 
-### Despacho iterado
+#### Despacho iterado
 
 Para despachar una *lista de argumentos paramétricos* de varios niveles, a menudo es mejor **separar cada nivel de despacho en funciones distintas**. 
 
@@ -3666,7 +3672,7 @@ julia>  +(a, b) = +(promote(a, b)...)
 julia>  +(a::Float64, b::Float64) = Core.add(a, b)
 ```
 
-### Separar la lógica de conversión y la del núcleo
+#### Separar la lógica de conversión y la del núcleo
 
 Una forma de reducir significativamente los tiempos de compilación y la complejidad de las pruebas es aislar la lógica de conversión (promoción) al tipo deseado y el cálculo en si mismo. Esto permite al compilador especializar y alinear la lógica de conversión independientemente del resto del cuerpo del función más grande.
 
@@ -3753,6 +3759,191 @@ entonces el resultado tanto de `f()` como de `f(1,2)` es -3. En otras palabras, 
 
 Por otra parte, los ***argumentos de palabras clave*** se comportan de forma bastante diferente a los ***argumentos posicionales ordinarios***. En particular, **no participan** en el ***despacho de método***. Los **métodos se despachan sólo tomando en cuenta a los argumentos posicionales**, y los ***argumentos de palabra clave*** se procesan después de identificar el método apropiado.
 
+### Objetos similares a funciones
+
+Los ***métodos*** están asociados a los ***tipos***, por lo que es posible hacer que ***cualquier objeto*** arbitrario de Julia sea *llamable* o *invocable* añadiendo métodos a su ***tipo***. Estos objetos *invocables* se llaman a veces ***funtores***.
+
+Por ejemplo, se puede **definir un tipo** que almacene los coeficientes de un polinomio, pero que se comporte como una función que evalúa el polinomio:
+
+```julia
+julia>  struct Polinomio{T}
+            coeficientes::Vector{T}
+        end
+
+julia> function (p::Polinomio)(x)                     # Definición con el bloque function
+           return x * sum(p.coeficientes)
+       end
+
+julia> (p::Polinomio)() = p(10)                       # Definición por asignación
+```
+
+Observe que la *función* se especifica por ***tipo*** en lugar de por nombre. Al igual que con las funciones normales, es una forma de sintaxis concisa. En el cuerpo de la función, `p` se referirá al objeto que será llamado. Un `Polinomio` se puede utilizar de la siguiente manera:
+
+```julia
+julia> p = Polinomio([1, 2, 3, 4])
+Polinomio{Int64}([1, 2, 3, 4])
+
+julia> p(3)
+30
+
+julia> p(5)
+50
+
+julia> p()
+100
+```
+Este mecanismo también es la parte esencial de cómo funcionan en Julia los ***constructores de tipos*** y los ***closures*** (funciones internas que se referencian a su ***scope*** circundante).
+
+### Funciones genéricas vacías
+
+En ocasiones es útil presentar una *función genérica* sin añadir todavía ***métodos***. Esto puede utilizarse para separar las definiciones de las ***interfaces*** de las implementaciones. También puede hacerse por motivos de documentación o legibilidad del código. La sintaxis para esto es un bloque `function` vacío sin tupla de argumentos:
+
+```julia
+julia>  function funcion_vacia end
+```
+
+### Diseño de métodos y prevención de ambigüedades
+El ***polimorfismo de los métodos*** de Julia es una de sus características más potentes, sin embargo, aprovechar este poder puede plantear retos de diseño. En particular, en las ***jerarquías de métodos*** más complejas es probabible que surjan ambigüedades.
+
+Por ejemplo, la primera ambigüedad que puede aparecer es:
+
+```julia
+julia>  f(x, y::Int) = 1
+
+julia>  f(x::Int, y) = 2
+
+# Lo anterior es fuente de posibles ambigüedad que puede ser corregido con el siguiente método:
+julia>  f(x::Int, y::Int) = 3
+```
+La estrategía anterior es a menudo la correcta; sin embargo, hay circunstancias en las que seguir este consejo sin meditarlo es contraproducente. En particular, cuantos más métodos tiene una función genérica, más posibilidades hay de ambigüedades. Cuando las ***jerarquías de métodos*** se vuelven más complicadas vale la pena pensar detenidamente otras alternativas.
+
+Las siguientes son algunas formas alternativas de resolver tales problemas.
+
+#### Argumentos Tuple y NTuple
+
+Los ***argumentos Tuple*** y ***NTuple*** presentan desafíos especiales. Por ejemplo:
+
+```julia
+julia>  f(x::NTuple{N,Int}) where {N} = 1
+
+julia>  f(x::NTuple{N,Float64}) where {N} = 2
+```
+
+son ambiguas debido a la posibilidad de que `N == 0`: la tupla no tiene elementos para determinar si se debe llamar a la variante para el tipo `Int` o el tipo `Float64`. Para resolver la ambigüedad, una estrategía es definir un método para la tupla vacía:
+
+```julia
+julia>  f(x::Tuple{}) = 3
+```
+
+Otra posibilidad, para todos los métodos menos uno se puede insistir en que haya al menos un elemento en la tupla:
+
+```julia
+julia>  f(x::NTuple{N,Int}) where {N} = 1             # El método por default
+
+julia>  f(x::Tuple{Float64, Vararg{Float64}}) = 2     # En este método requiere al menos un Float64.
+```
+
+#### Ortogonalización del diseño
+
+Cuando se necesite despachar sobre dos o más argumentos, considera si una función *envolvente* podría hacer un diseño más simple. Por ejemplo, en lugar de escribir múltiples variantes:
+
+```julia
+julia>  f(x::A, y::A) =   # código
+julia>  f(x::A, y::B) =   # código
+julia>  f(x::B, y::A) =   # código
+julia>  f(x::B, y::B) =   # código
+```
+es preferible considerar mejor una sola función tipo:
+
+```julia
+julia>  f(x::A, y::A) =   # código
+
+julia>  f(x, y) = f(g(x), g(y))
+```
+donde `g` **convierte** los argumentos `x` e `y` al tipo `A`. Este es un ejemplo muy específico del principio más general llamado [Diseño Ortogonal](https://en.wikipedia.org/wiki/Orthogonality_(programming)), en el que se asignan conceptos separados a métodos separados. Una estrategia relacionada aprovecha la **promoción** para llevar `x` e `y` a un tipo común:
+
+```julia
+julia>  f(x::T, y::T) where {T} =   # código
+
+julia>  f(x, y) = f(promote(x, y)...)
+```
+Uno de los riesgos de este diseño es la posibilidad de que si no hay un ***método de promoción*** adecuado que convierta `x` e `y` en el mismo ***tipo***, el segundo método recurrirá a sí mismo infinitamente y provocará un desbordamiento de la pila (*stack overflow*).
+
+#### Despachar sobre un argumento a la vez
+
+Si se necesita despachar sobre múltiples argumentos y hay demasiadas alternativas con combinaciones para que sea práctico definir todas las variantes posibles, entonces es conveniente introducir una ***cascada de nombres*** donde se despacha sobre el *primer argumento* y se llamas a un ***método interno***:
+
+```julia
+julia>  f(x::A, y) = _fA(x, y)
+julia>  f(x::B, y) = _fB(x, y)
+```
+Entonces los métodos internos `_fA` y `_fB` pueden despachar sobre `y` sin preocuparse de las ambigüedades entre ellos con respecto a `x`.
+
+Esta estrategia tiene al menos una desventaja importante: en muchos casos, no es posible que los usuarios personalicen más el comportamiento de `f` definiendo más especializaciones de la función exportada `f`. En su lugar, tienen que definir especializaciones para sus métodos internos `_fA` y `_fB`, y esto difumina las líneas entre los métodos exportados y los internos.
+
+#### Contenedores abstractos y tipos de elementos
+
+En la medida de lo posible, se debe evitar definir métodos que despachen sobre tipos de elementos específicos de contenedores abstractos. Por ejemplo:
+
+```julia
+julia>  -(A::AbstractArray{T}, b::Date) where {T<:Date}
+```
+genera ambigüedades para cualquiera que defina un método
+
+```julia
+julia>  -(A::MyArrayType{T}, b::T) where {T}
+```
+El mejor enfoque es evitar definir cualquiera de estos métodos: en su lugar, es mejor confiar en un método genérico `-(A::AbstractArray, b)` y asegúrarse de que ese método se implemente con llamadas genéricas (parecido a `similar`) que hace lo correcto para cada ***tipo de contenedor*** y ***tipo de elemento*** por separado. Esto es sólo una variante más compleja del consejo de ***ortogonalizar los métodos***.
+
+Cuando dicho enfoque no es posible de implementar, vale la pena iniciar una discusión con otros desarrolladores sobre la resolución de la ambigüedad; sólo porque un método fue definido primero no significa necesariamente que no pueda ser modificado o eliminado. Como último recurso, un desarrollador puede definir un método para "salir del paso":
+
+```julia
+julia>  -(A::MyArrayType{T}, b::Date) where {T<:Date} =   # código
+```
+que resuelve la ambigüedad por fuerza bruta.
+
+#### Métodos en cascada con argumentos por defecto
+
+Si se está definiendo un método ***en cascada*** que suministra argumentos por defecto, se debe tener cuidado de eliminar cualquier argumento que se corresponda con los posibles valores por defecto. Por ejemplo, se está escribiendo un *algoritmo de filtrado digital* y se tiene un método que maneja los bordes de la señal aplicando relleno (*padding*):
+
+```julia
+julia>  function mifiltro(A, kernel, ::Replica)
+            rellenado = replica_bordes(A, size(kernel))
+            return mifiltro(rellenado, kernel)            # ahora realiza el cálculo "real"
+        end
+```
+
+Esto entrará en conflicto con un método que suministra relleno por defecto:
+
+```julia
+julia>  function mifiltro(A, kernel)
+            return mifiltro(A, kernel, Replica())         # replicar el borde por defecto
+        end
+```
+Juntos, estos dos métodos generan una recursión infinita con `A` creciendo constantemente.
+
+El mejor diseño sería definir su ***jerarquía de llamadas*** así:
+
+```julia
+julia>  struct NoRelleno end            # Indicará que no se desea ningún relleno o que ya se ha aplicado.
+
+julia>  function mifiltro(A, kernel)
+            return mifiltro(A, kernel, Replicate())       # Condiciones de borde por defecto
+        end
+
+julia>  function mifiltro(A, kernel, ::Replicate)
+            rellenado = replica_bordes(A, size(kernel))
+            return mifiltro(rellenado, kernel, NoRelleno()) # Indica las nuevas condiciones de contorno
+        end
+
+# Otros métodos de relleno van aquí
+
+julia>  function mifiltro(A, kernel, ::NoRelleno)
+            # Esta es la implementación "real" del cálculo del kernel
+        end
+```
+
+`NoRelleno` se suministra en la misma posición de argumento que cualquier otro tipo de relleno, por lo que mantiene la jerarquía de despacho bien organizada y con menor probabilidad de ambigüedades. Además, extiende la interfaz "pública" de `mifiltro`: un usuario que quiera controlar el relleno explícitamente puede llamar directamente a la variante de `NoRelleno`.
 
 ***
 
