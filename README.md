@@ -105,8 +105,10 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
       * [Despachar sobre un argumento a la vez](#despachar-sobre-un-argumento-a-la-vez)
       * [Contenedores abstractos y tipos de elementos](#contenedores-abstractos-y-tipos-de-elementos)
       * [Métodos en cascada con argumentos por defecto](#métodos-en-cascada-con-argumentos-por-defecto) 
-  * [Constructores](#)  **↓ Pendiente ↓**
-  * [Álcance o Scope de la variables](#)
+  * [Constructores](#constructores)
+    * [Métodos constructores externos](#métodos-constructores-externos)
+    * [Métodos constructores internos](#métodos-constructores-internos)
+    * [Inicialización incompleta](#inicialización-incompleta)  **↓ Pendiente ↓**
   * [Módulos](#)
   * [Documentación](#)
 * [Referencias](#referencias)
@@ -3945,6 +3947,183 @@ julia>  function mifiltro(A, kernel, ::NoRelleno)
 
 `NoRelleno` se suministra en la misma posición de argumento que cualquier otro tipo de relleno, por lo que mantiene la jerarquía de despacho bien organizada y con menor probabilidad de ambigüedades. Además, extiende la interfaz "pública" de `mifiltro`: un usuario que quiera controlar el relleno explícitamente puede llamar directamente a la variante de `NoRelleno`.
 
+## Constructores
+
+Los ***constructores*** son funciones que crean objetos nuevos. Específicamente, ***instancias*** de ***tipos compuestos***. En Julia, los objetos ***Tipo*** también sirven como ***funciones constructoras***: crean nuevas instancias de sí mismos cuando se aplican a una tupla de argumentos como lo hace una función. Por ejemplo:
+
+```julia
+julia>  struct Persona
+            nombre
+            apodo
+        end
+
+julia>  obj = Persona("Juan", "Juancho")                   # Instancia de un tipo compuesto
+Persona("Juan", "Juancho")
+
+julia>  obj.nombre
+"Juan"
+
+julia>  foo.apodo
+"Juancho"
+```
+Para muchos tipos, formar nuevos objetos uniendo los valores de sus campos es todo lo que se necesita para crear instancias. Sin embargo, en algunos casos se requiere más funcionalidad al crear objetos compuestos. 
+
+A veces hay que aplicar invariantes, ya sea haciendo validaciones a los argumentos o transformándolos. Las estructuras de datos recursivas, especialmente las que pueden ser autorreferenciales, a menudo no pueden construirse limpiamente sin ser creadas primero en un estado incompleto y luego alteradas mediante programación para ser completadas, como un paso separado de la creación del objeto. 
+
+A veces, es simplemente conveniente ser capaz de construir objetos con menos o diferentes tipos de parámetros de los que tienen los campos. El sistema de Julia para la construcción de objetos aborda todos estos casos y más.
+
+### Métodos Constructores Externos
+
+Un ***constructor*** es como cualquier otra función en Julia en el sentido de que su comportamiento general está definido por el conjunto combinado de sus métodos. En consecuencia, **se puede añadir funcionalidad a un constructor simplemente definiendo nuevos métodos**. Por ejemplo, si se quiere añadir un ***método constructor*** para los objetos `Persona` que tome sólo un argumento y utilice el valor dado para ambos campos `nombre` y `edad`. Es decir:
+
+```julia
+julia>  Persona(x) = Persona(x, x)
+Persona
+
+julia> per1 = Persona("Alejandro")
+Persona("Alejandro", "Alejandro")
+```
+También puede agregar un ***método constructor*** `Persona` de cero argumentos, que proporcione valores predeterminados para los campos `nombre` y `apodo`:
+
+```julia
+julia> Persona() = Persona("Fulanito")
+Persona
+
+julia> per2 = Persona()
+Persona("Fulanito", "Fulanito")
+```
+Aquí el ***método constructor*** de cero argumentos llama al ***método constructor*** de un solo argumento, que a su vez llama al ***método constructor*** de dos argumentos proporcionado automáticamente. Los ***métodos constructores*** adicionales **declarados como métodos normales** como éste se llaman **métodos constructores externos**. Los ***métodos constructores externos*** sólo pueden crear una nueva instancia llamando a otro ***método constructor***, como el proporcionado automáticamente por defecto.
+
+### Métodos Constructores Internos
+
+Mientras que los ***métodos constructores externos*** consiguen resolver el problema de proporcionar ***métodos*** adicionales convenientes para construir objetos, no consiguen resolver los otros dos casos de uso mencionados al principio de esta sección: **aplicar invariantes** y permitir la **construcción de objetos autorreferenciales**. Para estos problemas, se necesita **métodos constructores internos**. Un ***método constructor interno*** es similar a un ***método constructor externo***, excepto por dos hechos:
+
+* Se declara dentro del bloque de la definción del ***tipo***, en lugar de fuera de él.
+* Tiene acceso a una función especial existente localmente llamada `new` que crea objetos del ***tipo*** que se está definiendo.
+
+Por ejemplo, si queremos declarar un ***tipo*** que contenga un par de números reales, sujeto a la restricción de que el primer número no sea mayor que el segundo, se podría declarar de la siguiente forma:
+
+```julia
+julia>  struct ParNumeros
+            x::Real
+            y::Real
+            ParNumeros(x, y) = x > y ? error("los números no están ordenados") : new(x, y)
+        end
+```
+Ahora los objetos `ParNumeros` se pueden construir sólo cuando `x` sea menor o igual que `y`:
+
+```julia
+julia>  ParNumeros(1, 2)
+ParNumeros(1, 2)
+
+julia>  ParNumeros(5, 2)
+ERROR: los números no están ordenados
+...
+```
+
+Si el tipo se declarara como ***mutable***, se podría cambiar directamente los valores de los campos para violar la invariante. Por supuesto, *toquetear* el interior de un objeto innecesariamente es una mala práctica. Se puede definir ***métodos constructores externos*** adicionales en cualquier momento, pero una vez que se declara un ***tipo***, no hay manera de añadir más ***métodos constructores internos***. 
+
+Dado que los ***métodos constructores externos*** sólo pueden crear objetos llamando a otros ***métodos constructores***, en última instancia, algún ***constructor interno*** debe ser llamado para crear un objeto. Esto garantiza que todos los objetos de ***tipo*** declarado deben instanciarse mediante una llamada a uno de los ***métodos constructores internos*** proporcionados con el ***tipo***, dando así cierto grado de cumplimiento de las ***invariantes de tipo***.
+
+Si se define algún ***método constructor interno***, no se proporcionará ningún método constructor por defecto, ya que se supone han proporcionado todos los constructores internos que se necesitan. El ***constructor por defecto*** es equivalente a escribir su propio ***método constructor interno*** que toma todos los ***campos del objeto*** como parámetros, sólo restringiendolos para ser del ***tipo*** correcto (si es que al ***campo*** correspondiente se le declaró un ***tipo***) y los pasa a `new`, devolviendo el objeto resultante:
+
+```julia
+julia>  struct Objeto
+            campo1
+            campo2
+            Objeto(campo1, campo2) = new(campo1, campo2)
+        end
+```
+
+Esta declaración tiene el mismo efecto que la definición anterior del ***tipo*** `Persona` sin un ***método constructor interno explícito***. Otro ejemplo, los siguientes dos ***tipos*** son equivalentes, uno con un ***constructor por defecto*** y el otro con un ***constructor explícito***:
+
+```julia
+julia>  struct Objeto1
+            x::Int64
+        end
+
+julia>  struct Objeto2
+            x::Int64
+            Objeto2(x) = new(x)
+        end
+```
+Es una buena práctica incluir el menor número posible de ***métodos constructores internos***, procurando sólo declarar aquellos que tomen todos los argumentos explícitamente y que apliquen la c*omprobación de errores* y *transformaciones esenciales*. Los ***métodos constructores*** adicionales, que proporcionan valores por defecto o transformaciones auxiliares, deberían proporcionarse como ***constructores externos*** que invoquen a los ***constructores internos*** para hacer el trabajo pesado. Esta separación suele ser bastante natural.
+
+### Inicialización incompleta
+
+El último problema que se abordará es la ***construcción de objetos autorreferenciales***, o más generalmente, de ***estructuras de datos recursivas***. La dificultad fundamental puede no ser obvia, se verá con un ejemplo. Consideremos la siguiente ***declaración recursiva de tipo***:
+
+```julia
+julia>  mutable struct AutoReferencia
+            objeto::AutoReferencia
+        end
+```
+Este ***tipo*** puede parecer bastante inofensivo, hasta que se considera cómo construir una instancia del mismo. Si `a` es una instancia de `AutoReferencia`, entonces se puede crear una segunda instancia mediante la llamada:
+
+```julia
+julia>  b = AutoReferencia(a)
+```
+Pero, ¿cómo se construye la primera instancia cuando no existe ninguna instancia que proporcione un valor válido para su campo `objeto`? La única solución es permitir la creación de una ***instancia incompletamente inicializada*** de `AutoReferencia` con un campo `objeto` sin asignar, y usar esa instancia incompleta como valor válido para el campo `objeto` de la segunda instancia, como por ejemplo, ella misma.
+
+Para permitir la creación de ***objetos incompletamente inicializados***, Julia permite llamar a la función `new` con menos del número de ***campos*** que tiene el ***tipo***, devolviendo un objeto con los campos no especificados sin inicializar. El ***método constructor interno*** puede entonces utilizar el objeto incompleto, terminando su inicialización antes de devolverlo. Aquí, por ejemplo, hay otro intento de definir el tipo `AutoReferencia`, esta vez usando un ***constructor interno*** de cero argumentos que devuelve instancias que tienen campos `objeto` apuntando a ellos mismos:
+
+```julia
+julia>  mutable struct AutoReferencia
+            objeto::AutoReferencia
+
+            function AutoReferencia()
+                x = new()
+                x.objeto = x
+            end
+        end
+```
+Podemos comprobar que este constructor funciona y construye objetos que son, de hecho, autorreferenciales:
+
+```julia
+julia> x = AutoReferencia()
+AutoReferencia(AutoReferencia(#= circular reference @-1 =#))
+
+julia> x === x
+true
+
+julia> x === x.objeto
+true
+```
+Aunque generalmente es una buena idea devolver un objeto completamente inicializado desde un constructor interno, es posible devolver objetos inicializados de forma incompleta:
+
+```julia
+julia>  mutable struct Incompleto
+            datos
+            Incompleto() = new()
+        end
+
+julia>  z = Incompleto();
+Incompleto(#undef)
+
+julia> z.datos
+ERROR: UndefRefError: access to undefined reference
+```
+
+Esto evita la necesidad de comprobar continuamente los valores `null`. Sin embargo, no todos los ***campos*** de los objetos son referenciales. Julia considera algunos ***tipos*** como *datos simples*, es decir, todos sus datos son autocontenidos y no hacen referencia a otros objetos. Los ***tipos de datos simples*** contienen ***tipos primitivos*** (por ejemplo, `Int`) y ***structs inmutables*** de otros ***tipos de datos simples***. El contenido inicial de un ***tipo de datos simple*** es indefinido:
+
+```julia
+julia>  struct TieneDatoSimple
+            n::Int
+            TieneDatoSimple() = new()
+        end
+
+julia> TieneDatoSimple()
+TieneDatoSimple(139633938687056)
+```
+Puede pasar objetos incompletos a otras funciones desde constructores internos para delegar su finalización:
+
+```julia
+julia>  mutable struct ObjetoPerezoso
+            datos
+            ObjetoPerezoso(v) = completar(new(), v)
+        end
+```
+Al igual que con los objetos incompletos devueltos por los constructores, si `completar` o cualquiera de sus llamados intenta acceder al campo de datos de `ObjetoPerezoso` antes de que se haya inicializado, se generará un error de inmediato.
 ***
 
 ## Referencias
