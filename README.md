@@ -108,8 +108,9 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
   * [Constructores](#constructores)
     * [Métodos constructores externos](#métodos-constructores-externos)
     * [Métodos constructores internos](#métodos-constructores-internos)
-    * [Inicialización incompleta](#inicialización-incompleta)  **↓ Pendiente ↓**
-  * [Módulos](#)
+    * [Inicialización incompleta](#inicialización-incompleta)
+    * [Constructores paramétricos](#constructores-paramétricos)  
+  * [Módulos](#módulos) **↓ Pendiente ↓**
   * [Documentación](#)
 * [Referencias](#referencias)
 
@@ -4124,6 +4125,100 @@ julia>  mutable struct ObjetoPerezoso
         end
 ```
 Al igual que con los objetos incompletos devueltos por los constructores, si `completar` o cualquiera de sus llamados intenta acceder al campo de datos de `ObjetoPerezoso` antes de que se haya inicializado, se generará un error de inmediato.
+
+### Constructores paramétricos
+
+Los ***tipos paramétricos*** añaden algunas particularidades a los constructores. Las instancias de ***tipos compuestos paramétricos*** pueden construirse pasando los ***parámetros de tipo*** explícitamente o con ***parámetros de tipo*** implícitos siendo deducidos por los ***tipos de los argumentos*** dados al constructor. Por ejemplo:
+
+```julia
+julia>  struct Punto{T<:Real}
+            x::T
+            y::T
+        end
+
+julia>  Punto(1, 2)                 # Tipo T implicito
+Punto{Int64}(1, 2)
+
+julia>  Punto(1.0, 2.5)             # Tipo T implicito
+Punto{Float64}(1.0, 2.5)
+
+julia>  Punto(1, 2.5)               # Tipo T implicito
+ERROR: MethodError: no method matching Punto(::Int64, ::Float64)
+Closest candidates are:
+  Punto(::T, ::T) where T<:Real at none:2
+
+julia>  Punto{Int64}(1, 2)          # Tipo T explicito
+Point{Int64}(1, 2)
+
+julia>  Punto{Int64}(1.0, 2.5)      # Tipo T explicito
+ERROR: InexactError: Int64(2.5)
+
+julia> Punto{Float64}(1.0, 2.5)     # Tipo T explicito
+Point{Float64}(1.0, 2.5)
+
+julia> Punto{Float64}(1, 2)         # Tipo T explicito
+Point{Float64}(1.0, 2.0)
+```
+
+Como se puede ver, para las llamadas a constructores con ***parámetros de tipo explícito***, los argumentos se convierten a los tipos de campo implícitos: `Punto{Int64}(1,2)` funciona, pero `Punto{Int64}(1.0,2.5)` genera un `InexactError` al convertir `2.5` a `Int64`. Cuando el ***tipo está implícito*** en los argumentos de la llamada al constructor, como en `Punto(1,2)`, entonces ***los tipos de los argumentos*** deben coincidir, de lo contrario la `T` no puede ser **determinada**; pero cualquier par de argumentos `Real` con tipo coincidente puede ser dado al **constructor genérico** de `Punto`.
+
+Lo que realmente sucede aquí es que `Punto`, `Punto{Float64}` y `Punto{Int64}` son funciones constructoras diferentes. De hecho, `Punto{T}` es una función constructora distinta para cada ***tipo*** `T`. Sin ningún constructor interno proporcionado explícitamente, la declaración del tipo compuesto `Punto{T<:Real}` proporciona automáticamente un ***constructor interno***, `Punto{T}`, para cada ***tipo*** posible `T<:Real`, que se comporta igual que los ***constructores internos*** por **defecto no paramétricos**. También proporciona un único *** constructor externo general*** `Punto` que toma pares de argumentos reales, que deben ser del mismo tipo. Esta provisión automática de constructores es equivalente a la siguiente ***declaración explícita***:
+
+```julia
+julia>  struct Punto{T<:Real}
+            x::T
+            y::T
+            Punto{T}(x, y) where {T<:Real} = new(x, y)
+       end
+
+julia> Punto(x::T, y::T) where {T<:Real} = Punto{T}(x,y);
+```
+Observese que cada definición se parece a la forma de llamada al constructor que maneja. La llamada `Punto{Int64}(1, 2)` invocará la definición `Punto{T}(x,y)` dentro del bloque ***struct***. La declaración ***externa del constructor***, por otro lado, define un método para el constructor general `Punto` que sólo se aplica a pares de valores del mismo ***tipo*** `Real`. Esta declaración hace que funcionen las llamadas a constructores sin ***parámetros de tipo*** explícitos, como `Punto(1,2)` y `Punto(1,0,2,5)`. Dado que la declaración del método restringe los argumentos a ser del mismo tipo, las llamadas como `Punto(1, 2.5)`, con argumentos de diferentes tipos, dan lugar a errores del estilo *no hay método*.
+
+Si se desea que la llamada al constructor `Punto(1, 2.5)` funcione *promoviendo* el valor entero `1` al ***valor de punto flotante*** `1.0`. La forma más sencilla de conseguirlo es definir el siguiente ***método constructor externo*** adicional:
+
+```julia
+julia>  Punto(x::Int64, y::Float64) = Punto(convert(Float64, x), y);
+```
+
+Este método utiliza la función `convert` para convertir explícitamente `x` a `Float64` y luego delega la construcción al constructor general para el caso en que ambos argumentos sean `Float64`. Con esta definición de método lo que antes era un `MethodError` ahora crea con éxito un punto de tipo `Punto{Float64}`:
+
+```julia
+julia>  p = Punto(1, 2.5)
+Punto{Float64}(1.0, 2.5)
+
+julia>  typeof(p)
+Punto{Float64}
+```
+Sin embargo, la otra llamada similar aún no es funcional:
+
+```julia
+julia>  Punto(1.5, 2)
+ERROR: MethodError: no method matching Punto(::Float64, ::Int64)
+Closest candidates are:
+  Point(::T, !Matched::T) where T<:Real at none:1
+```
+
+Una forma más general de hacer que todas esas llamadas funcionen con sentido, vea el tema de [conversión y promoción](https://docs.julialang.org/en/v1/manual/conversion-and-promotion). La siguiente definición de ***método externo*** para hacer que todas las llamadas al ***constructor general*** `Punto` funcione:
+
+```julia
+julia>  Punto(x::Real, y::Real) = Punto(promote(x,y)...);
+```
+La función `promote` convierte todos sus argumentos a un ***tipo*** común, en este caso `Float64`. Con esta definición de ***método***, el ***constructor*** `Punto` promueve sus argumentos de la misma manera que lo hacen los operadores numéricos como `+`, y funciona para todo tipo de números reales:
+
+```julia
+julia>  Punto(1.5, 2)
+Punto{Float64}(1.5, 2.0)
+
+julia>  Punto(1, 1//2)
+Punto{Rational{Int64}}(1//1, 1//2)
+
+julia>  Punto(1.0, 1//2)
+Punto{Float64}(1.0, 0.5)
+```
+Así, mientras que los ***constructores de parámetros de tipo implícitos*** proporcionados por defecto en Julia son bastante estrictos, es posible hacer que se comporten de una manera más relajada pero sensible con bastante facilidad. Además, dado que los ***constructores*** pueden aprovechar todo el potencial del ***sistema de tipos***, los ***métodos*** y el ***despacho múltiple***, es posible definir un comportamiento sofisticado con relativa sencillez.
+
+## Módulos
 ***
 
 ## Referencias
