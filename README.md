@@ -110,8 +110,13 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Métodos constructores internos](#métodos-constructores-internos)
     * [Inicialización incompleta](#inicialización-incompleta)
     * [Constructores paramétricos](#constructores-paramétricos)  
-  * [Módulos](#módulos) **↓ Pendiente ↓**
-  * [Documentación](#)
+  * [Módulos](#módulos) 
+    * [Gestión del namespace](#gestión-del-namespace) 
+    * [Listas de exportación](#listas-de-exportación) 
+    * [Manejo de conflictos de nombres](#manejo-de-conflictos-de-nombres) 
+    * [Definiciones de primer nivel por default y módulos `baremodule`](#definiciones-de-primer-nivel-por-default-y-módulos-baremodule) 
+    * [Submódulos y rutas relativas](#submódulos-y-rutas-relativas) **↓ Pendiente ↓**
+  * [Documentar código](#documentar-código)
 * [Referencias](#referencias)
 
 ***
@@ -2247,7 +2252,7 @@ Ya sea usando `using` o `import`, permite cargar un paquete, es decir, una colec
 
 ### Diferencia entre `using` e `import`
 
-Si bien, ambas instrucciones sirven para cargar el código del paquete, tiene ligeras diferencias.
+Si bien, ambas instrucciones sirven para cargar el código del paquete o de un módulo, tiene ligeras diferencias.
 
 Usando `using`, se trae con ello:
 
@@ -4219,6 +4224,212 @@ Punto{Float64}(1.0, 0.5)
 Así, mientras que los ***constructores de parámetros de tipo implícitos*** proporcionados por defecto en Julia son bastante estrictos, es posible hacer que se comporten de una manera más relajada pero sensible con bastante facilidad. Además, dado que los ***constructores*** pueden aprovechar todo el potencial del ***sistema de tipos***, los ***métodos*** y el ***despacho múltiple***, es posible definir un comportamiento sofisticado con relativa sencillez.
 
 ## Módulos
+
+Los ***módulos*** en Julia ayudan a organizar el código en unidades coherentes. Están delimitados sintácticamente dentro un bloque `module NombreDeMiModulo ... end`. Los módulos tienen las siguientes características:
+
+* Los ***módulos*** son ***namespaces*** separados, cada uno con su propio ***scope global***. Esto es útil, porque **permite utilizar el mismo nombre para diferentes funciones o variables globales** sin conflicto, siempre que estén en módulos separados.
+
+* Los ***módulos*** tienen control para la gestión detallada del ***namespace***: cada uno define el conjunto de nombres que exporta, y puede importar nombres de otros ***módulos*** con `using` e `import`. (Veáse la sección de [Usar paquetes dentro de Julia](#usar-paquetes-dentro-de-julia) para leer las especificaciones de estas dos instrucciones también aplicables para los módulos.)
+
+* Los ***módulos*** pueden ser **precompilados** para una carga más rápida y contienen código para la inicialización en tiempo de ejecución.
+
+Típicamente, en los paquetes de Julia más grandes tendrán el código de los módulos organizado en archivos, por ejemplo:
+
+```julia
+module AlgunModulo
+
+# Aquí se usa normalmente las instrucciones export, using, import.
+
+include("archivo1.jl")
+include("archivo2.jl")
+
+end
+```
+Los archivos y los nombres de los archivos en principio no tienen relación con los ***módulos***; los ***módulos*** se asocian sólo con las expresiones dentro de los módulos. **Uno puede tener múltiples archivos por módulo, y múltiples módulos por archivo**. 
+
+La palabra reservada **`include`** se comporta como si el contenido del archivo origen fuera evaluado en el ***scope global*** del ***módulo*** que lo incluye.
+
+El estilo recomendado es no indentar el cuerpo del módulo, ya que eso llevaría típicamente a indentar archivos enteros. Además, es común utilizar ***UpperCamelCase*** para el nombre de los ***módulos*** (igual que los ***tipos***) y utilizar **la forma plural** si es aplicable, especialmente si el ***módulo*** contiene un identificador de nombre similar, para evitar conflicto de nombres. Por ejemplo:
+
+```julia
+module Herramientas
+
+struct Herramienta
+    # Código
+end
+
+end
+```
+
+### Gestión del namespace
+
+La gestión del ***namespace*** se refiere a las facilidades que ofrece el lenguaje para que los nombres dentro de un módulo estén disponibles en otros módulos.
+
+Los nombres de las ***funciones***, ***variables*** y ***tipos*** en el ***scope global***, por ejemplo, `sin`, `ARGS` y `UnitRange` siempre pertenecen a un módulo, llamado ***módulo padre***, que se puede encontrar interactivamente con `parentmodule`:
+
+```julia
+julia> parentmodule(UnitRange)
+Base
+```
+
+También se pueden referir estos nombres fuera de su ***módulo padre*** prefijándolos con su módulo, por ejemplo `Base.UnitRange`. Esto se denomina **nombre cualificado** (*qualified name*). El ***módulo padre*** puede ser accesible usando una ***cadena de submódulos*** como `Base.Math.sin`, donde `Base.Math` se llama la ***ruta del módulo***. Debido a las ambigüedades sintácticas, *cualificar* un nombre que sólo contiene símbolos, como un operador, requiere insertar dos puntos, por ejemplo, `Base.:+`. Un pequeño número de operadores requiere además paréntesis, por ejemplo, `Base.:(==)`.
+
+Si un nombre está *cualificado*, siempre será accesible, y en el caso de una ***función***, también se le pueden añadir métodos utilizando el ***nombre cualificado*** como ***nombre de la función***.
+
+Dentro de un módulo, un nombre de variable puede ser ***reservado*** sin asignarle un valor, declarándolo como `global x`. Esto previene conflictos de nombres para globales inicializados después del tiempo de carga. La sintaxis `M.x = y` no funciona para asignar una variable global en otro módulo; **la asignación global siempre es local del módulo**.
+
+### Listas de exportación
+
+Los nombres de las ***funciones***, ***tipos***, ***variables globales*** y ***constantes*** pueden añadirse a la ***lista de exportación*** de un ***módulo*** con la palabra reservada `export`. Normalmente, se sitúan en la parte superior dentro del bloque `module`, o cerca de ella, para que los desarrolladores y revisores del código fuente puedan encontrarlos fácilmente. Por ejemplo:
+
+```julia
+module SuperModulo
+
+    export PERRO, alimentar                         # Nombre u objetos que será exportados
+
+    struct Perro end                                # Tipo singletón que no se exporta
+
+    const PERRO = Perro()                           # Un objeto instanciado que se exporta
+
+    alimentar(x) = "Hoy ya alimenté al perrito"     # Función que se exporta
+
+end
+```
+Esto último es sólo una sugerencia de estilo. Un módulo podría tener múltiples declaraciones de exportación en lugares arbitrarios.
+
+En el código anterior, la ***lista de exportación*** sugiere a los usuarios que deben utilizar directamente los nombres `alimentar` y `PERRO`. Sin embargo, dado que los ***nombres cualificados*** siempre hacen que los identificadores *no exportados* sean accesibles, pero es sólo una opción para organizar el llamado a los objetos en los módulos. A diferencia de otros lenguajes, Julia no tiene facilidades para realmente ocultar las partes internas de los módulos.
+
+Además, algunos módulos no exportan nombres en absoluto. Esto generalmente se hace si usan palabras comunes, lo que fácilmente podría entrar en conflicto con las ***listas de exportación*** de otros módulos.
+
+### Manejo de conflictos de nombres
+
+Considere la situación en la que dos (o más) módulos exportan el mismo nombre, por ejemplo:
+
+```julia
+module MiModulo1
+    export f
+    f() = 1
+end
+
+
+module MiModulo2
+    export f
+    f() = 2
+end
+```
+
+La instrucción para importar `using MiModulo1, MiModulo2` funcionará, pero cuando intente llamar a `f`, recibirá una advertencia:
+
+```julia
+WARNING: both MiModulo1 and MiModulo2 export "f"; uses of it in module Main must be qualified
+ERROR: LoadError: UndefVarError: f not defined
+```
+Aquí, Julia no puede decidir a qué `f` se refiere (recuerde que la instrucción `using` importa los nombres directamente a su scope global), así que se tiene que elegir. Las siguientes soluciones son las comúnmente utilizadas:
+
+1. Proceda mediante los ***nombres cualificados***, esto es, `MiModulo1.f` y `MiModulo2.f`. Esto hace que el contexto sea claro para el lector de su código, especialmente si el nombre `f` simplemente coincide por casualidad, pero tiene un significado diferente entre los diferentes paquetes o módulos. Por ejemplo, *grado* tiene varios usos en matemáticas, ciencias naturales y en la vida cotidiana, y estos significados deben mantenerse separados.
+
+2. Utilice la palabra reservada `as` para asignar un alias al nombre de uno o ambos identificadores. Por ejemplo:
+```julia
+using MiModulo1: f as f
+using MiModulo2: f as g
+```
+De esta forma, `MiModulo2.f` estará disponible simplemente como `g`.
+
+3. Cuando los nombres en cuestión comparten un significado, es común que un ***módulo*** lo importe desde otro, o tenga un paquete *base* liviano cuya única función sea definir una interfaz de importación para que pueda ser utilizada por otros paquetes. Es convencional que los nombres de dichos paquetes terminen en ...Base (que no tiene nada que ver con el módulo `Base` de Julia).
+
+### Definiciones de primer nivel por default y módulos `baremodule`
+
+Todos módulos contienen automáticamente `using Core`, `using Base` y definiciones de las funciones `eval` e `include`, que evalúan expresiones y archivos dentro del ***scope global*** del módulo.
+
+Si no se desea tener estas definiciones por defecto, los nuevos módulos deben definirse utilizando la palabra clave `baremodule` (**Nota**: `Core` sigue siendo importado). Por ejemplo:
+
+```julia
+baremodule MiModulo
+
+    using Base
+
+    eval(x) = Core.eval(MiModulo, x)
+    include(p) = Base.include(MiModulo, p)
+
+    # Código
+
+end
+```
+Hay tres módulos estándar importantes:
+
+1. `Core` contiene toda la funcionalidad "integrada" en el lenguaje.
+2. `Base` contiene una funcionalidad básica que es útil en casi todos los casos.
+3. `Main` es el módulo de nivel superior y el módulo actual, cuando se inicia Julia.
+
+### Submódulos y rutas relativas
+
+Los ***módulos*** pueden contener ***submódulos*** anidando la misma sintaxis `module ... end`. Pueden utilizarse para introducir ***namespaces*** separados, lo que puede ser útil para organizar grupos de código complejos. Es importante tener en cuenta que cada módulo introduce su propio scope, por lo que los ***submódulos*** **no heredan** automáticamente los nombres de su *padre*.
+
+Se recomienda que los ***submódulos*** se refieran a otros módulos dentro del módulo padre que los encierra (incluyendo este último) utilizando ***cualificadores de módulo relativos*** en las sentencias `using` e `import`. 
+
+Un ***cualificador de módulo relativo*** comienza con un punto (`.`), y que corresponde al ***módulo actual***. Cada `.` sucesivo lleva al *módulo padre* del módulo actual. Esto debe ir seguido de las cadena de submódulos, si es necesario, y finalmente del nombre real al que se quiere acceder, todo ello separado por puntos.
+
+Por ejemplo, el ***submódulo*** `MiSubmoduloA` define una función, que luego se extiende en su módulo *hermano*:
+
+```julia
+module MiModuloPadre
+
+    module MiSubmoduloA
+        export suma_D                           # Objeto exportado desde el submodulo A
+        const D = 3
+        suma_D(x) = x + D
+    end
+
+    using .MiSubmoduloA                         # Agregamos a `suma_D` en el namespace del Modulo Padre
+    export suma_D                               # Y lo exportamos desde el Module Padre
+
+    module MiSubmoduloB
+        import ..MiSubmoduloA: suma_D           # Ruta Relativa para un Módulo hermano
+        struct Infinito end
+        suma_D(x::Infinito) = x
+    end
+
+end
+```
+
+Se debe tener en cuenta que el orden de las definiciones también importa si está evaluando valores. Por ejemplo:
+
+```julia
+module ModuloTest
+
+    export x, y
+
+    x = 0
+
+    module SubModulo
+        using ..ModuloTest
+        z = y                         # ERROR: UndefVarError: `y` aún no está definido
+    end
+
+    y = 1
+
+end
+```
+donde `SubModulo` está intentando utilizar `ModuloTest.y` antes de que se definiera, por lo que no tiene un valor.
+
+Por razones similares, no se puede utilizar un ordenamiento cíclico:
+
+```julia
+module A
+
+    module B
+        using ..C                     # ERROR: UndefVarError: C no está definido
+    end
+
+    module C
+        using ..B
+    end
+
+end
+```
+
+## Documentar código
+
 ***
 
 ## Referencias
