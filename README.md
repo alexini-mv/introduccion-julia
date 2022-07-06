@@ -115,37 +115,42 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Listas de exportación](#listas-de-exportación) 
     * [Manejo de conflictos de nombres](#manejo-de-conflictos-de-nombres) 
     * [Definiciones de primer nivel por default y módulos `baremodule`](#definiciones-de-primer-nivel-por-default-y-módulos-baremodule) 
-    * [Submódulos y rutas relativas](#submódulos-y-rutas-relativas) **↓ Pendiente ↓**
+    * [Submódulos y rutas relativas](#submódulos-y-rutas-relativas)
   * [Documentar código](#documentar-código)
+    * [Convenciones simples](#convenciones-simples) 
+    * [Acceso a la documentación](#acceso-a-la-documentación)
+    * [Documentando funciones y métodos](#documentando-funciones-y-métodos) 
+    * [Uso avanzado](#uso-avanzado) 
+    * [Documentación dinámica](#documentación-dinámica)
 * [Referencias](#referencias)
 
 ***
 
 ## Instalación
 
-Para instalar el intérprete de Julia en nuestra computadora, debemos descargarlo directamente de los [repositorios](https://julialang.org/downloads/) oficiales. Elegimos la versión deseada, dependiendo del sistema operativo y arquitectura donde vamos a trabajar.
+Para instalar el intérprete de Julia en nuestra computadora, debemos descargarlo directamente de los [repositorios](https://julialang.org/downloads/) oficiales. Elegimos la versión deseada, dependiendo del sistema operativo y arquitectura de la máquina donde vayamos a trabajar.
 
-En mi caso, usaré la versión 1.7.3 para el sistema operativo Linux x86 a 64-bits. Se descargará un archivo con extensión **.tar.gz**.
+1. Para este tutorial, se usará la versión Julia-1.7.3, para el sistema operativo Linux x86 a 64-bits. Se descargará el archivo con extensión **.tar.gz**.
 
-Para extraer el contenido, dentro de una terminal ejecutaremos el siguiente comando:
+2. Para extraer el contenido, dentro de una terminal ejecutaremos el siguiente comando:
 
-```console
-tar -xvzf julia-1.7.3-linux-x86_64.tar.gz
-```
+    ```console
+    tar -xvzf julia-1.7.3-linux-x86_64.tar.gz
+    ```
 
-donde ustedes deben sustituir por el nombre del archivo que descargaron. El comando les habrá generado una carpeta con el `julia-1.7.3` que contiene los binarios del interprete.
+    donde ustedes deben sustituir por el nombre del archivo que descargaron. El comando les habrá generado una carpeta con el `julia-1.7.3` que contiene los binarios del interprete.
 
-Ahora, copiaremos todo el contenido de dicha carpeta al directorio `/opt/` de nuestro sistema de la siguiente manera:
+3. Copiaremos todo el contenido de dicha carpeta al directorio `/opt/` de nuestro sistema de la siguiente manera:
 
-```console
-sudo cp -r julia-1.7.3 /opt/
-```
+    ```console
+    sudo cp -r julia-1.7.3 /opt/
+    ```
 
-Finalmente, crearemos un enlace simbólico (*symbolic link*) de **Julia** dentro del directorio `/usr/local/bin/` para que sea visible para todo el sistema:
+4. Finalmente, crearemos un enlace simbólico (*symbolic link*) del ejecutable **Julia** dentro del directorio `/usr/local/bin/` para que sea visible para todo el sistema:
 
-```console
-sudo ln -s /opt/julia-1.7.3/bin/julia /usr/local/bin/julia
-```
+    ```console
+    sudo ln -s /opt/julia-1.7.3/bin/julia /usr/local/bin/julia
+    ```
 
 Listo, tenemos Julia instalado. Podemos verificar la instalación, reabriendo la terminal y ejecutando el comando
 
@@ -4430,6 +4435,231 @@ end
 
 ## Documentar código
 
+Julia permite a los desarrolladores y usuarios ***documentar funciones, tipos y otros objetos*** fácilmente a través de un sistema de documentación incorporado.
+
+La sintaxis básica es simple: cualquier `string` que aparezca en la parte superior justo antes de la definición del objeto (***función, macro, tipo o instancia***) se interpretará como documentación (***docstrings***). Tenga en cuenta que entre un ***docstring*** y el objeto documentado no puede haber líneas en blanco ni comentarios. Por ejemplo:
+
+```julia
+"Arreglo que contiene un arreglo de varios objetos..."
+funcion(x::Array) = # Código
+```
+La documentación se reinterpretará como texto en **Markdown**, por lo que puede usar la indentación y los carácteres especiales para delimitar fragmentos de código en los ejemplos. Técnicamente, cualquier objeto puede asociarse con cualquier otro como metadatos; *Markdown* pasa a ser el predeterminado, pero uno puede construir otros ***string macros*** y pasarlos al macro `@doc` también. Por ejemplo:
+```
+"""
+    bar(x[, y])
+
+Compute the Bar index between `x` and `y`.
+
+If `y` is unspecified, compute the Bar index between all pairs of columns of `x`.
+
+# Examples
+.```julia-repl
+julia> bar([1, 2], [1, 2])
+1
+.```
+"""
+function bar(x, y)
+    return x + y
+end
+```
+
+### Convenciones simples
+
+Se recomienda seguir algunas convenciones simples al escribir documentación:
+
+1. Muestre siempre la *firma* de una función en la parte superior de la documentación, con una indentación de cuatro espacios para que se imprima como código de Julia.
+
+    Puede ser idéntico a la *firma* de la definición del código en Julia. Por ejemplo, `mean(x::AbstractArray)` o una forma simplificada. 
+
+    Los argumentos opcionales deben representarse con sus valores predeterminados, es decir, `f(x, y=1)` cuando sea posible, siguiendo la sintaxis real de Julia. 
+
+    Los argumentos opcionales que no tienen un valor predeterminado deben ponerse entre paréntesis, es decir, `f(x[, y])` o `f(x[, y[, z]])`. Una solución alternativa es utilizar varias líneas: una sin argumentos opcionales y la otra con ellos. Esta solución también se puede utilizar para documentar varios métodos relacionados de una función dada. 
+    
+    Cuando una función acepta muchos argumentos de palabras clave, solo incluya un marcador de posición `<argumentos de palabras clave>` en la firma, es decir, `f(x; <argumentos de palabras clave>)`, y proporcione la lista completa en una sección `# Arguments` (punto 4 más adelante).
+
+2. Incluya una sola frase de una línea que describa lo que hace la función o lo que representa el objeto después del bloque de firma simplificada. Si es necesario, proporcione más detalles en un segundo párrafo, después de una línea en blanco.
+
+    La frase de una línea debe utilizar la forma imperativa "Hace esto...", "Devuelve aquello..." ("Do this", "Return that") al documentar las funciones. Debe terminar con un punto. Si el significado de una función no se puede resumir fácilmente, podría ser beneficioso dividirla en partes separadas.
+
+3. No te repitas a ti mismo.
+
+    Dado que el nombre de la función viene dado por la firma, no es necesario comenzar la documentación con "mifuncionmatematica": vaya directo al grano. De manera similar, si la firma especifica los tipos de argumentos, mencionarlos en la descripción es redundante.
+
+4. Sólo proporcione una lista de argumentos cuando sea realmente necesario.
+
+    En el caso de las funciones sencillas, suele ser más claro mencionar el papel de los argumentos directamente en la descripción del propósito de la función. Una lista de argumentos sólo repetiría la información ya proporcionada en otra parte. Sin embargo, proporcionar una lista de argumentos puede ser una buena idea para funciones complejas con muchos argumentos (en particular, ***argumentos de palabras clave***). En ese caso, insértela después de la descripción general de la función, bajo una cabecera `# Arguments`, con una `-` viñeta para cada argumento. La lista debe mencionar los tipos y valores por defecto (si los hay) de los argumentos:
+
+    ```
+    """
+    ...
+    # Arguments
+    - `n::Integer`: the number of elements to compute.
+    - `dim::Integer=1`: the dimensions along which to perform the computation.
+    ...
+    """
+    ```
+
+5. Proporcione sugerencias para las funciones relacionadas.
+
+    A veces hay funciones de funcionalidad relacionada. Para aumentar la visibilidad, proporcione una breve lista de estos en un párrafo ***Ver también*** (*See also*).
+    ```
+    See also [`bar!`](@ref), [`baz`](@ref), [`baaz`](@ref).
+    ```
+
+6. Incluya cualquier ejemplo de código en una sección `# Ejemplos`.
+
+    Los ejemplos deben, siempre que sea posible, escribirse como ***doctests***. Un *doctest* es un bloque de código delimitado que comienza con ` ```jldoctest ` y contiene cualquier número `julia>` prompts junto con entradas y salidas esperadas que imitan el ***REPL*** de Julia.
+
+    Por ejemplo, en el siguiente *docstring* se define una variable `a` y el resultado esperado tal como se imprimirá en un REPL de Julia:
+    ```
+    """
+    Some nice documentation here.
+
+    # Examples
+    .```jldoctest
+    julia> a = [1 2; 3 4]
+    2×2 Array{Int64,2}:
+    1  2
+    3  4
+    .```
+    """
+    ```
+    Luego puede ejecutar `make -C doc doctest=true` para ejecutar todas las pruebas de documentación en el Manual de Julia y la documentación de la API, lo que garantizará que su ejemplo funcione.
+
+    Para indicar que el resultado de salida está truncado, puede escribir `[...]` en la línea donde debe detenerse la comprobación. Esto es útil para ocultar un seguimiento de pila (que contiene referencias no permanentes a líneas de código julia) cuando el `doctest` muestra que se lanza una excepción, por ejemplo:
+    ```
+    .```jldoctest
+    julia> div(1, 0)
+    ERROR: DivideError: integer division error
+    [...]
+    .```
+    ```
+    Los ejemplos que no se pueden probar deben escribirse dentro de bloques de código delimitados que comiencen con ` ```julia ` para que se resalten correctamente en la documentación generada.
+
+7. Utilice acentos graves para identificar el código y las ecuaciones.
+
+    Los identificadores de Julia y los extractos de código siempre deben aparecer entre acentos graves \` para permitir el resaltado. Las ecuaciones en la sintaxis de LaTeX se pueden insertar entre dobles acentos graves \``. Utilice caracteres Unicode en lugar de su secuencia de escape LaTeX, es decir,
+    
+     \``α = 1\`` en lugar de \``\\alpha = 1\``.
+
+8. Coloque los caracteres """ iniciales y finales en **líneas separadas**.
+
+    Es decir, escriba:
+    ```
+    """
+    Retorna el valor absoluto...
+    [...]
+    """
+    f(x, y) = ...
+    ```
+    en lugar de:
+    ```
+    """Regresa el valor absoluto...
+
+    [...]"""
+    f(x, y) = ...
+    ```
+    Esto deja más claro dónde comienzan y terminan el docstring.
+
+9. Respete el límite de longitud de línea utilizado en el código circundante.
+
+    Los docstring se editan con las mismas herramientas que el código. Por lo tanto, deberían aplicarse las mismas convenciones. Se recomienda que las líneas tengan como **máximo 92 caracteres de ancho**.
+
+10. Proporcione información que permita que los tipos personalizados implementen la función en una sección `# Implementación`. Estos detalles de implementación están destinados a los desarrolladores en lugar de a los usuarios, explicando, p. qué funciones deben anularse y qué funciones utilizan automáticamente los respaldos apropiados. Dichos detalles se mantienen separados de la descripción principal del comportamiento de la función.
+
+11. Para docstrings largos, considere dividir la documentación con un encabezado `# Ayuda extendida`. El modo de ayuda típico mostrará solo el material sobre el encabezado; puede acceder a la ayuda completa agregando un `?` al principio de la expresión, es decir, `??foo` en lugar de `?foo`.
+
+### Acceso a la documentación
+
+Se puede acceder a la documentación en el *REPL* o en *IJulia* tecleando `?` seguido del nombre de una función o macro, y presionando *Enter*. Por ejemplo,
+```julia
+julia>  ?sin
+julia>  ?@tiempo
+julia>  ?r""
+```
+mostrará documentación para la función, macro o string macro correspondiente, respectivamente. En *Juno* usando `ctrl+J`, `ctrl+D` mostrará la documentación del objeto debajo del cursor.
+
+### Documentando funciones y métodos
+
+Las funciones en Julia pueden tener múltiples implementaciones, conocidas como métodos. Aunque es una buena práctica que las funciones genéricas tengan un único propósito, Julia permite documentar los métodos individualmente si es necesario. En general, sólo el método más genérico debe ser documentado, o incluso la propia función (es decir, el objeto creado sin ningún método por el bloque `function ... end`). Los métodos específicos sólo deben documentarse si su comportamiento difiere de los más genéricos. En cualquier caso, no deben repetir la información proporcionada en otro lugar. Por ejemplo:
+```julia
+"""
+    *(x, y, z...)
+
+Multiplication operator. `x * y * z *...` calls this function with multiple
+arguments, i.e. `*(x, y, z...)`.
+"""
+function *(x, y, z...)
+    # ... [implementation sold separately] ...
+end
+
+"""
+    *(x::AbstractString, y::AbstractString, z::AbstractString...)
+
+When applied to strings, concatenates them.
+"""
+function *(x::AbstractString, y::AbstractString, z::AbstractString...)
+    # ... [insert secret sauce here] ...
+end
+
+help?> *
+search: * .*
+
+  *(x, y, z...)
+
+  Multiplication operator. x * y * z *... calls this function with multiple
+  arguments, i.e. *(x,y,z...).
+
+  *(x::AbstractString, y::AbstractString, z::AbstractString...)
+
+  When applied to strings, concatenates them.
+```
+Cuando se recupera la documentación de una función genérica, los metadatos de cada método se concatenan con la función `catdoc`. Por supuesto, puede anularse para los tipos personalizados.
+
+### Uso avanzado
+
+El macro `@doc` asocia su primer argumento con su segundo en un diccionario por módulo llamado `META`.
+
+Para facilitar la escritura de la documentación, el analizador trata el nombre del macro `@doc` de manera especial: si una llamada a `@doc` tiene un argumento pero aparece otra expresión después de un solo salto de línea, entonces esa expresión adicional se agrega como segundo argumento al macro. Por lo tanto, la siguiente sintaxis se analiza como una llamada de dos argumentos a `@doc`:
+
+```
+@doc raw"""
+...
+"""
+f(x) = x
+```
+Esto hace posible el uso de expresiones distintas de los literales de los strings normales (como la macro de `raw"""` ) como una docstring.
+
+Cuando se usa para recuperar documentación, el macro `@doc` (o igualmente, la función `doc`) buscará en todos los diccionarios `META` metadatos relevantes para el objeto dado y los devolverá. El objeto devuelto (algún contenido de *Markdown*, por ejemplo) se mostrará por defecto de forma inteligente. Este diseño también facilita el uso del sistema doc de manera programática; por ejemplo, para reutilizar documentación entre diferentes versiones de una función:
+```
+@doc "..." foo!
+@doc (@doc foo!) foo
+```
+La documentación escrita en bloques que no son de nivel superior, como `begin`, `if`, `for` y `let`, se agrega al sistema de documentación a medida que se evalúan los bloques. Por ejemplo:
+
+```julia
+if # condición
+    "Documentación...."
+    f(x) = x
+end
+```
+agregará la documentación de `f(x)` sólo cuando la *condición* sea verdadera. Tenga en cuenta que incluso si `f(x)` queda fuera del scope al final del bloque, su documentación permanecerá.
+
+### Documentación dinámica
+
+A veces, la documentación adecuada para una ***instancia de un tipo*** depende de los valores de campo de esa instancia, en lugar de solo del tipo en sí. En estos casos, puede agregar un método a `Docs.getdoc` para su ***tipo personalizado*** que devuelve la documentación de la instancia. Por ejemplo:
+
+```julia
+struct MiTipo
+    valor::Int
+end
+
+Docs.getdoc(t::MiTipo) = "Documentación para MiTipo con valor $(t.valor)"
+
+x = MiTipo(1)
+y = MiTipo(2)
+```
+Ahora, `?x` mostrará *"Documentación para MiTipo con valor 1"*, mientras que `?y` mostrará *"Documentación para MiTipo con valor 2"*.
 ***
 
 ## Referencias
