@@ -1,11 +1,13 @@
 # Introducción al lenguaje de programación Julia
 
-El propósito de estas notas es tener una guía de estudio y referencia para el interesado en aprender en español el lenguaje de programación Julia. No es un curso formal, ni pretende serlo. La mayoria de la información proviene de la documentación oficial de [Julia](https://docs.julialang.org/en/v1/).
+El propósito de estas notas es tener una guía de estudio y referencia para el interesado en aprender en español el lenguaje de programación Julia. No es un curso formal, ni pretende serlo. La mayoría de la información proviene de la documentación oficial de [Julia](https://docs.julialang.org/en/v1/).
 ***
 
 ## Índice
 
 * [Instalación](#instalación)
+  * [Windows](#windows)
+  * [Linux](#linux)
 * [Ejecutando Hola Mundo](#ejecutando-hola-mundo)
 * [Julia Esencial](#julia-esencial)
   * [Variables](#variables)
@@ -128,11 +130,25 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
 
 ## Instalación
 
-Para instalar el intérprete de Julia en nuestra computadora, debemos descargarlo directamente de los [repositorios](https://julialang.org/downloads/) oficiales. Elegimos la versión deseada, dependiendo del sistema operativo y arquitectura de la máquina donde vayamos a trabajar.
+Para instalar el intérprete de Julia en nuestra computadora, debemos descargarlo directamente de los [repositorios](https://julialang.org/downloads/) oficiales. Elegimos la versión deseada, dependiendo del sistema operativo y arquitectura de la máquina donde vayamos a trabajar. Para este tutorial, se usará la versión Julia-1.7.3.
 
-1. Para este tutorial, se usará la versión Julia-1.7.3, para el sistema operativo Linux x86 a 64-bits. Se descargará el archivo con extensión **.tar.gz**.
+### Windows
 
-2. Para extraer el contenido, dentro de una terminal ejecutaremos el siguiente comando:
+1. Descarga el instalador, dependiendo la versión de Windows. El más común la versión a 64 bits. 
+
+2. Una vez descargado, ejecuta el archivo **.exe** y sigue los pasos del asistente para concretar la instalación.
+
+3. Para finalizar, abre el *símbolo del sistema* o una terminal de *Powershell*, y ejecuta:
+```console
+$ julia
+```
+para abrir y verificar que Julia se haya instalado correctamente.
+
+### Linux
+
+1. Para el sistema operativo Linux x86 a 64-bits. Se descargará un archivo con extensión **.tar.gz**.
+
+2. Extrae el contenido, esto se hace abriendo una terminal y ejecutaremos el siguiente comando:
 
     ```console
     tar -xvzf julia-1.7.3-linux-x86_64.tar.gz
@@ -140,7 +156,7 @@ Para instalar el intérprete de Julia en nuestra computadora, debemos descargarl
 
     donde ustedes deben sustituir por el nombre del archivo que descargaron. El comando les habrá generado una carpeta con el `julia-1.7.3` que contiene los binarios del interprete.
 
-3. Copiaremos todo el contenido de dicha carpeta al directorio `/opt/` de nuestro sistema de la siguiente manera:
+3. Copiamos todo el contenido de dicha carpeta al directorio `/opt/` de nuestro sistema de la siguiente manera:
 
     ```console
     sudo cp -r julia-1.7.3 /opt/
@@ -155,7 +171,7 @@ Para instalar el intérprete de Julia en nuestra computadora, debemos descargarl
 Listo, tenemos Julia instalado. Podemos verificar la instalación, reabriendo la terminal y ejecutando el comando
 
 ```console
-julia
+$ julia
 ```
 
 el cual, nos permitirá abrir el interprete de Julia.
@@ -163,7 +179,7 @@ el cual, nos permitirá abrir el interprete de Julia.
 
 ## Ejecutando Hola Mundo
 
-Para ejecutar código en Julia, se pueden utilizar varias opciones. La más fácil es usando el intérprete de Julia, también conocido como **REPL**. Lo abrímos en una terminal ejecutando `$ julia`. Una vez dentro del REPL, ejecutaremos el hola mundo, con esta sencilla instrucción para imprimir en pantalla:
+Para ejecutar código en Julia, se pueden utilizar varias opciones. La más fácil es usando el intérprete de Julia, también conocido como **REPL**. Lo abrímos en una terminal ejecutando `$ julia`. Una vez dentro del REPL, ejecutaremos el *hola mundo*, con esta sencilla instrucción para imprimir en pantalla:
 
 ```julia
 julia> println("Hola Mundo")
@@ -172,7 +188,7 @@ Hola Mundo
 
 Listo, tenemos nuestro 'Hola Mundo'. 😄
 
-Otra forma para ejecutar código, es escribiendo el código dentro archivos con extensión `.jl`, por ejemplo, en un archivo `script.jl` como sigue:
+Otra forma para ejecutar código, es escribiendo el código dentro archivos con extensión `.jl`. Por ejemplo, en un archivo `script.jl` como sigue:
 
 ```julia
 println("Hola Mundo")
@@ -201,7 +217,7 @@ Listo, hemos ejecutado un nuevo 'Hola Mundo'. 😄
 
 ## Variables
 
-En Julia, una variable es un nombre asociado a un valor, útil para almacenar ese valor en memoria para su uso posterior. Para declarar variables en Julia, se usa la asignación directa:
+En Julia, una variable es un nombre asociado a un valor, y es útil para almacenar ese valor en la memoria ram para su uso posterior. Para declarar variables en Julia, se usa mediante asignación directa:
 
 ```julia
 variable = 1 + 2
@@ -209,43 +225,43 @@ nombre = "Juan"
 mensaje = "Hola Mundo"
 ```
 
-Las variables son sensibles a mayúsculas y minúsculas, pero estás diferencias no tienen significado semántico, es decir, si tienen propiedades diferentes si se escriben en una forma u otra.
+El nombre de las variables son sensibles a mayúsculas y minúsculas. Pero estas diferencias no tienen significado semántico, es decir, no tienen propiedades especiales si se escriben en una forma u otra (como en otros lenguajes).
 
-El nombre de las variables pueden usar cualquier carácter de UTF-8, por ejemplo:
+El nombre de las variables pueden usar cualquier carácter Unicode UTF-8, por ejemplo:
 
 ```julia
 δ = 0.001
 ```
 
-En el REPL de Julia u otros editores, se pueden escribir carácteres especiales de LaTeX presionando el backslash \\ y el nombre del carácter, seguido de un TAB. Por ejemplo, \alpha + TAB = α.
+En el REPL de Julia u otros editores, se pueden escribir carácteres especiales de **LaTeX** presionando el backslash `\ ` y el nombre del carácter, seguido de un `TAB`. Por ejemplo, `\alpha + TAB = α`.
 
-Los nombres de las variables en Julia por convención deben iniciar por una letra (A-Z ó a-z), guiones bajos o carácteres especiales Unicode, ya sea letras o simbolos matemáticos. En estos últimos, se debe tener precaución ya que algunos se podría confundir con los operadores matemáticos que usa Julia.
+Los nombres de las variables en Julia por convención deben iniciar por una letra (A-Z ó a-z), guiones bajos o carácteres especiales Unicode, ya sea letras, simbolos matemáticos o inclusive *emojis*. Se debe tener precaución, ya que algunos símbolos se podría confundir con los operadores matemáticos que usa Julia.
 
 Los nombres para variables no validos son aquellas dentro de la lista de *palabras reservadas* del lenguaje. Por ejemplo: *begin, break, function, do, if*, etc.
 
-Julia impone pocas restricciones al asignar nombre a las variables, se recomienda las siguientes **convenciones de estilo**:
+Julia impone pocas restricciones al asignar nombre a las variables, pero se recomiendan las siguientes **convenciones de estilo**:
 
-1. El nombre de las variables son escritas en minúsculas.
-2. La separación de palabras puede ser indicada por el guión bajo, pero se desaconseja a menos de que el nombre sea díficil de leer en otro caso.
-3. El nombre de **Type**s y **Module**s deben empezar por una letra mayúscula y se debe utilizar *CamelCase* entre palabras de nombres compuestos, en lugar de guiones bajos.
-4. El nombre de **function**s y **macro**s deben escribirse siempre en minúsculas y sin guiones bajos.
-5. Las funciones que modifican o escriben en sus argumentos en lugar de simplemente devolver un resultado, por convención sus nombres siempre finalizan con **!**. Este tipo de funciones se les conoce como "mutantes" (*mutating*) o (*in-place*).
+1. El nombre de las variables deben ser escritas en minúsculas.
+2. La separación de palabras puede ser indicada por el guión bajo `_`, pero se desaconseja a menos de que el nombre sea díficil de leer en otro caso.
+3. El nombre de **Tipos** y **Módulos** deben empezar por una letra mayúscula y se debe utilizar *CamelCase* entre palabras de nombres compuestos, en lugar de guiones bajos.
+4. El nombre de **funciones** y **macros** deben escribirse siempre en minúsculas y sin guiones bajos.
+5. Las funciones que modifican sus argumentos, en lugar de devolver un resultado, por convención, sus nombres siempre finalizan con **!**. Este tipo de funciones se les conoce como "mutantes" (*mutating*) o (*in-place*).
 
 Para más ver más recomendaciones, por favor revise la [guía de estilo](https://docs.julialang.org/en/v1/manual/style-guide/) de Julia.
 
 ## Tipos de Datos
 
-Una de las fortalezas de Julia es su amplia variedad de tipo de datos. Además, cada tipo de dato es muy especifico a las necesidades que requiere la tarea.
+Una de las fortalezas de Julia es su amplia variedad de ***tipo de datos***. Además, cada tipo de dato es muy especifico a las necesidades que requiere la tarea.
 
-A diferencia de otros lenguajes de programación como Javascript donde se tienen solo unos tipos de datos genéricos, por ejemplo, "number" para cualquier dato númerico, en Julia se tiene que ser muy especifico, es especial sí se quiere tener un buen desempeño del lenguaje. Esto, aunque a primera vista podría parecer engorroso, nos dará ventajas que veremos más adelante.
+A diferencia de otros lenguajes de programación como Javascript, el cuál tienen solo unos cuantos tipos de datos genéricos (por ejemplo, ***number*** para cualquier dato númerico), en Julia se tiene tipo muy especifico, es especial si se quiere un buen desempeño del código. Esto, aunque a primera vista podría parecer engorroso, nos dará ventajas que veremos más adelante.
 
-Empecemos a ver los diferentes tipos de datos que nos ofrece Julia.
+Empecemos a ver los diferentes tipos de datos que nos ofrece Julia nativamente.
 
 ### Números Enteros y de Punto Flotante
 
-Julia proporciona una amplia gama de tipos numéricos primitivos, y sobre ellos se define un conjunto completo de operadores aritméticos y bit a bit, así como funciones matemáticas estándar.
+Julia proporciona una amplia gama de ***tipos numéricos primitivos***, y sobre ellos se define un conjunto completo de ***operadores aritméticos*** y ***bit a bit***, así como funciones matemáticas estándar.
 
-En la parte de números enteros, Julia nos proporciona los siguientes tipos numéricos primitivos:
+En la parte de ***números enteros***, Julia nos proporciona los siguientes tipos numéricos primitivos:
 
 |Tipo|Signo|Número de bits|Valor mínimo|Valor máximo|
 |--|--|--|--|--|
@@ -261,7 +277,7 @@ En la parte de números enteros, Julia nos proporciona los siguientes tipos num�
 |UInt128| |128|0|2^128 - 1|
 |Bool|N/A|8|false (0)|true (1)
 
-Y para datos de números de punto flotante, tiene los siguiente tipos primitivos:
+Y para datos de números de ***punto flotante***, tiene los siguiente tipos primitivos:
 
 |Tipo|Precisión|Número de bits|
 |--|--|--|
@@ -271,7 +287,7 @@ Y para datos de números de punto flotante, tiene los siguiente tipos primitivos
 
 Por defecto, el tipo de dato que usa Julia depende de la arquitectura del sistema donde se ejecuta, si se trata de 32-bits o de 64-bits.
 
-Para saber el tipo de dato con el que se está trabajando algún literal, podemos usar la instrucción:
+Para saber el tipo de dato con el que se está trabajando algún literal númerico, podemos usar la instrucción:
 
 ```julia
 julia> typeof(25)
@@ -281,7 +297,7 @@ julia> typeof(3.1416)
 Float64
 ```
 
-Existe un truco muy útil al trabajar con números muy grandes, se pueden separar los cifras con guiones bajos, y Julia los omitira internamente:
+Existe un truco de síntaxis muy útil para trabajar con números muy grandes: se pueden agrupar las cifras con guiones bajos, y Julia los omitira internamente, esto es:
 
 ```julia
 julia> a = 1_234_567
@@ -291,7 +307,7 @@ julia> b = 0.000_000_000_5
 5.0e-10
 ```
 
-Los números UInt se representan el prefijo *0x* seguido del número en hexadecimal (digitos 0-9a-f). El tamaño del valor UInt es determinado por el número hexadecimal.
+Los números `UInt` se representan el prefijo `0x` seguido de un número en hexadecimal (digitos 0-9a-f). El tamaño de un número `UInt` es determinado por el número hexadecimal.
 
 ```julia
 julia> x = 0x1
@@ -307,7 +323,7 @@ julia> typeof(x)
 UInt16
 ```
 
-También es soportado la representación binaria u octal de los literales númericos, usando los prefijos *0b* y *0o* respectivamente.
+Por otra parte, también es soportada la ***representación binaria y octal*** de los literales númericos, usando los prefijos *0b* y *0o* respectivamente.
 
 ```julia
 julia> x = 0b101
@@ -323,7 +339,7 @@ julia> typeof(x)
 UInt8
 ```
 
-Se puede revisar los valores mínimos y máximos que puede representar los diferentes tipos de datos númericos con la siguientes instrucciones:
+Para revisar los ***valores mínimos y máximos*** que pueden representar los diferentes tipos de datos númericos, se debe ejecutar las siguientes instrucciones:
 
 ```julia
 julia> typemin(Int32)
@@ -333,7 +349,7 @@ julia> typemax(Int32)
 2147483647
 ```
 
-Se pueden convertir los tipos de datos simplemente indicando el nuevo tipo de dato.
+Se pueden convertir los tipos de datos simplemente indicando el nuevo tipo de dato:
 
 ```julia
 julia> Float64(2)
@@ -342,7 +358,7 @@ julia> Int64(3.0)
 3
 ```
 
-Los números de punto flotante se pueden declarar usando las estandars representaciones, incluyendo la notación E-exponencial:
+Los números de ***punto flotante*** se pueden declarar usando las representaciones estándares, incluyendo la notación exponencial:
 
 ```julia
 julia> 2.
@@ -355,7 +371,7 @@ julia> 3.5f-4
 0.00035f0
 ```
 
-Y aunque, el literal 3.5, Julia lo interpreta como de tipo Float64, se puede declarar como de tipo Float32 agregandole al final el sufijo *f0*
+El literal númerico `3.5`, Julia lo interpretará como de tipo `Float64`, se puede declarar como de tipo `Float32` agregandole al final el sufijo `f0`
 
 ```julia
 julia> typeof(3.5)
@@ -365,14 +381,14 @@ julia> typeof(3.5f0)
 Float32
 ```
 
-En los tipos de punto flotante, existen **dos ceros**, el cero positivo y el cero negativo. Aunque son iguales el uno del otro, pero tienen diferente representación binaria.
+En los tipos de ***punto flotante***, existen **dos ceros**: el cero positivo y el cero negativo. Aunque son iguales el uno del otro, pero tienen diferente representación binaria.
 
 ```julia
 julia> 0.0 == -0.0
 true
 ```
 
-Existe tres valores especificos de números de punto flotante, los cuales no se corresponden a ningún punto en la recta real;
+Existe tres valores de números de ***punto flotante***, los cuales no representan a ningún punto en la recta real:
 
 |Nombre|Float16|Float32|Float64|Descripción|
 |--|--|--|--|--|
@@ -380,11 +396,11 @@ Existe tres valores especificos de números de punto flotante, los cuales no se 
 |Infinito negativo|-Inf16|-Inf32|-Inf|Un valor menor que cualquier número de punto flotante finito|
 |No es un número|NaN16|NaN32|NaN|Un valor que no es igual (==) a ningún número de punto flotante, incluyendo a el mismo|
 
-Existe un tipo de número, entero y flotante, que sirve para trabajar con números de precisión arbitraria, aún de los límites por tipo. Estos son **BigInt** y **BigFloat**.
+Existe un ***tipo númerico***, tanto entero como flotante, que sirve para trabajar con **números de precisión arbitraria**. Estos son `BigInt` y `BigFloat`.
 
 ### Literales numéricos como coeficientes
 
-La síntaxis de Julia nos permite tener literales numéricos como coeficientes de expresiones o fórmulas. De está forma, podemos tener expresiones claras, ya que un literal que precede a una variable es interpretado como una multiplicación:
+La síntaxis de Julia nos permite tener ***literales numéricos*** como ***coeficientes*** de expresiones o fórmulas. De está forma, podemos tener expresiones matemáticas claras, ya que un literal númerico que precede a una variable es interpretado como una multiplicación:
 
 ```julia
 julia> x = 3
@@ -393,20 +409,20 @@ julia> x = 3
 julia> 2x^2 - 3x + 1
 10
 
-julia> 1.5x^2 - .5x + 1
+julia> 1.5x^2 - 0.5x + 1
 13.0
 ```
 
-Aunque hay que tener cierto cuidado al interpretar esta última regla, ya que Julia parseara, por ejemplo 2^3x como 2^(3x) y 2x^3 será interpretado como 2*(x^3).
+Aunque hay que tener cierto cuidado al interpretar esta síntaxis, ya que Julia entenderá, por ejemplo que `2^3x` como `2^(3x)` y `2x^3` será interpretado como `2*(x^3)`.
 
-También los coeficiente númericos funciona con expresiones entre paréntesis:
+También los ***coeficiente númericos*** funciona con expresiones entre paréntesis:
 
 ```julia
 julia> 2(x-1)^2 - 3(x-1) + 1
 3
 ```
 
-Julia proporciona funciones para retornar cero o uno del tipo especifico del argumento dado:
+Por otra parte, Julia proporciona funciones para retornar el ***cero*** o el ***uno*** correspondiente al ***tipo especifico del argumento***. Por ejemplo:
 
 ```julia
 julia> zero(Float32)
@@ -424,9 +440,9 @@ julia> one(BigFloat)
 
 ### Números racionales
 
-Julia incluye nativamente los tipos de datos de números racionales (aquellos que se pueden escribir como una fracción de enteros) y números complejos (aquellos con parte real y parte imaginaria).
+Julia incluye nativamente los tipos de datos de ***números racionales*** (aquellos que se pueden escribir como una fracción de enteros) y ***números complejos*** (aquellos con parte real y parte imaginaria).
 
-Los **números racionales** son construidos usando el operador **//** como sigue:
+Los **números racionales** son construidos usando el operador `//` como sigue:
 
 ```julia
 julia> typeof(2//3)
@@ -440,7 +456,7 @@ julia> 5//10
 1//2
 ```
 
-Como está normalización es única, ambos números son iguales, y se pueden comparar directamente con cualquier operador de comparación valido:
+Dicha normalización es única y por lo tanto, ambos números son iguales. Se pueden comparar directamente con cualquier operador de comparación valido:
 
 ```julia
 julia> 1//2 == 5//10
@@ -450,18 +466,18 @@ julia> 3//4 < 2//3
 false
 ```
 
-Sin problemas se puede convertir un racional en tipo de punto flotante como:
+Sin mayor dificultad, un ***número racional*** se puede convertir en ***tipo de punto flotante*** como sigue:
 
 ```julia
 julia> float(3//4)
 0.75
 ```
 
-La promoción de tipo nos ayuda a que un racional pueda operar con cualquier otro tipo de dato númerico directamente.
+La ***promoción y conversión de tipos*** nos ayuda a que un número de ***tipo racional*** pueda operar con cualquier otro tipo de dato númerico directamente.
 
 ### Números complejos
 
-Para el tipo de datos **numéricos complejos**, Julia implementa la constante global **im** ligada a la unidad imaginaria matemática $i$, que representa la $\sqrt{-1}$. Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
+Para el tipo **numéricos complejos**, Julia implementa la constante global `im` ligada a la unidad imaginaria matemática $ i $ que representa la $\sqrt{-1}$ . Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
 
 ```julia
 julia> typeof(1 + 2im)
