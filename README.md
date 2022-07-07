@@ -477,7 +477,7 @@ La ***promoción y conversión de tipos*** nos ayuda a que un número de ***tipo
 
 ### Números complejos
 
-Para el tipo **numéricos complejos**, Julia implementa la constante global `im` ligada a la unidad imaginaria matemática $i $ que representa la $\sqrt{-1}$ . Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
+Para el tipo **numéricos complejos**, Julia implementa la constante global `im` ligada a la unidad imaginaria matemática ($i $) que representa la $\sqrt{-1}$ . Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
 
 ```julia
 julia> typeof(1 + 2im)
