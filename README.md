@@ -477,14 +477,14 @@ La ***promoción y conversión de tipos*** nos ayuda a que un número de ***tipo
 
 ### Números complejos
 
-Para el tipo **numéricos complejos**, Julia implementa la constante global `im` ligada a la unidad imaginaria matemática ($i $) que representa la $\sqrt{-1}$ . Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
+Para el tipo **numéricos complejos**, Julia implementa la constante global `im` ligada a la unidad imaginaria matemática ($i $) que representa $\sqrt{-1}$ . Además, dado que Julia acepta la yuxtaposición de literales númericos como coeficientes para las variables, la notación utilizada para la definición de números complejos es similiar a la forma tradicional matemática:
 
 ```julia
 julia> typeof(1 + 2im)
 Complex{Int64}
 ```
 
-Y pueden realizarse cualquier tipo de operación matemática entre números complejos, e inclusive, por promoción de tipo, puede operar con otros tipos de datos númericos sin problema:
+Y pueden realizarse cualquier tipo de operación matemática entre números complejos, e inclusive, por promoción de tipo, puede operar con otros ***tipos de datos númericos*** sin problema:
 
 ```julia
 julia> (1 + 2im) * (2 + 3.im)
@@ -494,42 +494,43 @@ julia> 3(1 + 2im)^2.0
 -9.0 + 12.0im
 ```
 
-Tenga cuidado cuando los coeficientes de la parte imaginaria son fracciones, ya que puede presentarse confusiones en expresiones de este estilo: $3/4im == 3/(4*im) == -(3/4)*im$.
+Tenga cuidado cuando los coeficientes de la parte imaginaria son fracciones, ya que puede presentarse confusiones en expresiones de este estilo: `3/4im == 3/(4*im) == -(3/4)*im`.
 
-Julia provee de funciones estandar básicas para la manipulación de números complejos:
+Julia provee de funciones estandar básicas para la manipulación de ***números complejos***:
 
 ```julia
 julia> z = 1 + 2im
 1 + 2im
 
-julia> real(z) # Parte real de z
+julia> real(z)              # Parte real de z
 1
 
-julia> imag(z) # Parte imaginaria de z
+julia> imag(z)              # Parte imaginaria de z
 2
 
-julia> conj(z) # Complejo conjugado z
+julia> conj(z)              # Complejo conjugado z
 1 - 2im
 
-julia> abs(z) # Norma o valor absoluto de z
+julia> abs(z)               # Norma o valor absoluto de z
 2.23606797749979
 
-julia> abs2(z) # Norma cuadrada o valor absoluto cuadrado de z
+julia> abs2(z)              # Norma cuadrada o valor absoluto cuadrado de z
 5
 
-julia> angle(z) # Ángulo o fase de z
+julia> angle(z)             # Ángulo o fase de z
 1.1071487177940904
 ```
 
-Si bien es posible construir complejos a partir de variables númericas que representen sus coeficientes:
+Si bien es posible construir complejos a partir de ***variables númericas*** que representen sus coeficientes, esto es:
 
 ```julia
 julia> a = 1; b = 2;
+
 julia> a + b*im
 1 + 2im
 ```
 
-es recomendable y más eficiente construirlo a partir de la función *complex*, donde directamente lo construye pasando la parte real e imaginaria del complejo:
+es recomendable y más eficiente construirlo a partir de la función `complex`, la cuál construye el número complejo pasando la parte real e imaginaria:
 
 ```julia
 julia> complex(a, b)
@@ -538,9 +539,9 @@ julia> complex(a, b)
 
 ### Strings
 
-Los literales tipo string son cadenas finitas de carácteres. Cada carácter es un elemento de tipo Char. Julia puede aceptar, en términos sencillos, cualquier carácter UTF-8.
+Los literales ***tipo String*** son cadenas finitas de carácteres. Cada carácter es un elemento de ***tipo Char***. Julia puede aceptar, en términos sencillos, cualquier carácter Unicode UTF-8.
 
-Se puede definir los strings entre comillas dobles o entre dos pares de comillas triples, como el siguiente ejemplo:
+Se puede definir los ***strings*** entre comillas dobles o entre dos pares de comillas triples, como el siguiente ejemplo:
 
 ```julia
 julia> str1 = "Hola \
@@ -552,9 +553,9 @@ pero finalizaré aquí."""
 "Hola, estoy escribiendo en un párrafo. \nAhora estoy escribiendo en la segunda línea, \npero finalizaré aquí."
 ```
 
-donde se puede posponer la escritura del string mediante `\`, además de que dentro del string se pueden agregar los carácteres especiales de salto de línea y tabulador.
+donde se puede posponer la escritura del ***string*** mediante `\`. Además, dentro del ***string*** se puede agregar los carácteres especiales de salto de línea `\n` y tabulador `\t`.
 
-Los strings con objetos iterables, y puedes obtener los carácteres que lo integran de la siguiente forma:
+Los ***strings*** son objetos iterables y se pueden recorrer para obtener los carácteres que lo integran de la siguiente forma:
 
 ```julia
 julia> str1[1]
@@ -564,7 +565,7 @@ julia> str1[4]
 'a': ASCII/Unicode U+0061 (category Ll: Letter, lowercase)
 ```
 
-**Nota**: aúnque esto es cierto en la mayoria de casos, Julia indexa los string realmente por la cantidad de bytes que ocupa el carácter para ser codificado. UTF-8 incluye carácteres de longitud en byte variable. El índice arriba indicado, se refiere a la posición de byte que observa para retornar el carácter, en lugar de referirse a la posición relativa del carácter dentro del string. Esto es algo para tener en cuenta y cuidado a la hora de trabajar con strings. Para revisar más detalles al respecto, [aquí](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8).
+**Nota**: aúnque esto es cierto en la mayoria de casos, Julia indexa los ***string*** realmente por la cantidad de bytes que ocupa el carácter *para ser codificado*. **UTF-8** incluye carácteres de longitud en byte variable. El índice arriba indicado, se refiere a la posición de byte que observa Julia para decodificar el carácter, en lugar de referirse a la posición relativa del carácter dentro del ***string***. Esto es algo para tener en cuenta y cuidado a la hora de trabajar con ***strings***. Para revisar más detalles al respecto, [aquí](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8).
 
 Para usar símbolos o carácteres Unicode, sólo se tienen que declarar como:
 
@@ -573,7 +574,7 @@ julia> s = "\u2200 x \u2203 y"
 "∀ x ∃ y"
 ```
 
-Para realizar la **concatenación** de dos o más strings, se puede realizar de manera sencilla de dos formas, la primera es usando la función *string*, la cual toma dos o más strings, y crea uno nuevo:
+Para realizar la **concatenación** de dos o más strings, se puede realizar de manera sencilla de dos formas, la primera es usando la función `string`, la cual toma dos o más ***strings***, y crea uno nuevo:
 
 ```julia
 julia> str1 = "Hola "; str2 = "Mundo";
@@ -582,16 +583,16 @@ julia> string(str1, str2)
 "Hola Mundo"
 ```
 
-Las segunda forma es utilizando el operador **\*** (de multiplicación).
+Las segunda forma es utilizando el operador `*` (*multiplicación*).
 
 ```julia
 julia> str1 * str2
 "Hola Mundo"
 ```
 
-Si bien, en otros lenguajes utilizan el operador **+** para realizar la acción de concatenación de strings, sintacticamente es un poco incorrecto, ya que la operación de concatenación es no-conmutativo. De hecho, matemáticamente, el conjunto de todos los strings de longitud finita **S** junto con el operador de concatenación **\*** forma un monoide libre $(S,*)$, que no es conmutativo. Y es común representar la operación concatenación con el símbolo **\***, por lo que Julia es coherente con esa notación.
+Si bien, otros lenguajes utilizan el operador `+` para realizar la acción de concatenación de ***strings***, sintacticamente es incorrecto, ya que la operación de concatenación **es una operación no-conmutativa**. De hecho, matemáticamente, el conjunto de todos los ***strings*** de longitud finita **S** junto con el operador de concatenación `*` forma un **monoide libre** $(S,*)$ no conmutativo. Como es común representar la ***operación concatenación*** con el símbolo `*`, por lo que Julia es coherente con esa notación.
 
-Para utilizar el valor de variables con literales strings dentro de nuevos string, Julia utiliza la interpolación mediante el simbolo **$**, de la siguiente forma:
+Para utilizar el valor de variables con ***literales strings*** dentro de nuevos string, Julia utiliza la **interpolación** mediante el simbolo `$`, de la siguiente forma:
 
 ```julia
 julia> "$str1 a todos, hoy salió el sol para todo el $str2"
@@ -609,7 +610,7 @@ julia> "El resultado de sumar 1 y 2 es $(1 + 2)"
 
 ### Vectores y Arreglos
 
-Los vectores son colecciones de elementos ordenados, los cuales pueden estar duplicados y ser de diferente tipo de dato cada uno. Los vectores son mutables, esto es, pueden agregarse elementos y eliminarlos. Es un objeto iterable y se puede acceder a sus elementos mediante indexación. Es muy similar a las listas en Python.
+Los ***vectores*** son colecciones de elementos ordenados, los cuales pueden estar duplicados o ser de diferente tipo de dato cada uno. Los **vectores son mutables**, esto es, pueden agregarse elementos o eliminarlos. También son objetos iterables y puede accederse a sus elementos mediante indexación. Es muy similar a las listas en Python.
 
 Hay varias formas de declarar un vector:
 
@@ -621,13 +622,13 @@ julia> b = Vector{T}([valor1, valor2, valor3, etc])
 julia> c = Array{T, 1}([valor1, valor2, valor3, etc])
 ```
 
-La primera forma es la forma más directa, donde Julia identifica el mejor tipo de vector que se definirá dependiendo del tipo de dato de los elementos.
+La primera forma es la forma más directa, donde Julia identifica el mejor ***tipo de vector*** que se definirá dependiendo del ***tipo de dato*** de los elementos.
 
-La segunda forma, se define el objeto ***Vector***, donde *T* es el tipo de dato de los elementos que contendrá la lista. En este caso, los elementos futuros no pueden tener un tipo de dato distinto al declarado, por lo que hay que tener precaución.
+La segunda forma, se instancia un objeto `Vector`, donde `T` es el tipo de dato de los elementos que contendrá la lista. En este caso, los elementos futuros no pueden tener un tipo de dato distinto al declarado, por lo que hay que tener precaución.
 
-La tercerda forma, se define al vector como un objeto ***Array*** de una dimensión. De la misma forma que el caso anterios, *T* es el tipo de dato de los elementos del vector. Realmente en el fondo, *Vector* es un alias de *Array* de una dimensión.
+La tercerda forma, se define al vector como un objeto `Array` de una dimensión. De la misma forma que el caso anterios, `T` es el ***tipo de dato*** de los elementos del vector. En el fondo, `Vector` es un **alias** de un `Array` de **una dimensión**.
 
-Como se mencionó con anterioridad, se pueden acceder a los valores de los vectores mediante la indexización usando los ***[]***. Se puede pasar el índice, número natural, o un rango, siempre y cuando tenga sentido. Julia es un lenguaje **1-indexado**, lo que significa que el índice del primer elemento es uno, a diferencia de lenguajes de programación como Python o JavaScript, que son 0-indexados, su primer elemento se indexa  a partir del cero.
+Como se mencionó con anterioridad, se puede acceder a los elementos que componen un vector mediante la **indexización** usando los la notación `[]`. Se puede pasar el ***índice, número natural, o un rango***, siempre y cuando tenga sentido. Julia es un lenguaje **1-indexado**, lo que significa que el índice del primer elemento es uno, a diferencia de lenguajes de programación como Python o JavaScript, que son 0-indexados, su primer elemento se indexa a partir del cero.
 
 ```julia
 julia> a = ["Hola", "¿Cómo estás?", "Muy bien", "Igualmente", "Adiós"]
@@ -707,7 +708,7 @@ julia> popfirts!(a)                             # Elimina el primer elemento del
  "Adiós"
 ```
 
-También se pueden agregar los elementos de una lista a otra ya existente con la función **append** como sigue:
+También se pueden agregar los elementos de un vector a otro ya existente con la función `append!`, como sigue:
 
 ```julia
 julia> append!(a, ["Buenas tardes", "Buenas noches"])
@@ -721,7 +722,9 @@ julia> append!(a, ["Buenas tardes", "Buenas noches"])
  "Buenas noches"
 ```
 
-Como se mencionó anteriormente, los *vectores* son un caso particular de los *Array*, de una dimensión. Ahora, los *Array* de dos dimensiones, en Julia se le llama ***Matrices***, ya que representan datos ordenados en filas y columnas. Para definir las matrices o arreglos de dos dimensiones, los elementos de una misma fila se separan solo por espacio en blanco, mientras que para separar las filas se usa ; de la siguiente forma:
+Como se mencionó anteriormente, los ***vectores*** son un caso particular de `Array` de una dimensión. Los `Array` de dos dimensiones, en Julia se le llama ***matrices***, ya que representan datos ordenados en filas y columnas. 
+
+Para definir las matrices o arreglos de dos dimensiones, los elementos que conforman una fila se separan únicamente por un espacio en blanco, mientras que para separar las filas se usa el símbolo `;` de la siguiente forma:
 
 ```julia
 julia> b = [1 2 3; 4 5 6]
@@ -730,7 +733,7 @@ julia> b = [1 2 3; 4 5 6]
  4  5  6
 ```
 
-Para acceder a los elementos de la matriz, tenemos que usar dos índices, el primero para la fila, el segundo para la columna:
+Para acceder a los elementos de la ***matriz***, tenemos que usar dos índices, el primero para la fila, el segundo para la columna:
 
 ```julia
 julia> b[1, 2]
@@ -739,7 +742,7 @@ julia> b[2, 1]
 4
 ```
 
-Para agregar nuevos datos al final de la matrix, y modificando así su dimensión matricial, se realiza de la siguiente forma
+Para agregar nuevos datos al final de la ***matriz***, y modificando así su dimensión matricial, se realiza de las siguientes funciones:
 
 ```julia
 julia> c = [b; [7 8 9]]                             # Se agrega como una nueva fila
@@ -760,7 +763,7 @@ julia> c = hcat(b, [7; 8])                          # Se agrega como una nueva c
  4  5  6  8
 ```
 
-Los arreglos 3-dimensional, son arreglos de arreglos que se extienden una dimensión más. Para crearlos, se requiere usar la función ***cat*** o ***reshape*** de la siguiente forma:
+Los arreglos 3-dimensional, son ***arreglos de arreglos*** que se extienden una dimensión más. Para crearlos, se requiere usar la función ***cat*** o ***reshape*** de la siguiente forma:
 
 ```julia
 julia> d = cat([1 2; 3 4], [5 6; 7 8], dims=3)
@@ -783,13 +786,14 @@ julia> d[1,2,2]
 julia> d[2,1,1]
 3
 ```
+Para más detalles sobre ***matrices multidimensionales***, se discutirá en la sección [Arreglos multidimensionales](#arreglos-multidimensionales).
 
 ### Tuplas
 
-Otra estructura de datos son las ***tuplas***, los cuales son contenedores de longitud fija y cuyos valores no se pueden modificar (son **inmutables**). Pero al igual que los vectores, sus valores se pueden acceder via ***índices***. Las tuplas se definen con paréntesis y comas, como sigue:
+Las **tuplas** son contenedores de **longitud fija** y cuyos valores no se pueden modificar (son **inmutables**). Pero al igual que los vectores, sus valores se pueden acceder via ***índices***. Las tuplas se definen con paréntesis y comas, como sigue:
 
 ```julia
-julia> (1,)
+julia> (1,)                           # Tupla de una dimensión
 (1,)
 
 julia> (1, 1 + 1)
@@ -805,9 +809,9 @@ julia> a[2]
 "Hola"
 ```
 
-Note que para la tupla unidimensional, se requiere definirlo como $(1,)$ y no como $(1)$ ya que este último significa simplemente el valor 1 entre paréntesis.
+La tupla unidimensional requiere definirse como `(1,)` y no como `(1)` ya que esto último significa simplemente el valor 1 entre paréntesis.
 
-Opcionalmente, los elementos de las tuplas se pueden nombrar, en tal caso, el objeto se llamará ***tupla nombrada***, cuyos valores se pueden regresar ya sea por **índice** o por **notación punto** usando el nombre de su argumento. Las ***tuplas nombradas*** se construye como sigue:
+Opcionalmente, los elementos de las tuplas se pueden nombrar. En tal caso, el objeto se llamará **tupla nombrada** y cuyos valores se pueden obtener mediante **índices** o por **notación punto** (usando el nombre de su argumento). Las ***tuplas nombradas*** se construye como sigue:
 
 ```julia
 julia> b = (nombre="Juan", apellido="Pérez", edad=15)
@@ -827,7 +831,7 @@ julia> b.edad
 15
 ```
 
-Para destructurar una tupla, podemos asignar a una serie de variables para obtener en cada una de ellas el valor de los elementos de la tupla, de la siguiente forma:
+Para desestructurar una tupla, podemos asignar una serie de variables a cada valor de los elementos de la tupla, de la siguiente forma:
 
 ```julia
 julia> mitupla = ("Juan", 7, 15.50);
@@ -850,7 +854,7 @@ Al igual que en Python, podemos usar el guión bajo `_` para ignorar alguna posi
 julia> a, _, c = mitupla;
 ```
 
-Si durante la asignación, la última variable tiene el *sufijo* `...` (conocido como *slurping* sorbedor), entonces, a esa última variable se le asignará un iterador *perezoso* (*lazy iterator*, que ejecutará sólo cuando se le llame), con el resto de elementos del objeto a la derecha se la asignación.
+Si durante la asignación, la última variable tiene el *sufijo* `...` (conocido como *slurping* sorbedor), entonces, a esa última variable se le asignará un iterador *perezoso* (*lazy iterator*) que se ejecutará sólo cuando sea invocado, con el resto de elementos de la tupla u objeto a la derecha del signo de asignación.
 
 ```julia
 julia> a, b... = 1:5;
@@ -868,9 +872,9 @@ julia> b
 
 ### Diccionarios
 
-Los diccionarios en Julia, al igual que en Python, son colecciones de pares clave-valor (key-value), donde cada valor puede ser accedido por su clave, en lugar de índices, ya que en general, los diccionarios son desordenados. Cada diccionario debe tener claves diferentes, preferentemente deben ser strings, enteros o simbolos (:*simbolo*), mientras que en los valores no hay restricciones.
+Los diccionarios en Julia, al igual que en Python, son colecciones de pares **clave-valor** (*key-value*), donde cada valor puede ser accedido por la clave, en lugar de índices. En general, los diccionarios son desordenados. Cada diccionario debe tener claves únicas, preferentemente deben ser **strings, enteros o simbolos** (:*simbolo*), mientras que no hay restricciones en el ***tipo*** de los valores .
 
-Un diccionario es definido mediante un constructor ya incluido **Dict()**, y separando la clave con el valor mediante el símbolo **=>** siguiendo la siguiente estructura y síntaxis:
+Un diccionario se define mediante un ***constructor*** ya incluido `Dict()`, y separando la clave del valor mediante el símbolo `=>` siguiendo la siguiente estructura y síntaxis:
 
 ```julia
 julia> a = Dict("nombre" => "Juan", "apellido" => "Pérez", "edad" => 15, :Δ => "Hola")
@@ -890,7 +894,7 @@ julia> a[:Δ]
 "Hola"
 ```
 
-Julia provee una función muy útil definida de base **get(diccionario, clave, default)**, que nos ayuda a traer el valor asociado a una clave, y en caso de no existir, lanzar un valor o mensaje por default:
+Julia provee una función muy útil `get(diccionario, clave, valor_default)`, que nos ayuda a traer el valor asociado a una clave, pero en caso de no existir la clave consultada, lanzar un valor o mensaje por default. Por ejemplo:
 
 ```julia
 julia> get(a, "nombre", "Beto")
@@ -900,7 +904,7 @@ julia> get(a, "domicilio", "Domicilio no registrado")
 "Domicilio no registrado"
 ```
 
-Al igual que en Python, existen funciones para obtener todas las claves o valores de un diccionario en un objeto iterable . Estas son **keys()** y **values** con la siguiente síntaxis:
+Al igual que en Python, existen funciones para obtener todas las claves o valores de un diccionario en un objeto iterable, estas son `keys` y `values` con la siguiente síntaxis:
 
 ```julia
 julia> claves = keys(a)
@@ -932,7 +936,7 @@ julia> collect(valores)
  "Hola"
 ```
 
-Tanto los objetos regresados por las funciones *keys()* y *values()* pueden ser utilizados como iterables en ciclos *for*, se puede acceder a dichos elementos clave-valor directamente (como en Python con el método .items()) con la siguiente síntaxis:
+Tanto los objetos regresados por las funciones `keys` y `values` pueden ser utilizados como iterables en ciclos `for`, se puede acceder a dichos elementos clave-valor directamente (como en Python con el método `items`) con la siguiente síntaxis:
 
 ```julia
 julia>  for (clave, valor) in a
@@ -944,7 +948,10 @@ apellido => Pérez
 Δ => Hola
 ```
 
-Los diccionarios se pueden modificar. Las tres principales modificaciones son: Agregar nuevos elementos clave-valor, actualizar el valor de claves ya existentes, y borrar claves-valor.
+Los diccionarios son objetos **mutables**. Las tres principales acciones para modificar un diccionario son: 
+1. Agregar nuevos elementos clave-valor. 
+2. Actualizar el valor de alguna clave ya existente.
+3. Borrar claves-valor.
 
 ```julia
 julia> a["ciudad"] = "Monterrey"                # Agregando un nuevo par clave - valor
@@ -964,7 +971,7 @@ Dict{Any, Any} with 4 entries:
   :Δ         => "Hola"
 ```
 
-Se pueden unir dos o más diccionarios mediante la función ***merge()***. Esto crea un nuevo diccionario, o se puede modificar el primer diccionario con ***merge!***, como sigue:
+Se pueden unir dos o más diccionarios mediante la función `merge`. Esto crea un nuevo diccionario, o se puede modificar el primer diccionario con `merge!`, como sigue:
 
 ```julia
 julia> domicilio = Dict("ciudad" => "Guadalajara", "estado" => "Jalisco", "pais" => "México")
