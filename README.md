@@ -29,7 +29,7 @@ El propósito de estas notas es tener una guía de estudio y referencia para el 
     * [Funciones matemáticas básicas](#funciones-matemáticas-básicas)
     * [Funciones vectorizadas](#funciones-vectorizadas)
   * [Funciones](#funciones)
-    * [Bloque function](#bloque-function)
+    * [Bloque `function`](#bloque-function)
     * [Funciones por asignación](#funciones-por-asignación)
     * [Funciones anónimas](#funciones-anónimas)
     * [Desestructurando argumentos](#desestructurando-argumentos)
@@ -993,7 +993,7 @@ Dict{Any, Any} with 7 entries:
 
 ## Operadores matemáticos y funciones elementales
 
-Julia provee con un colección completa de operadores aritméticos y bit a bit en todos los tipos de primitivos. Así como una colección de funciones matemáticas éstandar implementadas eficientemente.
+Julia provee con un colección completa de ***operadores aritméticos*** y ***bit a bit*** en todos los ***tipos de primitivos***. Así como una colección de funciones matemáticas estándar implementadas eficientemente.
 
 ### Operadores aritméticos
 
@@ -1022,7 +1022,7 @@ En la siguiente tabla, se muestra los **operadores booleanos**:
 
 ### Operadores de actualización
 
-Todos los operadores aritméticos tienen su correspondiente **operador de actualización**, esto es, toma el valor de una variable, ejecuta la operación y guarda el resultado en la misma variable. Por ejemplo, x **+=** 1 equivale a x = x **+** 1. Los operadores son:
+Todos los operadores aritméticos tienen su correspondiente **operador de actualización**, esto es, toma el valor de una variable, ejecuta la operación y guarda el resultado en la misma variable. Por ejemplo, `x += 1` equivale a `x = x + 1`. Los operadores son:
 
 ```julia
 +=   -=   *=   /=   \=   ÷=   ^=   %=
@@ -1041,7 +1041,7 @@ Los siguientes son los **operadores de comparación**:
 |<=,  ≤|Menor o igual que|
 |>=,  ≥|Mayor o igual que|
 
-Al igual que Python, Julia acepta cadena de comparaciones de la siguiente forma:
+Al igual que Python, Julia acepta serie de comparaciones de la siguiente forma:
 
 ```julia
 julia> -21 < 1 < x <= 4 < 10 
@@ -1056,7 +1056,7 @@ Las siguientes son las **funciones de redondeo**:
 |round(x)|Redondea al entero más cercano|
 |floor(x)|Redondea al entero más cercano en dirección a **-∞**|
 |ceil(x)|Redondea al entero más cercano en dirección a **+∞**|
-|trunc(x)|Redonde al entero más cercano en dirección a cero|
+|trunc(x)|Redondea al entero más cercano en dirección a cero|
 
 Algunas funciones de **valor absoluto y signo**:
 
@@ -1066,12 +1066,12 @@ Algunas funciones de **valor absoluto y signo**:
 |abs2(x)|Cuadrado del valor absoluto o de la magnitud del número|
 |sign(x)|Regresa el signo del valor, ya sea -1, 0 ó 1. Para el caso de un número complejo, lo regresa normalizado|
 
-La siguiente tabla contienen las principales **funciones potencia, raíces y logaritmos*:
+La siguiente tabla contienen las principales **funciones potencia, raíces y logaritmos**:
 |Función|Descripción|
 |---|---|
 |sqrt(x),   √x|Raíz cuadrada|
 |cbrt(x),   ∛x|Raíz cúbica|
-|hypot(x, y)|Hipótenusa de un triángulo rectángulo cuyos cátetos miden x e y|
+|hypot(x, y)|Hipotenusa de un triángulo rectángulo cuyos catetos miden x e y|
 |exp(x)|Función exponencial de x|
 |log(x)|Logaritmo natural de x|
 |log(b, x)|Logaritmo base b de x|
@@ -1080,7 +1080,7 @@ La siguiente tabla contienen las principales **funciones potencia, raíces y log
 
 También, Julia incluye las funciones **trigonométricas** estandar:
 
-```
+```julia
 sin     asin     sinh   asinh
 cos     acos     cosh   acosh
 tan     atan     tanh   atanh
@@ -1089,14 +1089,17 @@ sec     asec     sech   asech
 csc     acsc     csch   acsch
 ```
 
-Adicionalmente, ya ofrece en el repertorio funciones **sinpi(x)** y **cospi(x)** que son versiones mejor implementadas y optimizadas para calcular **sin(π\*x)** y  **cos(π\*x)**.
-De manera paralela, se incluyen funciones trigonométricas que hacen los cálculos en grados en lugar de radianes, agregandole una *d* al nombre de la función: sind(x), cosd(x), tand(x) ...
+Adicionalmente, Julia ofrece en el repertorio funciones `sinpi(x)` y `cospi(x)` que son versiones mejor implementadas y optimizadas para calcular `sin(π*x)` y  `cos(π*x)`.
+
+De manera paralela, se incluyen funciones trigonométricas que hacen los cálculos en grados en lugar de radianes, agregandole una *d* al nombre de la función: `sind(x)`, `cosd(x)`, `tand(x)`, etc.
 
 ### Funciones vectorizadas
 
-Todas las funciones y operadores tienen su versión **vectorizada**, eso es, que aplicadas a un arreglo o vector, las funciones actuan sobre cada uno de los elementos (*elementwise*), mediante el *operador punto (.)*. Por ejemplo, si tenemos la instrucción [1, 2, 3]^2, dicha instrucción no está definida en la base estandar. En cambio, utilizando el operador punto como [1, 2, 3] **.^** 2, ahora sí, la operación potencia se aplicada a cada elemento del vector [1^2, 2^2, 3^2]. Este operador puede ser aplicado a cualquier operador básico. Por convención y para evitar confusiones con los literales exponentes, se recomienda siempre dejar un espacio blanco en cada lado de los operadores.
+Todas las funciones y operadores tienen su versión **vectorizada**, eso es, que aplicadas a un arreglo o vector, las funciones actúan sobre cada uno de los elementos (*elementwise*), mediante el **operador punto (`.`)**. 
 
-Las **funciones básicas vectorizadas** tambien se pueden aplicar elemento a elemento agregando un punto al final del nombre de la función. Por ejemplo, **sin.(x)** aplicará la función **sin** a cada elemento del vector x.
+Por ejemplo, si tenemos la instrucción `[1, 2, 3]^2` la potencia de vectores no está definida en la base estándar. En cambio, utilizando el operador punto como `[1, 2, 3] .^ 2`, la operación potencia será aplicada a cada elemento del vector, esto es: `[1^2, 2^2, 3^2]`. Este operador puede ser aplicado a cualquier operador básico. Por convención y para evitar confusiones con los literales exponentes, se recomienda siempre dejar un espacio blanco en cada lado de los operadores.
+
+Las **funciones básicas** también se pueden *vectorizar* y aplicarlas elemento a elemento agregando un punto al final del nombre de la función. Por ejemplo, `sin.(x)` aplicará la función `sin` a cada elemento del un vector `x`.
 
 ```julia
 julia> vec = [1, 2, 3, 4, 5, 6];
@@ -1113,9 +1116,9 @@ julia> sqrt.(vec)
 
 ## Funciones
 
-### Bloque function
+Las funciones en Julia son objetos que toman una **tupla de valores-argumento** y regresan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
 
-Las funciones en Julia son objetos que toman una **tupla de valores-argumento** y retornan un valor. En general, las funciones no son puras en Julia, ya que pueden ser afectadas por el estado global del programa.
+### Bloque `function`
 
 La síntaxis básica para declarar funciones en Julia es la siguientes:
 
@@ -1125,11 +1128,11 @@ julia>  function f(x, y)
         end
 ```
 
-La definición de la función comienza con la palabra reservada ***function*** seguida por el nombre de la función y sus argumentos. Siempre se debe finalizar el bloque de definción de la función con la palabra reservada ***end***.
+La definición de la función comienza con la palabra reservada `function`, seguida por el nombre propia de la función y sus argumentos. Siempre se debe finalizar el bloque de definición de la función con la palabra reservada `end`.
 
-Por default, las funciones regresan siempre el valor de la última instrucción de su definición. Sin embargo, también existe la palabra reservada ***return*** que explicitamente indica el valor que la función retornará. Toda expresión después de la línea de *return* será ignorada.
+Por default, las funciones **regresan siempre el valor de la última instrucción** de su definición. Sin embargo, existe la palabra reservada `return` que explícitamente indica el valor que la función retornará. Toda expresión después de la línea del `return` será ignorada.
 
-Es recomendable siempre incluir explicitamente el return de las funciones:
+**Es recomendable siempre incluir explícitamente la palabra** `return` en las funciones:
 
 ```julia
 julia>  function f(x, y)
@@ -1139,13 +1142,13 @@ julia>  function f(x, y)
 
 ### Funciones por asignación
 
-Existe otra síntaxis para declarar funciones más compacta, llamada ***por asignación***, ideal cuando la definición de la función se puede hacer en una sola expresión:
+Existe otra síntaxis más compacta para declarar funciones, llamada ***por asignación***. Esta es ideal cuando la definición de la función se puede hacer en una sola expresión:
 
 ```julia
 julia> f(x, y) = x^2 - 2x + y
 ```
 
-Al igual que con el nombre de las variables, se pueden usar carácteres Unicode para el nombre de las funciones:
+Se pueden usar carácteres Unicode para el nombre de las funciones:
 
 ```julia
 julia> ∑(x, y) = x + y
@@ -1156,12 +1159,12 @@ julia> ∑(2, 7)
 
 ### Funciones anónimas
 
-Existe una tercera síntaxis para declarar funciones, las llamadas ***funciones anónimas*** (equivalentes a las *lambda functions* de Python o las *arrow functions* de JavaScript), que principalmente se utilizan como argumentos de otras funciones, y que no se requieren conservar después de su ejecución. Las dos formas equivalenes para declararlas es como sigue:
+Existe una tercera síntaxis para declarar funciones, las llamadas ***funciones anónimas*** (equivalentes a las *lambda functions* de Python o las *arrow functions* de JavaScript). Principalmente, las ***funciones anónimas*** se usan como argumentos de otras funciones, que al final de su ejecución no se requieren conservar. Las dos formas equivalentes para declarar ***funciones anónimas***, como sigue:
 
 ```julia
 julia> x -> x^2 - 2x + 1            # En una sola línea
 
-julia>  function (x)                # Sin incluir un nombre a la función
+julia>  function (x)                # Sin incluir algún nombre a la función
             x^2 - 2x + 1
         end
 ```
@@ -1176,14 +1179,14 @@ Existe una tercera forma para declarar funciones anónimas, es por medio del [Bl
 
 ### Desestructurando argumentos
 
-Al igual que vimos en la sección de [tuplas](#tuplas), se pueden desestructurar los argumentos de una función. Si los argumentos de una función se escriben como una tupla, es decir `(x, y)`, en lugar de un sólo elemento, entonces, las variables serán asignada siguiendo la desestructuración de tupla `(x, y) = *tupla argumento*`. Por ejemplo:
+De la misma forma que las [tuplas](#tuplas), se puede desestructurar los argumentos de una función. Si los argumentos de una función se escriben como una tupla, es decir `(x, y)`, en lugar de un sólo elemento, entonces, las variables serán asignada siguiendo la desestructuración de tupla `(x, y) = *argumento-tupla*`. Por ejemplo:
 
 ```julia
 julia>  function minimomaximo(x, y)
             if x > y
                 return (y, x)
             else
-                return (x, y)
+                return (x, y)                                 # En cualquier caso, regresa una tupla con dos valores
             end
         end
 
@@ -1194,7 +1197,8 @@ julia>  function diferencia((minimo, maximo))                 # Cada argumento s
 julia> diferencia(minimomaximo(10, 6))
 4
 ```
-Note que en la definición de la función `diferencia`, se requiere un par extra de paréntesis, ya que sin ellos, la función tomaría dos argumentos, en lugar de un solo argumento tupla.   
+
+Note que en la definición de la función `diferencia`, se requiere un par extra de paréntesis, ya que sin ellos, la función tomaría dos argumentos, en lugar de un solo argumento-tupla.   
 
 Esto también sirve para funciones anónimas, como sigue:
 
@@ -1208,7 +1212,7 @@ Aquí, la declaración de la función anónima requiere una coma extra para func
 
 ### Funciones con número variable de argumentos
 
-A menudo es conveniente poder escribir funciones tomando un número arbitrario de argumentos. Estas funciones se conocen tradicionalmente como funciones ***varargs***. Puede definirse una función ***varargs*** colocando en el último argumento posicional el sufijo de puntos suspensivos `...`, como sigue:
+A menudo es conveniente poder escribir funciones tomando un número arbitrario de argumentos. Estas funciones se conocen tradicionalmente como ***funciones varargs***. Puede definirse una ***función varargs*** colocando en después del último argumento posicional el sufijo de puntos suspensivos `...`, como sigue:
 
 ```julia
 julia>  function toarray(a, b...)
@@ -1231,7 +1235,7 @@ julia> toarray(1, 2, 3)
  3
 ```
 
-Es posible restringir el número de argumentos el número de valores que se pasan dentro de la función de argumentos variables. Pero eso es un tema para la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
+Es posible restringir el número de argumentos que se pasan dentro de la función de argumentos variables. Pero eso es un tema para la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
 
 Ahora, en el caso contrario, donde tengamos una variable con un objeto iterable (no necesariamente una tupla) cuyos elementos los queremos pasar a una función de elementos fijos, puede utilizarse los `...` como desestructurador, pero no en la definición de la función, sino en la llamada, como sigue:
 
@@ -1245,7 +1249,7 @@ julia> sumatriple(1, 2, 3)
 
 julia> z = (1, 2, 3);
 
-julia>  sumatriple(z)
+julia>  sumatriple(z)                             # Falla porque estamos pasando una tupla en lugar de tres números
 ERROR: MethodError: no method matching sumatriple(::Tuple{Int64, Int64, Int64})
 ...
 
@@ -1253,7 +1257,7 @@ julia>  sumatriple(z...)
 6
 ```
 
-Di hay una cantidad incorrecta de elementos en el objeto a desestructurar, la llamada a la función fallará, tal como lo haría si se proporcionaran demasiados argumentos explícitamente.
+Si hay una cantidad incorrecta de elementos en el objeto a desestructurar, la llamada a la función fallará, tal como lo haría si se proporcionaran demasiados argumentos explícitamente.
 
 ### Argumentos opcionales
 
@@ -1274,21 +1278,21 @@ Que onda, Juan. Eres el No. 1
 julia>  saludo("Juan", "Que onda", 5)
 Que onda, Juan. Eres el No. 5
 ```
-En Julia, a diferencia de lo que sucede en Python, **los argumentos opcionales siguen siendo posicionales y no puede ser pasados por nombre**. Por ejemplo:
+En Julia, a diferencia de lo que sucede en Python, **los argumentos opcionales siguen siendo posicionales y no pueden ser pasados por nombre**. Por ejemplo:
 
 ```julia
 julia> saludo("Juan", mensaje="Buenas noches")
 ERROR: MethodError: no method matching saludo(::String; mensaje="Buenas noches")
-...
+[...]
 ```
 
-Los argumentos opcionales son en realidad una sintaxis conveniente para escribir múltiples definiciones de métodos con diferentes números de argumentos. De hecho, note que el mensaje de salida en la definición de la función `saludo`, nos indica que definimos tres métodos diferentes de la función. Cada método corresponde uno de los tres casos, cuando proporcionamos valores a uno, dos o tres argumentos. Esto se verá con más detalle en la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
+Los ***argumentos opcionales*** son en realidad una sintaxis conveniente para **escribir definiciones múltiples de métodos** con diferente número de argumentos. De hecho, note que el mensaje de salida en la definición de la función `saludo` en el ejemplo anterior, nos indica que definimos tres métodos diferentes de la función. Cada método corresponde uno de los tres casos, cuando proporcionamos valores a uno, dos o tres argumentos. Esto se verá con más detalle en la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
 
 ### Argumentos de palabra clave
 
-Cuando una función recibe un gran número de argumentos, es dificil recordar la posición precisa de cada uno de ellos y puede ser dificil su invocación. Los ***argumentos de palabra clave*** (***Keyword arguments***, al igual que en Python) pueden facilitar el llamado de las funciones, ya que **permiten identificar cada argumento por su nombre en lugar de sólo por su posición**.
+Cuando una función recibe un gran número de argumentos, es difícil recordar la posición precisa de cada uno de ellos y puede ser difícil su invocación. Los ***argumentos de palabra clave*** (***Keyword arguments***) , al igual que en Python, pueden facilitar el llamado de las funciones, ya que **permiten identificar cada argumento por su nombre en lugar de su posición**.
 
-Los ***argumentos de palabra clave*** se definen en la función separandolos de los ***argumentos posicionales*** mediante *punto y coma* `;` de la siguiente forma:
+Los ***argumentos de palabra clave*** se definen en la función separándoles de los ***argumentos posicionales*** mediante *punto y coma* `;` de la siguiente manera:
 
 ```julia
 julia>  function f(x, y; radio=1.0, eje=1.0)            # Los argumentos x, y son posicionales
@@ -1296,9 +1300,9 @@ julia>  function f(x, y; radio=1.0, eje=1.0)            # Los argumentos x, y so
         end
 ```
 
-Cuando la función es invocada, el *punto y coma* entre los argumentos es opcional. Es decir, `f(x, y; radio=3.0)` es lo mismo que `f(x, y, radio=3.0)`. Los valores por defecto de argumentos de palabra clave se pasan a la función, si no se proporciona su correspondiente valor durante su invocación.
+Cuando la función es invocada, el *punto y coma* entre los argumentos es opcional. Es decir, `f(x, y; radio=3.0)` es lo mismo que `f(x, y, radio=3.0)`. Los valores por defecto de argumentos de palabra clave se pasan a la función, si no se proporciona su correspondiente valor durante la invocación.
 
-Es posible especificar explicitamente el ***tipo*** de los argumentos de palabra clave, como sigue:
+Es posible especificar explícitamente el ***tipo*** de los argumentos de palabra clave, como sigue:
 
 ```julia
 julia>  function f(; x::Int=1, y::Float64=0.0)
@@ -1306,7 +1310,7 @@ julia>  function f(; x::Int=1, y::Float64=0.0)
         end
 ```
 
-También, los ***argumentos de palabra clave*** pueden ser implementados en ***funciones con número de argumentos variables*** de la siguiente manera:
+También, los ***argumentos de palabra clave*** pueden ser implementados en ***funciones con número de argumentos posicionales variables*** de la siguiente manera:
 
 ```julia
 julia>  function f(a, b...; radio::Float64=1.0)
@@ -1322,7 +1326,7 @@ julia>  function f(a; x=1.0, kwargs...)
         end
 ```
 
-Dentro de `f`, `kwargs` será un ***iterador clave-valor inmutable*** sobre una ***tupla nombrada***. Las ***tuplas nombradas***, así como los ***diccionarios*** con claves del tipo `Symbol`, pueden pasarse como ***conjunto de argumentos de palabra clave*** utilizando explicitamente el *punto y coma* `;` en la invocación de la función. Por ejemplo:
+Dentro de `f`, `kwargs` será un ***iterador clave-valor inmutable*** sobre una ***tupla nombrada***. Las ***tuplas nombradas***, así como los ***diccionarios*** con **claves** del tipo `Symbol`, pueden pasarse como ***kwargs*** utilizando explícitamente el *punto y coma* `;` en la invocación de la función. Por ejemplo:
 
 ```julia
 julia> function f(r; kwargs...)
@@ -1354,7 +1358,7 @@ julia>  function g(x; y)
 
 julia>  g(1)
 ERROR: UndefKeywordError: keyword argument y not assigned
-...
+[...]
 
 julia>  g(1, y=1.0)
 Argumento Posicional: 1
@@ -1370,13 +1374,13 @@ Argumento Palabra clave: 1.5
 
 Es decir `g(1; :y => 1.5)` es equivalente a `g(1, y=1.5)`. Esto es útil en situaciones en las que el nombre de la palabra clave se calcula en tiempo de ejecución.
 
-Otra caracteristica curiosa, cuando aparece un identificador simple o una *expresión de punto* después de un punto y coma en la invocación de la función, el nombre del ***argumento de palabra clave*** está implícito en el identificador o el nombre del campo. Esto es:
+Otra característica curiosa, cuando aparece un identificador simple o una *expresión de punto* después de un *punto y coma* en la invocación de la función, el nombre del ***argumento de palabra clave*** está implícito en el identificador o el nombre del campo. Esto es:
 
 ```julia
 julia>  y = 2.0;
 
 julia> g(1.0; y)                                    # Esto es equivalente a g(1.0; y=y) [Un poco 
-Argumento Posicional: 1.0                           # similar a lo que se tiene en JavaScript]
+Argumento Posicional: 1.0                           # similar a alguna característica que tiene JavaScript]
 Argumento Palabra clave: 2.0
 
 julia>  tupla = (a=5, y=8)
@@ -1387,13 +1391,13 @@ Argumento Posicional: 1
 Argumento Palabra clave: 8
 ```
 
-La naturaleza de los ***argumentos de palabra clave*** hace posible especificar el mismo argumento más de una vez. Por ejemplo, en la llamada `plot(x, y; opciones..., ancho=2)` es posible que la estructura del objeto `opciones` también contenga un valor `ancho`. En tal caso, la **ocurrencia más a la derecha** tiene prioridad; en el caso del ejemplo, es seguro que `ancho` tendra el valor `2`. Sin embargo, especificar explícitamente el **mismo** ***argumento de palabra clave*** **varias veces**, por ejemplo `plot(x, y, ancho=2, ancho=3)`, no está permitido y da lugar a un error de sintaxis.
+La naturaleza de los ***argumentos de palabra clave*** hace posible especificar el mismo argumento más de una vez. Por ejemplo, en la llamada `plot(x, y; opciones..., ancho=2)` es posible que la estructura del objeto `opciones` también contenga un valor `ancho`. En tal caso, la **ocurrencia más a la derecha** tiene prioridad; en el caso del ejemplo, es seguro que `ancho` tendrá el valor `2`. Sin embargo, especificar explícitamente el **mismo** ***argumento de palabra clave*** **varias veces**, por ejemplo `plot(x, y, ancho=2, ancho=3)`, no está permitido y da lugar a un error de síntaxis.
 
 ### Declaración de tipo de argumentos
 
-Es posible indicar el tipo de dato de los argumentos (tanto de los argumentos posicionales como los keyword), al igual que el tipo de dato que retorna la función.
+Es posible indicar el tipo de dato de los argumentos (tanto de los ***argumentos posicionales*** como los ***argumentos de palabra clave***), al igual que el tipo de dato que retorna la función.
 
-La síntaxis para declarar el tipo de dato se realiza con los cuadripuntos `::` (similares a Fortran), de la siguiente forma:
+La síntaxis para declarar el tipo de dato se realiza con los cuadripuntos `::` (símbolo similar en Fortran), de la siguiente forma:
 
 ```julia
 julia>  function prediccion(x::Float64; n::Int64 = 5, p::Float64 = 0.5)::Float64
@@ -1401,13 +1405,13 @@ julia>  function prediccion(x::Float64; n::Int64 = 5, p::Float64 = 0.5)::Float64
         end
 ```
 
-Julia se asegurará de convertir el resultado al tipo de dato que declara como salida de la función.
+Julia se asegurará de convertir el resultado al ***tipo de dato*** que declara como salida de la función.
 
 Si bien, el tipado de argumentos no da ninguna ventaja en el desempeño del código, será sumamente útil para aplicaciones más avanzadas de Julia (veáse el [Despacho múltiple](#métodos-de-funciones-despacho-múltiple)).
 
 ### Return nothing
 
-Finalmente, las funciones que no regresan algún valor y sólo realizan cambios, por convención se retorna la expresión ***nothing*** como sigue:
+Finalmente, las funciones que no regresan algún valor y sólo realizan cambios, por convención deben retorna la expresión `nothing`, como sigue:
 
 ```julia
 julia>  function imprime(nombre)
@@ -1418,12 +1422,16 @@ julia>  function imprime(nombre)
 
 ### Vectorización de funciones
 
-Una de las implementaciones más interesantes en Julia incluida en sus sistema base, es la implementación vectorizada (elemento a elemento) de las funciones al ser aplicadas a arreglos, vectores o matrices. Para conseguirlo, usamos la síntaxis punto (*dot syntax*) que ya vimos anteriormente con las funciones elementales, pero esta vez a nuestras funciones:
+Una de las implementaciones más interesantes en Julia incluida en sus sistema base, es la implementación ***vectorizada*** (*elemento a elemento*) de las funciones al ser aplicadas a ***arreglos, vectores o matrices***. Para conseguirlo, usamos la síntaxis punto (*dot syntax*) que ya vimos anteriormente con las funciones elementales, pero esta vez a nuestras funciones personalizadas:
 
 ```julia
+julia>  function prediccion(x, n, p)
+            return (n * x) ^ p 
+        end
+
 julia> A = [1.0, 1.5, 2.0, 3.0, 5.0]
 
-julia> prediccion.(A, n=5, p=0.5)       # Si se ejecuta la función sin el punto, salta un error
+julia> prediccion.(A, 5, 0.5)                       # Si se ejecuta la función sin el punto, saltará un error
 5-element Vector{Float64}:
  2.23606797749979
  2.7386127875258306
@@ -1432,24 +1440,26 @@ julia> prediccion.(A, n=5, p=0.5)       # Si se ejecuta la función sin el punto
  5.0
 ```
 
-**Nota**: La síntaxis *punto* es azucar sintáctica de la función [broadcast](#broadcasting) que justamente realiza la operación de aplicar una función a cada uno de los elementos de los arreglos.
+**Nota**: La síntaxis *punto* es azúcar sintáctica de la función [broadcast](#broadcasting) que justamente realiza la operación de aplicar una función a cada uno de los elementos de los arreglos.
 
 ### Composición de funciones
 
-Otra curiosidad de Julia, es que se puede realizar de manera sencilla **composición de funciones**, esto es, aplicar una función sobre el resultado de otra función (algo muy natural en matemáticas). Esto se logra con el operador de composicion `∘` esto es, `(f ∘ g)(args...)` es lo mismo que `f(g(args...))`. Dentro del REPL, el operador composición se obtiene escribiendo **\circ + TAB**.
+Otra curiosidad de Julia, es que se puede realizar de manera sencilla **composición de funciones**, esto es, aplicar una función sobre el resultado de otra función (algo muy natural en matemáticas). 
 
-Otra implementación de la composición de funciones es utilizando el operador *pipe* `|>` (algo más común entre los programadores). Realiza exactamente lo mismo, la salida de una función pasa como argumento de la siguiente:
+Esto se logra con el operador de composición `∘` de la siguiente forma: `(f ∘ g)(args...)` es lo mismo que `f(g(args...))`. Dentro del REPL, el operador composición se obtiene escribiendo `\circ + TAB`.
+
+Otra implementación de la composición de funciones es utilizando el operador ***pipe*** `|>` (algo común entre los programadores). Ambas formas realizan exactamente lo mismo, la salida de una función pasa como argumento de la siguiente, por ejemplo:
 
 ```julia
 julia> x = [1, 2, 3, 4, 5]
 
-julia> sqrt(sum(x))         # Composición de funciones normal
+julia> sqrt(sum(x))               # Composición de funciones normal
 3.872983346207417
 
-julia> (sqrt ∘ sum)(x)      # Al estilo matemático
+julia> (sqrt ∘ sum)(x)            # Al estilo matemático
 3.872983346207417
 
-julia> x |> sum |> sqrt     # Utilizando pipe al estilo programador
+julia> x |> sum |> sqrt           # Utilizando pipe al estilo programador
 3.872983346207417
 ```
 
@@ -1460,28 +1470,28 @@ julia> x |> sum |> sqrt     # Utilizando pipe al estilo programador
 Los bloques condicionales permiten evaluar porciones de código dependiendo si se cumple o no cierta expresión booleana. La estructura condicional sigue el siguiente patrón `if-elseif-else`:
 
 ```julia
-julia>  if condición_1
+julia>  if condición1
             # Bloque de código 1
-        elseif condición_2
+        elseif condición2
             # Bloque de código 2
         else
             # Bloque de código 3
         end
 ```
 
-El bloque condicional no introduce un alcance local de las variables, lo que significa que variables definidas o modificadas dentro del bloque, pueden ser accedidas fuera de él después de la ejecución del bloque condicional.
+El bloque condicional no introduce un ***scope local*** de las variables, lo que significa que variables definidas o modificadas dentro del bloque, pueden ser accedidas fuera de él después de la ejecución del bloque condicional.
 
-Existe otra síntaxis para evaluar condicionales, principalmente cuando se pueden escribir en una sóla expresión, el llamado ***operador ternario*** **? :** que tiene la siguiente estructura sintáctica:
+Existe otra síntaxis para evaluar condicionales, principalmente cuando se pueden escribir en una sola expresión, el llamado ***operador ternario*** `? :` que tiene la siguiente estructura sintáctica:
 
 ```julia
-julia> condición ? expresión_1 : expresión_2
+julia> condición ? expresión1 : expresión2
 ```
 
-La expresión condicional se pone antes del signo **?** . Si la ***condición*** es verdadera, se ejecuta el ***expresión_1***. En caso contrario, si la ***condición*** es falsa, se ejecuta ***expresión_2***.
+La expresión condicional se pone antes del signo `?` . Si la `condición` es verdadera, se ejecuta la `expresión1`. En caso contrario, si la `condición` es falsa, se ejecuta la `expresión2`.
 
 ### Evaluación Short-Circuit
 
-Al evaluar dos o más condiciones lógicas, Julia utiliza tanto **&&** como **||** como operadores lógicos AND y OR respectivamente. Sin embargo, estos operadores tienen una propiedad adicional, la evaluación ***short-circuit*** o de cortocircuito, el cual consiste en no evaluar necesariamente el segundo argumento. En una serie de expresiones booleanas conectadas con estos operadores, sólo el mínimo de expresiones necesarias son evaluadas para determinar el valor del booleano final. En otras palabras, tenemos estas dos condiciones:
+Al evaluar dos o más condiciones lógicas, Julia utiliza tanto **&&** y **||** como operadores lógicos AND y OR respectivamente. Sin embargo, estos operadores tienen una propiedad adicional, la evaluación ***short-circuit*** o de ***cortocircuito***. Esto consiste en no evaluar necesariamente el segundo argumento. En una serie de expresiones booleanas conectadas con estos operadores, para determinar el valor final sólo se evalúan el mínimo de expresiones necesarias. En otras palabras, tenemos estas dos condiciones:
 
 1. En la expresión `A && B`, la subexpresión ***B*** es evaluada solamente si la expresión ***A*** es **verdadera**.
 2. En la expresión `A || B`, la subexpresión ***B*** es evaluada solamente si la expresión ***A*** es **falsa**.
@@ -1491,11 +1501,11 @@ La razón de estas dos condiciones es la siguiente:
 1. Si ***A*** es falsa, entonce la expresión `A && B` debe ser falsa, independientemente del valor que tenga ***B***.
 2. Si ***A*** es verdadera, entonces las expresión `A || B` debe ser verdadera, independientemente del valor que tenga ***B***.
 
-La evaluación *short-circuit* de los operadores **&&** y **||** se realiza de izquierda a derecha, teniendo la preferencia la evaluación de **&&** sobre **||**.
+La evaluación ***short-circuit*** de los operadores `&&` y `||` se realiza de izquierda a derecha, teniendo preferencia la evaluación de `&&` sobre `||`.
 
-Si se desea hacer la evaluación explicita de las dos subexpresiones **A** y **B**, entonces se puede usar los operadores lógicos bit a bit **&** y **|**.
+Si se desea hacer la evaluación explicita de las dos subexpresiones **A** y **B**, entonces se puede usar los operadores lógicos bit a bit `&` y `|`.
 
-La evaluación *short-circuit* frecuentemente es utilizado en Julia como un truco para hacer evaluaciones `if <condición> <expresión> end`. Por ejemplo, los siguiente ejemplos son equivalentes:
+La evaluación ***short-circuit*** frecuentemente es utilizado en Julia como un truco para hacer evaluaciones `if <condición> <expresión> end`. Por ejemplo, los siguiente ejemplos son equivalentes:
 
 ```julia
 julia>  if condición
@@ -1515,7 +1525,7 @@ julia> condición || # expresion
 
 ### Ciclos While y For
 
-El primer bloque para realizar ciclo de repeticiones es el **while**, el cual evalua una expresión condicional. En el caso de que la expresión condicional sea verdadera, el ciclo se ejecutará, hasta que se deje de cumplir la expresión. La estructura sintáctica del ciclo while es el siguiente:
+El primer bloque para realizar ciclos de repeticiones es el `while`, el cual evalúa una expresión condicional. En el caso de que la expresión condicional sea verdadera, el ciclo se ejecutará, hasta que se deje de cumplir la expresión. La estructura sintáctica del ciclo `while` es el siguiente:
 
 ```julia
 julia>  while condición
@@ -1523,7 +1533,7 @@ julia>  while condición
         end
 ```
 
-El otro bloque para realizar repeticiones es el ciclo **for**, el cual recorre sobre algún objeto iterable (por ejemplo, objetos de **rango**) repitiendo la ejecución del bloque de código, hasta que se alcance el final del objeto iterable. La estructura sintáctica del ciclo for es el siguiente:
+El otro bloque para realizar repeticiones es el ciclo `for`, el cual recorre sobre algún objeto iterable (por ejemplo, objetos `range`) repitiendo la ejecución del bloque de código, hasta que se alcance el final del objeto iterable. La estructura sintáctica del ciclo `for` es el siguiente:
 
 ```julia
 julia>  for i in objeto_iterable        # Forma pythonica de pertenencia
@@ -1539,17 +1549,17 @@ julia>  for i = objeto_iterable         # Forma matemática o de Fortran de decl
         end
 ```
 
-Se puede utilizar la palabra clave **in** o el símbolo ∈ (\in + TAB) o el símbolo igual (=) para índicar la pertenencia del índice mudo a cada elemento del objeto iterable.
+Se puede utilizar la palabra clave `in`, el símbolo `∈` (`\in + TAB`) o el símbolo igual (`=`) para indicar la pertenencia del índice mudo que recorrerá al objeto iterable.
 
-Las objetos **range** son los más frecuentemente utilizados para iterar sobre un rango de valores numéricos. Hay dos formas equivalente de declarar rangos en Julia:
+Las objetos `range` son los más utilizados para iterar sobre un rango de valores numéricos. Hay dos formas equivalente de declarar rangos en Julia:
 
 ```julia
-julia> range(inicio, final, step=n)         # Declaración de rango como en Python, pero es incluyente.
+julia> range(inicio, final, step=n)         # Declaración de rango incluyente.
 
 julia> inicio:step:final                    # Declaración preferida en Julia.
 ```
 
-Para ciclos for anidados, se puede hacer de la forma tradicional, escribiendo dentro de un primer ciclo for el segundo ciclo for. Sin embargo, para muchos casos, puede ser conveniente y posible sustituir el anidamiento en un solo ciclo for como sigue:
+Para ciclos `for` anidados, se puede hacer de la forma tradicional, escribiendo dentro de un primer ciclo el segundo ciclo `for`. Sin embargo, para muchos casos, puede ser conveniente y posible sustituir el anidamiento en un solo ciclo `for` como sigue:
 
 ```julia
 julia>  for i in [1, 2], j in [3, 4]
@@ -1561,23 +1571,23 @@ julia>  for i in [1, 2], j in [3, 4]
 (2, 4)
 ```
 
-Hay que tener cuidado, ya que a diferencia del ciclo for anidado tradicional, donde recorre uno por uno los elementos de cada índice, en este último ciclo for hace el producto cartesiano de los elementos de los iterables, e itera sobre esos nuevos elementos. Para la mayoría de casos, ambos ciclos son equivalentes, pero se debe tener cuidado al trabajar con ellos dependiendo que la tarea que se quiera realizar.
+Hay que tener cuidado, ya que a diferencia del ciclo `for` anidado ***tradicional***, donde los indices mudos recorre uno por uno los elementos, en este último ciclo `for` primero hace el producto cartesiano de los elementos en los iterables, y después itera sobre nuevos elementos. Para la mayoría de casos, ambos ciclos son equivalentes, pero se debe tener cuidado al trabajar con ellos dependiendo que la tarea que se quiera realizar.
 
 ### Bloque de Expresiones Compuestas
 
-Muchas veces es conveniente y útil tener un sola expresión que evalue varias subexpresiones y que únicamente devuelva el valor de la última subexpresión. Hay dos formas equivalentes de hacer esto en Julia, la primera es con el ***bloque begin*** y la segunda es con cadenas ***;*** como sigue:
+Muchas veces es conveniente y útil tener un sola expresión que evalúe varias subexpresiones y que únicamente devuelva el valor de la última subexpresión. Hay dos formas equivalentes de hacer esto en Julia, la primera es con el ***bloque `begin`*** y la segunda es con cadenas de expresiones separadas por `;`, como sigue:
 
 ```julia
 julia>  suma =  begin
                     x = 3
                     y = 5
-                    x + y
+                    x + y                         # Sólo regresa la evaluación de la última expresión
                 end
 
 julia>  suma = (x = 3; y = 5; x + y)
 ```
 
-En ambos casos, el valor que se guarda en la variable siempre será el resultado de la última instrucción. Aunque típicamente esta es la forma de utilizar las cadenas ***;*** y el bloque ***begin***, nada restringe la posibilida de tener un bloque begin en una línea, y una cadena ; multilínea.
+En ambos casos, el valor que se guarda en la variable siempre será el resultado de la última instrucción. Aunque típicamente esta son la forma de utilizar las cadenas de `;` y el bloque `begin`, nada restringe la posibilidad de tener un bloque `begin` en una línea, y una cadena `;` multilínea.
 
 ```julia
 julia>  suma =  begin; x = 3; y = 5; x + y; end
@@ -1589,17 +1599,17 @@ julia>  suma = (x = 3;
 
 ### Bloque Do
 
-Al pasar funciones como argumentos a ***funciones de orden superior***, tipicamente se usan [funciones anónimas](#funciones-anónimas). Pero muchas veces de dichas funciones requieren multiples líneas para su definición, lo que hace engorrosa y díficil la lectura del código. Afortunadamente, el bloque `do` solventa este problema.
+En ***funciones de orden superior*** que requieren como argumento una función, típicamente se usan [funciones anónimas](#funciones-anónimas). Pero muchas veces, dichas funciones requieren multiples líneas para su definición, lo que hace engorrosa y díficil la lectura del código. Afortunadamente, el bloque `do` solventa este problema.
 
-El bloque `do` creará una función anónima que en autómatico se la pasará a la *función de orden superior*. Para esto, es necesario que la *función de orden superior* **reciba como primer argumento un función**. La síntaxis del bloque `do` es la siguiente:
+El bloque `do` creará una función anónima, y en automático se la pasará como argumento a la *función de orden superior*. Para esto, **es necesario** que la *función de orden superior* **reciba como primer argumento un función**. La síntaxis del bloque `do` es la siguiente:
 
 ```julia
 # Invocación sin el bloque do sería: 
-julia>  función_orden_superior(función_anonima, otros_args...)
+julia>  función_orden_superior(función_anónima, otros_args...)
 
 # Usando el bloque Do
-julia>  función_orden_superior(otros_args...) do argumentos_función_anonima,...
-            # Intrucciones de la función anónima
+julia>  función_orden_superior(otros_args...) do argumentos_función_anónima,...
+            # Instrucciones de la función anónima
         end
 ```
 
@@ -1609,7 +1619,7 @@ Por ejemplo:
 julia> numeros = [(1,2),(9,2),(5,5),(7,3),(3,4)];
 
 # Sin bloque Do:
-julia> map(x -> begin
+julia> map(x -> begin                                   # map(f::Function, array::Array)
                     if x[1] < x[2]
                         return "Es menor"
                     elseif x[1] > x[2]
@@ -1631,8 +1641,7 @@ julia>  map(numeros) do x
         end 
 ```
 
-La instrucción `do x` crea una función anónima con un argumento, `x -> ...` . Así, la instrucción `do x, y` creará una función anónima de dos argumentos, `(x, y) -> ...` . En cambio, la expresión `do (x, y)` creará una función anónima cuyo único argumento será una tupla que será deconstruida. Finalmente, la simple instrucción `do` definirá una función anónima sin argumentos `()-> ...` .
-
+La instrucción `do x` crea una función anónima con un argumento, equivalente a `x -> ...` . Así, la instrucción `do x, y` creará una función anónima de dos argumentos, equivalente a `(x, y) -> ...` . En cambio, la expresión `do (x, y)` creará una función anónima cuyo único argumento será una tupla que será desestructurada. Finalmente, la simple instrucción `do` definirá una función anónima sin argumentos equivalente `()-> ...` .
 
 ***
 
