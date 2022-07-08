@@ -151,7 +151,7 @@ para abrir y verificar que Julia se haya instalado correctamente.
 2. Extrae el contenido, esto se hace abriendo una terminal y ejecutaremos el siguiente comando:
 
     ```console
-    tar -xvzf julia-1.7.3-linux-x86_64.tar.gz
+    $ tar -xvzf julia-1.7.3-linux-x86_64.tar.gz
     ```
 
     donde ustedes deben sustituir por el nombre del archivo que descargaron. El comando les habrá generado una carpeta con el `julia-1.7.3` que contiene los binarios del interprete.
@@ -159,13 +159,13 @@ para abrir y verificar que Julia se haya instalado correctamente.
 3. Copiamos todo el contenido de dicha carpeta al directorio `/opt/` de nuestro sistema de la siguiente manera:
 
     ```console
-    sudo cp -r julia-1.7.3 /opt/
+    $ sudo cp -r julia-1.7.3 /opt/
     ```
 
 4. Finalmente, crearemos un enlace simbólico (*symbolic link*) del ejecutable **Julia** dentro del directorio `/usr/local/bin/` para que sea visible para todo el sistema:
 
     ```console
-    sudo ln -s /opt/julia-1.7.3/bin/julia /usr/local/bin/julia
+    $ sudo ln -s /opt/julia-1.7.3/bin/julia /usr/local/bin/julia
     ```
 
 Listo, tenemos Julia instalado. Podemos verificar la instalación, reabriendo la terminal y ejecutando el comando
@@ -1649,11 +1649,11 @@ La instrucción `do x` crea una función anónima con un argumento, equivalente 
 
 ## Arreglos multidimensionales
 
-Julia provee de un implementación de alta calidad para el manejo de arreglos multidimensionales. Su biblioteca de arreglos está escrita enteramente en Julia y su eficiencia se debe enteramente al compilador. Es posible definir tipos personalizados de arreglos, gracias a la herencia del tipo AbstractArray.
+Julia provee de un implementación de alta calidad para el manejo de arreglos multidimensionales. Su biblioteca de arreglos está escrita enteramente en Julia y su eficiencia se debe al compilador. Es posible definir tipos personalizados de arreglos, gracias a la herencia del tipo `AbstractArray`.
 
-En el caso general, los arreglos pueden contener objetos del tipo `Any` (cualquiera, indistinto). Pero para la mayoria de propositos computacionales, los arreglos pueden contener objetos de tipos más especificos como `Int64` o `Float64`. Y para cuestiones cientificas, incluve tipos `Complex`.
+En el caso general, los arreglos pueden contener objetos del tipo `Any` (cualquiera, indistinto). Pero para la mayoria de propósitos computacionales, los arreglos pueden contener objetos de tipos más especificos como `Int64` o `Float64` y para cuestiones científicas, tipos `Complex`.
 
-A diferencia de otros lenguajes de programación, Julia no espera que los programas sean escritos de forma "vectorizada" por mejorar su eficiencia. En cambio, el compilador de Julia utiliza la inferencia de tipos para generar código optimizado permitiendo que escribir el código con un estilo conveniente y legible, sin sacrificar el desempeño y memoria.
+A diferencia de otros lenguajes de programación, Julia no espera que los programas sean escritos de forma *vectorizada* para mejorar su eficiencia. Sin embargo, el compilador de Julia utiliza la inferencia de tipos para generar código optimizado permitiendo una escritura de código legible, sin sacrificar el desempeño y memoria.
 
 ### Funciones Básicas para Arreglos
 
@@ -1663,38 +1663,38 @@ Estas son algunas de las funciones básicas para obtener información de los arr
 |---|---|
 |**eltype(A)**|El tipo de dato de los elementos contenidos en A.|
 |**length(A)**|Número de elementos en A.|
-|**ndims(A)**|Números de dimensiones de A, p. ej. si A es un arreglo de **n** x **m**, el número de dimensiones es 2.|
+|**ndims(A)**|Número de dimensiones de A, p. ej. si A es un arreglo de **n** x **m**, el número de dimensiones es 2.|
 |**size(A)**|Tupla con la dimensión de A. p. ej. si A es un arreglo de **n** x **m**, su dimensión es (n, m).|
 |**size(A,n)**|Longitud de A a lo largo de la dimensión n.|
 |**axes(A)**|Tupla con los índices validos para cada dimensión de A.|
 |**axes(A,n)**|Un rango con los índices validos a lo largo de la dimensión n.|
-|**eachindex(A)**|Un eficiente iterador para visitar cada posición de A.|
+|**eachindex(A)**|Un iterador eficiente para obtener el elemento en cada posición de A.|
 
 ### Construcción de arreglos e inicialización
 
-Existe muchas funciones para construir e inicializar arreglos. La siguiente lista contiene algunas de ellas, en las cuales, el argumento `dims...` son las dimensiones del arreglo y puede ser pasado ya sea como tupla con cada una de las dimensiones, o como una sucesion de argumentos númericos individuales. La mayoria de las funciones acepta como primer argumento el tipo de dato de los elementos del arreglo (***T***), que si se omite, por defecto será `Float64`.
+Existe muchas funciones para construir e inicializar arreglos. La siguiente lista contiene algunas de ellas, las cuales, el argumento `dims...` son las dimensiones del arreglo que pueden ser pasados ya sea como tupla o como una sucesión de argumentos númericos individuales. La mayoria de las funciones acepta como primer argumento el ***tipo de dato*** de los elementos del arreglo `T`, que si se omite, por defecto será `Float64`.
 
 |Función|Descripción|
 |---|---|
 |**Array{T}(undef, dims...)**|Construye un arreglo sin inicializar.|
-|**zeros(T, dims...)**|Regresa un arreglo de todo ceros.|
-|**ones(T, dims...)**|Regresa un arreglo de todo unos.|
+|**zeros(T, dims...)**|Regresa un arreglo con todas sus entradas cero.|
+|**ones(T, dims...)**|Regresa un arreglo con todas sus entradas unos.|
 |**trues(dims...)**|Regresa un arreglo binario con todos los valores true.|
 |**falses(dims...)**|Regresa un arreglo binario con todos los valores false.|
 |**reshape(A, dims..)**|Regresa un arreglo con todos los elementos de A pero de diferentes dimensiones.|
 |**copy(A)**|Regresa una copia superficial del arreglo A.|
-|**deepcopy(A)**|Regresa una copia profunda del arreglo A, esto es, recursiva a cada uno de sus elementos (en caso de tener arreglo de arreglos).|
+|**deepcopy(A)**|Regresa una copia profunda del arreglo A, esto es, recursiva a cada uno de sus elementos (en caso de tener ***arreglo de arreglos***).|
 |**similar(A, T, dims...)**|Regresa un arreglo sin inicializado del mismo tipo de A, pero con tipo de dato de cada elemento y dimensión personalizada. Si los argumentos `T` y `dims` se omiten, se toman directamente de A.|
 |**rand(T, dims...)**|Arreglo con valores aleatorios uniformemente distribuidos sobre el intervalo abierto $[0,1)$.|
-|**randn(T, dims...)**|Arreglo con valores aleatorios normal y estandarmente distribuidos.|
+|**randn(T, dims...)**|Arreglo con valores aleatorios normales y estandarmente distribuidos.|
 |**Matrix{T}(I, m, n)**|Matriz identidad de dimensión **m** x **n**. Requiere usar el paquete de `LinearAlgebra` para usar `I`.|
-|**range(start, stop, length=n)**|Rango de **n** elementos linealmente espaciados, empezando en `start` y finalizando en `stop`. Es similar a np.linspace de Python.|
+|**range(start, stop, length=n)**|Rango de `n` elementos linealmente espaciados, empezando en `start` y finalizando en `stop`. Es similar a `numpy.linspace` de Python.|
 |**fill!(A, x)**|Llena el arreglo A con el valor x.|
-|**fill(x, dims...)**|Regresa un arrego llena con el valor x, con dimensiones `dims`.|  
+|**fill(x, dims...)**|Regresa un arreglo lleno con el valor x, con dimensiones `dims`.|  
 
 ### Arreglos literales
 
-Como vimos en secciones pasadas, se pueden definir arreglos especificando directamente sus elementos mediante parentesis cuadrados siguiendo la síntaxis `[a, b, c, ...]`, separando los elementos con comas. Esto genera un arreglo 1-dimensional (o vector columna). Con esta forma de declaración, el tipo del arreglo se determinará automáticamente a partir del tipo de dato de los elementos. Si el tipo de dato de los elementos es diferente, se determinará el tipo de dato común mediante la función de `promoción de tipo` (es decir, si tenemos enteros y flotantes, todos será promovidos a flotantes). En el caso de que los tipos de datos sean heterogéneos, entonces se definirá como tipo `Any`.
+Como vimos en secciones pasadas, se pueden definir arreglos especificando directamente sus elementos mediante paréntesis cuadrados siguiendo la síntaxis `[a, b, c, ...]`, separando los elementos con comas. Esto genera un arreglo *1-dimensional* (o *vector columna*). Con esta forma de declaración, el tipo del arreglo se determinará automáticamente a partir del ***tipo de dato*** de los elementos. Si el tipo de dato de los elementos es diferente, se determinará el tipo de dato común mediante ***promoción de tipo*** (es decir, si tenemos enteros y flotantes, todos será promovidos a flotantes). En el caso de que los tipos de datos sean heterogéneos, entonces se definirá como tipo `Any`.
 
 ```julia
 julia> [1, 2.3, 4//5]               # Cada elemento tiene un tipo de dato diferente 
@@ -1706,7 +1706,7 @@ julia> [1, 2.3, 4//5]               # Cada elemento tiene un tipo de dato difere
 
 ### Concatenación
 
- Existen varias síntaxis para realizar la contatenación de arreglos.
+ Existen varias síntaxis para realizar la concatenación de arreglos.
 
 * Si los arreglos dentro de los paréntesis cuadrados son separados por punto y coma (`;`) o por saltos de línea, en lugar de comas (`,`), entonces esos elementos se concatenan verticalmente, en lugar de que sean elementos en sí mismos.
 
@@ -1739,10 +1739,10 @@ julia> [1:2; 3:4; 5:6]                         # Arreglos separados por punto y 
  6
  ```
 
-* Si los arreglos son separados por tabuladores, espacios vacíos, o dobles punto y coma (`;;`), entonces, los elementos son concatenados horizontalmente. *Nota: Recordemos que los arreglos unidimensionales se representan como vectores columna*.
+* Si los arreglos son separados por tabuladores, espacios vacíos, o dobles punto y coma (`;;`), entonces, los elementos son concatenados horizontalmente. **Nota**: *Recordemos que los arreglos unidimensionales se representan como vectores columna*.
 
 ```julia
-julia> [1:3 4:6 7:9]                            # Arreglos separados por espacios vacios,
+julia> [1:3 4:6 7:9]                            # Arreglos separados por espacios en blanco,
 3×3 Matrix{Int64}:                              # sus elementos se concatenan horizontalmente
  1  4  7
  2  5  8
@@ -1769,7 +1769,7 @@ julia> [[1 2 3], [4 5 6], [7 8 9]]              # Se define un vector de vectore
  [7 8 9]
 ```
 
-* Los espacios vacíos, saltos de línea o punto y coma individual o doble se pueden combinar para hacer concatenaciones horizontales y verticales.
+* Los espacios en blanco, saltos de línea, los *punto y coma* individuales o doble se pueden combinar para hacer concatenaciones horizontales y verticales.
 
 ```julia
 julia> [[1 2 3]; [4 5 6]; [7 8 9]]             # Se concatenan verticalmente los tres vectores renglón.
@@ -1789,7 +1789,7 @@ julia> [zeros(Int, 2, 2)    [1; 2]
 Existe una jerarquía de orden al realizar las concatenaciones horizontales si se combinan simbolos para realizarlas:
 
 * Los espacios y los tabuladores tienen preferencia sobre los `;`, realizando primero las concatenaciones horizontal y después las verticales.
-* En cambio, si se utiliza punto y coma dobles `;;` para indicar la concatenación horizontal,  entonces las concatenaciones verticales tienen preferencia, y al finalizar se realizan las concatenaciones horizontales.
+* En cambio, si se utiliza *punto y coma* dobles `;;` para indicar la concatenación horizontal,  entonces las concatenaciones verticales tienen preferencia, y al finalizar se realizan las concatenaciones horizontales.
 
 En otras palabras, se resuelven las concatenaciones en este orden: **tabs o espacios → `;` →  `;;`→**...
 
@@ -1801,7 +1801,7 @@ julia> [1:2; 4;; 1; 3:4]
  4  4
 ```
 
-Se puede realizar concatenaciones a más altas dimensiones, agregando triples, cuadruples,..., puntos y comas. El símbolo `;;;` significa una concatenación sobre una tercera dimensión, y así sucesivamente.
+Se puede realizar concatenaciones a **más altas dimensiones**, agregando triples, cuádruples, o más *puntos y comas*. El símbolo `;;;` significa una concatenación sobre una tercera dimensión, y así sucesivamente.
 
 ```julia
 julia> [1; 2;; 3; 4;; 5; 6;;; 7; 8;; 9; 10;; 11; 12]
@@ -1815,17 +1815,17 @@ julia> [1; 2;; 3; 4;; 5; 6;;; 7; 8;; 9; 10;; 11; 12]
  8  10  12
 ```
 
-Más en general, cada uno de las formas anteriores, son azucar sintáctica de la función `cat` o alguna de sus variaciones: `vcat`, `hcat`, `hvcat`, `hvncat`.
+En general, cada uno de las formas anteriores, son *azúcar sintáctica* de la función `cat` o alguna de sus variaciones: `vcat`, `hcat`, `hvcat`, `hvncat`.
 
 ### Array Comprehension
 
-Los array comprehension son muy similares a los list comprehension de Python. Son arreglos que se construyen a partir de la iteración sobre los elementos de objetos iterables. Su construcción es muy similar a la notación de la definición de conjuntos:
+Los **array comprehension** son muy similares a los ***list comprehension*** de Python. Son arreglos que se construyen a partir de la iteración sobre los elementos de objetos iterables. Su construcción es muy similar a la notación de la definición de conjuntos:
 
 ```julia
-A = [f(x,y,...) for x in iterable1, y in iterable2]$$
+A = [f(x,y,...) for x in iterable1, y in iterable2,...]
 ```
 
-donde $f(x,y,...)$ es un expresión que será evaluada por cada uno de los iterables y cuyo resultado se guardará en el nuevo arreglo. Al igual que en Python, los arrays comprehension pueden evaluar condicionales `if` durante su construcción.
+donde $f(x,y,...)$ es un expresión que será evaluada por cada uno de los iterables y cuyo resultado se guardará en el nuevo arreglo. Al igual que en Python, los ***arrays comprehension*** pueden evaluar condicionales `if` durante su construcción.
 
 ```julia
 julia> numeros = [2, 3, 4, 5, 6];
@@ -1847,9 +1847,9 @@ julia> pares = [i for i in numeros if i % 2 == 0]
 
 ### Vistazo a los Generadores
 
-A diferencia de los `array comprehension`, que se construyen completos a partir de las iteraciones y se guarda todo en memoria, en los `generadores` sólo se declara la expresión de su construcción y los elementos se van generando conforme se vayan necesitando, sin ser guardados en memoria.
+A diferencia de los ***array comprehension*** que se construyen completos a partir de las iteraciones y se guarda en memoria, los **generadores** sólo declaran la expresión de su construcción y los elementos se van *generando* conforme se van necesitando, sin ser guardados en memoria.
 
-Los `generadores` se construyen casi igual que los `array comprehension`, pero en lugar de usar paréntesis cuadrados `[]`, se usan paréntesis normales `()`. Los generadores también aceptan la evaluación de condicionales `if` es su construcción.
+Los ***generadores*** se construyen casi igual que los ***array comprehension***, pero en lugar de usar paréntesis cuadrados `[]`, se usan paréntesis normales `()`. Los ***generadores*** aceptan también la evaluación de condicionales `if` en su construcción.
 
 ```julia
 julia> pares = (n for n in 1:1000 if n % 2 == 0)
@@ -1859,13 +1859,13 @@ julia> sum(pares)
 250500
 ```
 
-Se puede obtener los elementos de `generador` utilizando la función `iterate()`. Para mayor referencia a como recorrer un generador, por favor dirijase a la siguiente [documentación](https://docs.julialang.org/en/v1/base/collections/).
+Los elementos de ***generador*** se pueden obtener utilizando la función `iterate`. Para mayor referencia a como recorrer un ***generador***, vea la siguiente [documentación](https://docs.julialang.org/en/v1/base/collections/).
 
 ### Indexación
 
 Para traer los elementos de los arreglos, se usan índices con la siguiente síntaxis general:
 $$A[i_1, i_2, i_3, ..., i_n]$$
-donde cada $i_j$ puede ser un entero, un arreglo de enteros o un conjunto de índices soportados. Esto último incluye al símbolo (`:`) que selecciona todos los elementos indexados en la dimensión correspondiente. También incluye rangos del tipo *start:end*, *start:step:end*, o arreglo de booleanos donde se seleccionan los elementos con índice `true`.
+donde cada $i_j$ puede ser un ***entero***, un ***arreglo de enteros*** o un ***conjunto de índices soportados***. Esto último incluye al símbolo `:` que selecciona todos los elementos indexados en la dimensión correspondiente. También incluye rangos del tipo **start:end**, **start:step:end**, o ***arreglo de booleanos*** donde se seleccionan los elementos del array original correspondientes al índice `true`.
 
 ```julia
 julia> A = [ 1  2  3  4
@@ -1999,7 +1999,7 @@ julia> A[mascara]
 
 ### Broadcasting
 
-Anteriormente vimos que se puede aplicar operaciones o funciones elemento a elemento sobre vectores o arreglos. Pero en otras será útil realizar operaciones binarias sobre arreglos de diferentes dimensiones, como por ejemplo, sumar un vector a cada una de las columnas de una matriz. Una manera poco eficiente de realizarlo sería hace una matriz con multiples copias del vector, y después hacer la suma de matrices. Al trabajar con matrices de altas dimensiones, esta estrategía se vuelve laboriosa de manejar y causa un desperdicio de memoria.
+Anteriormente vimos que es posible aplicar operaciones o funciones de ***elemento a elemento*** sobre vectores o arreglos. En otras ocasiones será útil realizar operaciones binarias sobre arreglos de diferentes dimensiones, como por ejemplo, **sumar un vector a cada una de las columnas de una matriz**. Una manera poco eficiente de realizarlo sería hace una matriz con multiples copias del vector, y después hacer la suma de las dos matrices. Al trabajar con matrices en altas dimensiones, esta estrategia se vuelve laboriosa, difícil de manejar y causa un desperdicio de memoria.
 
 Es por eso que Julia provee de la función `broadcast`, que duplica un singletón para que coincidan con las dimensiones de la matriz correspondiente, creando una nueva matriz sin usar memoria adicional, y realizar la operación elemento a elemento. La función `broadcast` tiene la siguiente síntaxis `broadcast(f, args,...)`, donde `f` es la función que se quiere aplicar.
 
@@ -2020,7 +2020,7 @@ julia> broadcast(+, a, B)
  9  10  11
 ```
 
-La *notación punto* para operadores o funciones es azúcar sintáctica de la función `broadcast`, es decir, `f.(args, ...)` es equivalente a `broadcast(f, args, ...)`. Además el `broadcast` no está limitado a arreglos únicamente, sino también es posible aplicarlo a otros objetos como escalares (`Numbers`, `Strings`, `Symbols`, `Types`, `Functions`), tuplas u otra colección. Los siguiente ejemplos son equivalentes:
+La ***notación punto*** para operadores o funciones es simplemente ***azúcar sintáctica*** de la función `broadcast`. Es decir, `f.(args, ...)` es equivalente a `broadcast(f, args, ...)`. Además `broadcast` no está limitado a arreglos únicamente, sino también es posible aplicarlo a otros objetos como escalares (`Numbers`, `Strings`, `Symbols`, `Types`, `Functions`), tuplas u otra colección. Los siguiente ejemplos son equivalentes:
 
 ```julia
 julia> broadcast(string, 1:3, ".- ", ["Primero", "Segundo", "Tercero"])
@@ -2038,7 +2038,7 @@ julia> string.(1:3, ".- ", ["Primero", "Segundo", "Tercero"])
 
 ## Leer y escribir archivos
 
-Antes de entrar al tema, revisemos lo siguiente. Julia provee dos funciones para leer y escribir datos sobre flujo de datos `stream`, estas son: `write`, `read`. Ambas funciones toman al `stream` como primer argumento:
+Antes de entrar al tema, revisemos un tema relacionado. Julia provee dos funciones para leer y escribir datos sobre ***flujo de datos*** `stream`, estas son: `write`, `read`. Ambas funciones toman al `stream` como primer argumento:
 
 ```julia
 julia> write(stdout, "Hola mundo");                         # Standard output
@@ -2057,7 +2057,7 @@ Hola a todos.
 "Hola a todos."
 ```
 
-Para el caso de datos dentro de un archivo de texto, Julia provee la función `open`, la cual toma el nombre del archivo y regresa un objeto tipo `IOStream`, que puede ser usado con `read` y `write` para leer y escribir dentro del archivo. Por ejemplo:
+Ahora bien, para el caso de datos dentro de un archivo de texto, Julia provee la función `open`, la cual toma el nombre del archivo y regresa un objeto tipo `IOStream`, que puede ser usado con `read` y `write` para leer y escribir dentro del archivo. Por ejemplo, para leer el contenido de un archivo:
 
 ```julia
 julia> file = open("hola.txt")
@@ -2071,7 +2071,7 @@ julia> readlines(file)
 julia> close(file)
 ```
 
-O si lo que se desea es escribir sobre el archivo, se debe pasar como argumento "w" a la función `open`, como sigue:
+Si se desea es escribir sobre el archivo, se debe pasar como argumento "***w***" a la función `open`, como sigue:
 
 ```julia
 julia> file = open("hola.txt", "w")
@@ -2080,19 +2080,19 @@ IOStream(<file hola.txt>)
 julia> write(file, "Buenos días a todo el mundo.");
 ```
 
-Si examinas el contenido del archivo en este punto, estará vacío. Esto es debido a que `IOStream` debe cerran antes de que los datos se escriban finalmente en el archivo.
+Si se examina el contenido del archivo en este punto, estará vacío. Esto es debido a que `IOStream` debe se debe cerra antes de que los datos se escriban en el archivo.
 
 ```julia
 julia> close(file)                      # Ahora sí los datos se escribirán en el archivo.
 ```
 
-El patrón que se sigue al manejar datos en archivos:
+El patrón que se sigue al trabajar con archivos es:
 
 1. Se abren el archivo.
 2. Se trabaja con el contenido.
 3. Se cierra el archivo.
 
-Es tan recurrente ese patrón, que existe otra forma de invocar la función `open`, la cual toma como primer argumento una función y como segundo argumento el nombre del archivo, e internamente abre el archivo, ejecuta la función tomando el objeto `IOStream` como argumento, y al terminar, lo cierra en automático. Por ejemplo:
+Es tan recurrente este patrón, que existe otra forma de invocar a la función `open`, en la cual toma como primer argumento una función y como segundo argumento el nombre del archivo. Con esta forma, internamente abre el archivo, ejecuta la función pasada como argumento, tomando el objeto `IOStream` como argumento, y al terminar, lo cierra el archivo en automático. Por ejemplo:
 
 ```julia
 julia> function leer_y_mayusculas(file::IOStream)
@@ -2105,7 +2105,7 @@ julia> open(leer_y_mayusculas, "hola.txt")
  "SEAN FELICES :D"
 ```
 
-Ahora, recordando lo mencionado en la sección del [Bloque Do](#bloque-do), es muy frecuente invocar a la función `open` de esta segunda forma pasandole como primer argumento una función anónima definida dentro de un bloque do, y tener una síntaxis parecida a la expresión ***with*** de Python, como la siguiente:
+Ahora, recordando lo mencionado en la sección del [Bloque Do](#bloque-do), es muy frecuente invocar a la función `open` de esta segunda forma, pasando como primer argumento una ***función anónima*** definida dentro de un bloque `do`, y tener una síntaxis parecida a la expresión `with` de Python, como la siguiente:
 
 ```julia
 julia>  open("numeros.txt") do file
@@ -2115,21 +2115,21 @@ julia>  open("numeros.txt") do file
 
 ## Gestor de paquetes Pkg
 
-Julia provee de un excelente manejador de paquetes, que trabaja alrededor de ambientes o entornos (*enviroments*), es decir áreas de trabajo con conjunto de paquetes independientes que pueden ser locales para proyectos individuales o compartidos, así como seleccionados por nombre. El conjunto exacto de paquetes y versiones del ambiente es declarado en un archivo *manifiesto*, el cual ayuda a la reproducibilidad del proyecto.
+Julia provee de un excelente gestor de paquetes, que trabaja alrededor del concepto de ***ambientes*** o ***entornos*** (*enviroments*), es decir áreas de trabajo con conjunto de paquetes independientes que pueden ser locales para proyectos individuales o compartidos, así como seleccionados por nombre. El conjunto exacto de paquetes y versiones del ambiente es declarado en un archivo *manifiesto*, el cual ayuda a la reproducibilidad del proyecto.
 
-El enfoque del que se inspira Pkg de los ambientes es muy similar al usado en Python con virtualenv, pero que en Julia funciona de manera nativa.
+El enfoque del que se inspira `Pkg` de los ambientes es muy similar al usado en Python con `virtualenv`, pero que en Julia funciona de manera nativa.
 
 ### Uso básico
 
-Existen dos formas para usar el gestor de paquetes Pkg, una es la forma interactiva por medio del REPL de Julia, y la otra no interactiva, por medio de la API de Pkg dentro del código. Aquí explicaremos las instrucciones básicas usando el REPL.
+Existen dos formas para usar el gestor de paquetes `Pkg`, una es la forma interactiva por medio del REPL de Julia, y la otra no interactiva, por medio de la API de `Pkg` dentro del código. Aquí explicaremos las instrucciones básicas usando el REPL.
 
-Para entrar al REPL Pkg y administrar los paquetes, presionamos la tecla `]` dentro de REPL de Julia, y para salir presionamos la tecla de retroceso (*backspace*) o `ctrl + c`. Veremos que el REPL cambió y se verá similar al siguiente:
+Para entrar al REPL `Pkg` y administrar los paquetes, presionamos la tecla `]` dentro de REPL de Julia, y para salir presionamos la tecla de retroceso (*backspace*) o `ctrl + c`. Veremos que el REPL cambió y se verá similar al siguiente:
 
 ```julia
 (@v1.7) pkg>
 ```
 
-Aquí, podemos ejecutar las instrucciones. Por ejemplo, para instalar algún paquete, debemos ejecutar la instrucción `add` seguido por el nombre del paquete o paquetes que queremos instalar, separados por un espacio simple.
+Aquí, podemos ejecutar las instrucciones. Por ejemplo, para instalar algún paquete, debemos ejecutar la instrucción `add` seguido por el nombre del paquete(s) que queremos instalar, separados por un espacio simple.
 
 ```julia
 (@v1.7) pkg> add Paquete1 Paquete2 
@@ -2163,19 +2163,19 @@ Si desea instalar algún paquete en una versión especifica, puede señalarla us
 (@v1.7) pkg> add Paquete1@1.3.2 
 ```
 
-Cuando se está trabajando en el desarrollo de un paquete, es muy conveniente instalarlo en modo *desarrollador* `dev`, para que sean siempre recargados de una ubicación de desarrollo.
+Cuando se está trabajando en el *desarrollo de un paquete*, es muy conveniente instalarlo en modo *desarrollador* `dev`, para que sean siempre recargados de una ubicación de desarrollo.
 
 ```julia
 (@v1.7) pkg> dev PaqueteDev
 ```
 
-El manejador de paquetes hará un clon del paquete en la ruta de desarrollo de Julia. Y cuando se importe el paquete dentro de Julia, el interprete sabrá que deberá traerlo de la ruta desarrollo en lugar de los repositorios estables. Para dejar de seguir el paquete de desarrollo y utilizar el paquete estable, se puede hacer con
+El gestor de paquetes realizará un clon del paquete en la ruta de desarrollo de Julia y cuando se importe el paquete dentro de Julia, el interprete sabrá que deberá traerlo de la ruta desarrollo en lugar de los repositorios estables. Para dejar de seguir el paquete de desarrollo y utilizar el paquete estable, se puede hacer con
 
 ```julia
 (@v1.7) pkg> free PaqueteDev
 ```
 
-Para paquetes que no se utilicen por más de 30 días o que en ningún *manifiesto* los llame, se pueden borrar con el Garbage Collector, usando la siguiente instrucción:
+Para paquetes que no se utilicen por más de 30 días o que en ningún *manifiesto* los llame, se pueden borrar con el ***garbage collector***, usando la siguiente instrucción:
 
 ```julia
 (@v1.7) pkg> gc --all
@@ -2187,11 +2187,11 @@ Con esto, borrará de disco todos los paquetes viejos y que no se utilizan.
 
 Para este punto, seguro habrá notado en el REPL de Pkg (@v1.7), esto nos indica el ambiente o entorno virtual en el cual estamos trabajando.
 
-Para crear un nuevo ambiente virtual para comenzar a trabajar en un nuevo proyecto, usamos la instrucción `activate` como sigue
+Para crear un nuevo ambiente virtual y comenzar a trabajar en un nuevo proyecto, usamos la instrucción `activate` como sigue
 
 ```julia
 (@v1.7) pkg> activate tutorial               # nombre del ambiente virtual
-  Activating new project at # dirección del directoria donde se trabajará.
+  Activating new project at # dirección del directorio donde se trabajará.
 
 (tutorial) pkg>
 ```
@@ -2207,7 +2207,7 @@ Si simplemente se quiere inicializar un ambiente virtual en el directorio actual
 (introduccion-julia) pkg>
 ```
 
-Una vez activado el ambiente virtual, podemos usar las instrucciones que se vieron anteriormente para instalar, borrar o actualizar los paquetes que se requieren. Toda la información de las dependecias será actualizada en los archivos `Project.toml` y `Manifest.toml`.
+Una vez activado el ambiente virtual, podemos usar las instrucciones que se vieron anteriormente para instalar, borrar o actualizar los paquetes que se requieren. Toda la información de las dependencias será actualizada en los archivos `Project.toml` y `Manifest.toml`.
 
 Cuando se desea regresar al ambiente por defecto, simplemente ejecute `activate` sin argumentos.
 
@@ -2217,31 +2217,31 @@ Cuando se desea regresar al ambiente por defecto, simplemente ejecute `activate`
 (@v1.7) pkg>
 ```
 
-Si se quiere recrear el ambiente virtual de algún proyecto del cual, por ejemplo, se clonó de github o que se distribuye libremente, se puede replicar el entorno de manera sencilla si se tienen los archivos `Project.toml` o `Manifest.toml`. Simplemente, ejecute Julia en el directorio raíz del proyecto, entre al REPL de Pkg, active el ambiente en el directorio actual e instancie como sigue:
+Si se quiere recrear el ambiente virtual de algún proyecto del cual, por ejemplo, se clonó de GitHub o que se distribuye libremente, se puede replicar el entorno de manera sencilla si se tienen los archivos `Project.toml` o `Manifest.toml`. Simplemente, ejecute Julia en el directorio raíz del proyecto, ingrese al REPL de `Pkg`, active el ambiente en el directorio actual e ***instancie*** como sigue:
 
 ```julia
-(@v1.7) pkg> activate .          
+(@v1.7) pkg> activate .                                     # Activando el ambiente virtual
   Activating new project at # directorio de trabajo
 
-(proyecto-clonado) pkg> instantiate
+(proyecto-clonado) pkg> instantiate                         # Se instanciará las especificaciones del ambiente virtual
 ```
 
-Esto instalará todas las dependencias especificadas en los *manifiestos* o las resolverá a las versiones más actuales y compatibles con el proyecto.
+Esto instalará todas las dependencias declaradas en los archivos *manifiestos* o las resolverá a las versiones más actuales y compatibles con el proyecto.
 
-Ahora, si no se quiere usar `activate` desde el REPL de Julia, puede especificar el ambiente virtual usando la bandera --project=<directorio>. Por ejemplo, para ejecutar un script desde la línea de comando utilizando el entorno virtual en el directorio actual:
+Ahora, si no se quiere usar `activate` desde el REPL de Julia, puede especificar el ambiente virtual usando la bandera `--project=<directorio>`. Por ejemplo, para ejecutar un script desde la línea de comando utilizando el entorno virtual en el directorio actual:
 
 ```console
-julia --project=. miscript.jl
+$ julia --project=. miscript.jl
 ```
 
 ### Modo no interactivo de Pkg
 
-Como se mencionó anteriormente, se puede gestionar la instalación de paquetes sin entrar en el modo interactivo del REPL de Julia, ideal cuando se manejar scripts de ejecución, por medio de la API funcional de Pkg.
+Como se mencionó anteriormente, se puede gestionar la instalación de paquetes sin entrar en el modo interactivo del REPL de Julia por medio de la API funcional de `Pkg` (ideal cuando se manejar scripts de ejecución).
 
-Aunque tiene un grado de complejidad mayor para funciones avanzadas, presentamos las instrucciones básicas.
+Aunque tiene incluye un grado de complejidad mayor para funciones avanzadas, presentamos las instrucciones básicas.
 
 ```julia
-using Pkg                                       # Importamos la API del manejador de paquetes
+using Pkg                                       # Importamos la API del gestor de paquetes
 
 Pkg.add("Paquete1")                             # Instalamos un paquete
 Pkg.add(name="Paquete2", version="0.3")         # Instalamos un paquete en una version especifica
@@ -2257,15 +2257,15 @@ Pkg.activate("ruta/local")                      # o por ruta del proyecto
 
 Pkg.rm("Paquete1")                              # Remueve el paquete del ambiente actual
 
-Pkg.update()                                    # Actualiza todo los paquete
-Pkg.update("Paquete1")                          # o alguno en especifico
+Pkg.update()                                    # Actualiza todos los paquetes
+Pkg.update("Paquete1")                          # o actualiza alguno en especifico
 
 Pkg.instantiate()                               # Instala todas las dependencias declaradas en 
-                                                # los archivos manifiestos
+                                                # los archivos "manifiestos"
 
-Pkg.gc()                                        # Limpia los paquete que no se usan en ningun ambiente
+Pkg.gc()                                        # Limpia los paquete que no se usan en ningún ambiente
 
-Pkg.status()                                    # Imprime el estatus del los manifiestos
+Pkg.status()                                    # Imprime el estatus de los manifiestos
 
 Pkg.dependencies()                              # Regresa un diccionario con la información de las 
                                                 # dependencias instaladas
@@ -2285,22 +2285,22 @@ julia> using Paquete1
 julia> import Paquete2
 ```
 
-Ya sea usando `using` o `import`, permite cargar un paquete, es decir, una colección independiente y reutilizable de código Julia y esté disponible con su nombre dentro del módulo de importación. Si el mismo *Paquete* se importa varias veces en la misma sesión de Julia, sólo se carga la primera vez; en las importaciones posteriores, sólo se obtiene una referencia al mismo módulo.
+Ya sea usando `using` o `import`, permite cargar un paquete, es decir, una colección independiente y reutilizable de código Julia para que esté disponible con su nombre dentro del módulo de importación. Si el mismo *paquete* se importa varias veces en la misma sesión de Julia, sólo se carga la primera vez; en las importaciones posteriores, sólo se obtiene una referencia al mismo módulo.
 
 ### Diferencia entre `using` e `import`
 
-Si bien, ambas instrucciones sirven para cargar el código del paquete o de un módulo, tiene ligeras diferencias.
+Si bien, ambas instrucciones sirven para cargar el código de un paquete o de un módulo, tiene ligeras diferencias.
 
 Usando `using`, se trae con ello:
 
 1. El nombre del módulo o paquete.
-2. Los elementos en la lista de *exportación* al espacio de nombres (*namespace*) global principal.
+2. Los elementos en la ***lista de exportación*** al espacio de nombres (*namespace*) global principal.
 
-Técnicamente, la declaración `using Paquete1` significa que un paquete llamado *Paquete1* estará disponible para resolver los nombres según sea necesario. Cuando se encuentra una variable global que no tiene definición en el módulo actual, el sistema la buscará entre las variables *exportadas* por *Paquete1* y la utilizará si se encuentra ahí. En palabras simples, con `using` se importa tanto el nombre del *Paquete1* y todos los nombres exportados por *Paquete1* para que **sean usados directamente** por la sesión de Julia donde se importa. Los nombres que son están en la lista de nombres exportados, pueden ser accedidos por medio de la síntaxis punto: `Paquete1.nombre`.
+Técnicamente, la declaración `using Paquete1` significa que un paquete llamado *Paquete1* estará disponible para resolver los nombres según sea necesario. Cuando se encuentra una variable global que no tiene definición en el módulo actual, el sistema la buscará entre las variables *exportadas* por *Paquete1* y la utilizará si se encuentra ahí. En palabras simples, con `using` se importa tanto el nombre del *Paquete1* y todos los nombres exportables por *Paquete1* para que **sean usados directamente** por la sesión de Julia donde se importa. Los nombres que son están en la ***lista de nombres exportados***, pueden ser accedidos por medio de la síntaxis punto: `Paquete1.nombre`.
 
-Por otra parte, usar `import`, sólo se trae el nombre del paquete al scope actual. Los usuarios necesitarán usar la síntaxis punto para acceder a todos los nombres dentro del paquete: `Paquete1.nombre`. Por lo general se usa `import` para mantener limpio el *namespace* de la sesión actual y evitar cruce de nombres repetidos.
+Por otra parte, usar `import` sólo se obtiene el nombre del paquete al *scope* actual. Los usuarios necesitarán usar la ***síntaxis punto*** para acceder a todos los nombres dentro del paquete, esto es: `Paquete1.nombre`. Por lo general se usa `import` para mantener limpio el *namespace* de la sesión actual y evitar cruce de nombres repetidos.
 
-Otra diferencia relevante es al importar con `using` no se puede crear nuevos métodos a las funciones que viven dentro del paquete importado. En cambio usando `import` es posible crear nuevos métodos a las funciones importadas, pero es necesarios invocarlos con la síntaxis punto.
+Otra diferencia relevante es que al importar con `using` no se puede crear nuevos métodos a las funciones que viven dentro del paquete importado. En cambio usando `import` es posible crear nuevos métodos a las funciones importadas, pero es necesarios invocarlos con la síntaxis punto.
 
 ### Importando elementos especificos y el uso de alias
 
@@ -2310,13 +2310,13 @@ Tanto con `using` e `import` se pueden importar multiples paquetes en la misma e
 julia> using LinearAlgebra, Statistics
 ```
 
-Si se quiere sólo importar ciertos elementos especificos de un paquete, ya sea con `using` o `import`, sin importar todo lo demás, se puede especificar usando `:` como sigue:
+Si se quiere importar sólo ciertos elementos especificos de un paquete, ya sea con `using` o `import`, sin importar todo lo demás, se puede especificar usando `:` como sigue:
 
 ```julia
 julia> using Paquete: función1, función2
 ```
 
-Muchas veces el nombre de los paquetes o de los elementos importados tienen nombre muy largos o dificiles de recordar o que pueden causar conflictos con nombres iguales en el scope actual. Para evitar esto, se puede *renombrar* los elementos importados por medio de alias, usando la palabra reservada `as` (similar a Python). Por ejemplo:
+Muchas veces el nombre de los paquetes o de los elementos importados tienen nombre muy largos o difíciles de recordar o que pueden causar conflictos con nombres iguales en el *scope* actual. Para evitar esto, se puede *renombrar* los elementos importados por medio de un *alias*, usando la palabra reservada `as` (similar a Python). Por ejemplo:
 
 ```julia
 julia> import BenchmarkTools as BT
@@ -2326,46 +2326,46 @@ julia> import CSV: read as rd
 julia> using CSV: read as rd
 ```
 
-Aquí existe otra diferencia entre `import` y `using` en el uso de `as`: Con `using` sólo se pueden renombrar elementos especificos importados con `:`. La instrucción `using CSV as C` no tendría efecto alguno. En cambio, con `import` es posible renombrar el nombre del paquete mismo (tal como en Python).
+Aquí existe otra diferencia entre `import` y `using` en el uso de `as`: Con `using` sólo se pueden renombrar elementos especificos del Paquete importados con `:`. La instrucción `using CSV as C` no tendría efecto alguno. En cambio, con `import` es posible renombrar el nombre del paquete mismo (tal como en Python).
 
 ## Manejo de excepciones
 
-Cuando ocurre un caso inesperado, es posible que una función no pueda devolver un valor esperado. En tales casos, puede ser mejor para el caso excepcional terminar el programa mientras se imprime un mensaje de error de diagnóstico o mejor aún, incluir un código para manejar tales circunstancias excepcionales y permitir que el código tome la acción apropiada.
+Cuando ocurre un error inesperado, es posible que una función no pueda devolver algún valor esperado. En tales casos, puede ser mejor terminar el programa mientras se imprime un mensaje de error de diagnóstico o mejor aún, incluir un código para manejar tales circunstancias excepcionales y permitir que el código tome la acción apropiada.
 
 ### Excepciones integradas
 
-En Julia, se lanza una `Exception`s cuando ocurre una condición inesperada. Las siguientes son las excepciones integradas que interrumpen el flujo normal de control.
+En Julia, se lanza una `Exception` cuando ocurre una condición inesperada. Las siguientes son las excepciones integradas que interrumpen el flujo normal de control.
 
 |Exception|Descripción|
 |---|---|
-|[ArgumentError](https://docs.julialang.org/en/v1/base/base/#Core.ArgumentError)|Los parámetros de una llamada de función no coinciden con una firma válida.|
+|[ArgumentError](https://docs.julialang.org/en/v1/base/base/#Core.ArgumentError)|Los parámetros en una llamada de función no coinciden con los argumentos válidos en la definición de la función.|
 |[AssertionError](https://docs.julialang.org/en/v1/base/base/#Core.AssertionError)|La condición afirmada no se evaluó como verdadera.|
-|[BoundsError](https://docs.julialang.org/en/v1/base/base/#Core.BoundsError)|Una operación de indexación en una matriz, intentó acceder a un elemento fuera de los límites en el índice.|
+|[BoundsError](https://docs.julialang.org/en/v1/base/base/#Core.BoundsError)|Una operación de indexación en una arreglo, intentó acceder a un elemento fuera de los límites del índice.|
 |[CompositeException](https://docs.julialang.org/en/v1/base/base/#Base.CompositeException)|Envuelve un vector de excepciones lanzadas por una tarea con información sobre la serie de excepciones. Por ejemplo, si un grupo de trabajadores está ejecutando varias tareas y varios trabajadores fallan, la CompositeException resultante contendrá un "paquete" de información de cada trabajador que indica dónde y por qué ocurrieron las excepciones.|
-|[DimensionMismatch](https://docs.julialang.org/en/v1/base/base/#Base.DimensionMismatch)|Los objetos llamados no tienen una coincidencia dimensionalidad.|
-|[DivideError](https://docs.julialang.org/en/v1/base/base/#Core.DivideError)|Se intentó la división de enteros con un valor de denominador de 0.|
+|[DimensionMismatch](https://docs.julialang.org/en/v1/base/base/#Base.DimensionMismatch)|Los objetos llamados no coinciden dimensionalmente.|
+|[DivideError](https://docs.julialang.org/en/v1/base/base/#Core.DivideError)|Se intentó la división con un valor cero en el denominador.|
 |[DomainError](https://docs.julialang.org/en/v1/base/base/#Core.DomainError)|El argumento de una función o constructor está fuera del dominio válido.|
-|[EOFError](https://docs.julialang.org/en/v1/base/base/#Base.EOFError)|No había más datos disponibles para leer de un archivo o secuencia.|
+|[EOFError](https://docs.julialang.org/en/v1/base/base/#Base.EOFError)|No hay más datos disponibles para leer de un archivo o secuencia.|
 |[ErrorException](https://docs.julialang.org/en/v1/base/base/#Core.ErrorException)|Tipo de error genérico. |
-|[InexactError](https://docs.julialang.org/en/v1/base/base/#Core.InexactError)|No se puede convertir exactamente *valor* a un tipo *T* con algún método de la función.|
+|[InexactError](https://docs.julialang.org/en/v1/base/base/#Core.InexactError)|No se puede convertir exactamente el *valor* a un tipo *T* con algún método de la función.|
 |[InitError](https://docs.julialang.org/en/v1/base/base/#Core.InitError)|Ocurrió un error al ejecutar la función `__init__` de un módulo.|
 |[InterruptException](https://docs.julialang.org/en/v1/base/base/#Core.InterruptException)|El proceso fue detenido por una interrupción de terminal (CTRL+C).|
-|[KeyError](https://docs.julialang.org/en/v1/base/base/#Base.KeyError)|Una operación de indexación en un objeto `AbstractDict` (`Dict`) o `Set` intentó acceder o eliminar un elemento inexistente.|
+|[KeyError](https://docs.julialang.org/en/v1/base/base/#Base.KeyError)|Una operación de indexación en un objeto `AbstractDict`, `Dict` o `Set` intentó acceder o eliminar un elemento inexistente.|
 |[LoadError](https://docs.julialang.org/en/v1/base/base/#Core.LoadError)|Ocurrió un error al ejecutar `include`, `require` o `using` un archivo.|
-|[Meta.ParseError](https://docs.julialang.org/en/v1/base/base/#Base.Meta.ParseError)|La expresión pasada a la función `parse` no se pudo interpretar como una expresión de Julia válida.|
-|[MethodError](https://docs.julialang.org/en/v1/base/base/#Core.MethodError)|No existe un método con la firma de tipo requerida en la función genérica dada. Alternativamente, no existe un método único más específico.|
+|[Meta.ParseError](https://docs.julialang.org/en/v1/base/base/#Base.Meta.ParseError)|La expresión pasada a la función `parse` no se pudo interpretar como una expresión válida de Julia.|
+|[MethodError](https://docs.julialang.org/en/v1/base/base/#Core.MethodError)|No existe un método con los tipos de argumentos requerida en la función genérica dada. Alternativamente, no existe un método único más específico.|
 |[MissingException](https://docs.julialang.org/en/v1/base/base/#Base.MissingException)|Se genera una excepción cuando se encuentra un valor `Missing` en una situación en la que no se admite.|
 |[OutOfMemoryError](https://docs.julialang.org/en/v1/base/base/#Core.OutOfMemoryError)|Una operación asignó demasiada memoria para que el sistema o el recolector de basura la manejen correctamente.|
 |[OverflowError](https://docs.julialang.org/en/v1/base/base/#Core.OverflowError)|El resultado de una expresión es demasiado grande para el tipo especificado y provocará un ajuste.|
-|[ProcessFailedException](https://docs.julialang.org/en/v1/base/base/#Base.ProcessFailedException)|Indica el estado de salida problemático de un proceso. Al ejecutar comandos o canalizaciones, esto se lanza para indicar que se devolvió un código de salida distinto de cero (es decir, que el proceso invocado falló).|
+|[ProcessFailedException](https://docs.julialang.org/en/v1/base/base/#Base.ProcessFailedException)|Indica un estado de salida problemático de un proceso. Al ejecutar comandos o canalizaciones, esto se lanza para indicar que se devolvió un código de salida distinto de cero (es decir, que el proceso invocado falló).|
 |[ReadOnlyMemoryError](https://docs.julialang.org/en/v1/base/base/#Core.ReadOnlyMemoryError)|Una operación intentó escribir en la memoria que es de solo lectura.|
 |[StackOverflowError](https://docs.julialang.org/en/v1/base/base/#Core.StackOverflowError)|La llamada a la función creció más allá del tamaño de la pila de llamadas. Esto suele suceder cuando una llamada se repite infinitamente.|
-|[StringIndexError](https://docs.julialang.org/en/v1/base/base/#Base.StringIndexError)|Se produjo un error al intentar acceder a str en el índice i que no es válido.|
+|[StringIndexError](https://docs.julialang.org/en/v1/base/base/#Base.StringIndexError)|Se produjo un error al intentar acceder a un `string` en el índice i que no es válido.|
 |[SystemError](https://docs.julialang.org/en/v1/base/base/#Base.SystemError)|Una llamada del sistema falló con un código de error (en la variable global `errno`).|
 |[TypeError](https://docs.julialang.org/en/v1/base/base/#Core.TypeError)|Una aserción de tipo falló o se llamó a una función intrínseca con un tipo de argumento incorrecto.|
 |[UndefKeywordError](https://docs.julialang.org/en/v1/base/base/#Core.UndefKeywordError)|El argumento de palabra clave requerido no se asignó en una llamada de función.|
 |[UndefRefError](https://docs.julialang.org/en/v1/base/base/#Core.UndefRefError)|El elemento o campo no está definido para el objeto dado.|
-|[UndefVarError](https://docs.julialang.org/en/v1/base/base/#Core.UndefVarError)|Un símbolo en el scope actual no está definido.|
+|[UndefVarError](https://docs.julialang.org/en/v1/base/base/#Core.UndefVarError)|Una variable en el *scope* actual no está definida.|
 
 Por ejemplo, la función `sqrt` lanzará la excepción `DomainError` si lo aplicamos a un valor negativo:
 
@@ -2373,8 +2373,7 @@ Por ejemplo, la función `sqrt` lanzará la excepción `DomainError` si lo aplic
 julia> sqrt(-1)
 ERROR: DomainError with -1.0:
 sqrt will only return a complex result if called with a complex argument. Try sqrt(Complex(x)).
-Stacktrace:
-...
+[...]
 ```
 
 Se pueden definir excepciones personalizadas, de la siguiente manera:
@@ -2399,8 +2398,7 @@ julia>  function positivo(x)
 julia> positivo(-5)
 ERROR: DomainError with -5:
 el argumento debe ser positivo
-Stacktrace:
-...
+[...]
 ```
 
 Por convención, cuando escriba un mensaje de error, es preferible que lo escriba con minúsculas, por ejemplo:
@@ -2421,13 +2419,12 @@ doble (generic function with 1 method)
 
 julia> doble(-2)
 ERROR: el argumento debe ser positivo
-Stacktrace:
-...
+[...]
 ```
 
 ### Bloque `try`/`catch`/`finally`
 
-Las instrucciones `try` y `catch` permiten probar y capturar excepciones, para tener un manejo elegante de las cosas inesperadas que pueden romper el código de la aplicación. Por ejemplo, al llamar una función que arrojaría un `Exception`, se puede envolver dentro de un bloque `try`/`catch` y mitigar el error, ya sea registrandola, devolviendo un valor por defecto, o imprimir una declaración. Una cosa a tener en cuenta al decidir cómo manejar situaciones inesperadas es que usar un bloque try/catch es mucho más lento que usar ramificaciones condicionales para manejar esas situaciones.  
+Las instrucciones `try` y `catch` permiten probar y capturar ***excepciones***, para tener un manejo elegante de las cosas inesperadas que pueden romper el código del programa. Por ejemplo, al llamar una función que arrojaría un `Exception`, se puede envolver dentro de un bloque `try`/`catch` y mitigar el error, ya sea registrándola, devolviendo un valor por defecto, o imprimir una declaración. Una cosa a tener en cuenta al decidir cómo manejar situaciones inesperadas es que usar un bloque `try`/`catch` es mucho más lento que usar ramificaciones condicionales para manejar esas situaciones.  
 
 Por ejemplo, podemos manejar la siguiente excepción:
 
@@ -2452,9 +2449,9 @@ julia> raiz2(-4)
 
 Dentro de `try` incluiremos las instrucciones que deseamos ejecutar y que posiblemente puedan tener un comportamiento inesperado. En caso de lanzarse un `Error` o una `Exception`, la instrucción `catch` la capturará y la guardará localmente en un variable para su manejo. En caso de que `try` no arroje una excepción, entonces el bloque `catch` es ignorado. Es una buena práctica comparar la excepción arrojada con los tipos de excepciones que nosotros esperamos, y decirle al programa como manejarlos uno a uno.
 
-En el ejemplo anterior, sabemos que la función `sqrt` lanzará un `DomainError` si se le pasa un número negativo. En ese caso, se captura la excepción y explicitamente le pedimos convertir el número negativo a tipo `Complex` y que aplique inmediatamente la función `sqrt`, la cual está definida para argumentos tipo complejos.
+En el ejemplo anterior, sabemos que la función `sqrt` lanzará un `DomainError` si se le pasa un número negativo. En ese caso, se captura la excepción y explícitamente le pedimos convertir el número negativo a tipo `Complex` y que aplique inmediatamente la función `sqrt`, la cual está definida para argumentos tipo complejos.
 
-Hay instrucciones o tareas (como el uso de recursos en archivos o la modificación de estado) que requieren de un trabajo de limpieza, (por ejemplo, declarar el cierre archivos abiertos para escribir sobre ellos en disco) y que se debe ejecutar cuando finaliza el código. El lanzamiento de errores y excepciones complica esta tarea ya que interrumpen la ejecución código. Para eso existe la instrucción `finally` (opcional) que proporciona una forma de ejecutar código, independientemente que como resulte el bloque de código que lo antecede. Por ejemplo:
+Hay instrucciones o tareas (como el uso de recursos en archivos o la modificación de estado) que requieren de un trabajo de limpieza, (por ejemplo, declarar el cierre de archivos abiertos para escribir sobre ellos en disco) y que se deben ejecutar forzosamente cuando finaliza el código. El lanzamiento de errores y excepciones complica esta tarea ya que interrumpen la ejecución del código. Para eso existe el bloque `finally` (opcional) que proporciona una forma de ejecutar código, independientemente del resultado de los bloques `try`/`catch` que lo anteceden. Por ejemplo:
 
 ```julia
 julia>  file = open("file.txt")
@@ -2469,11 +2466,11 @@ julia>  file = open("file.txt")
             end
 ```
 
-El bloque `try`/`catch`/`finally` es muy útil para el manejo de errores y excepciones. Pero esto sólo es lo básico. Julia proveé funciones más avanzadas para el manejo de excepciones, lo cual es un tema aparte, pero que invitamos a revisar la [documentación correspondiente](https://docs.julialang.org/en/v1/base/base/#Base.rethrow).
+El bloque `try`/`catch`/`finally` es muy útil para el manejo de errores y excepciones. Pero esto sólo es lo básico. Julia provee funciones más avanzadas para el manejo de excepciones, lo cual es un tema aparte, pero que invitamos a revisar la [documentación correspondiente](https://docs.julialang.org/en/v1/base/base/#Base.rethrow).
 
 ## Comandos Shell en Julia
 
-En Julia, es posible usar funciones incluidas para manejar archivos y directorios por línea de comandos, muy similares a las usadas en la `shell` de `UNIX`. Aquí una breve lista:
+En Julia, es posible usar funciones ya incluidas para manejar y gestionar archivos y directorios, similares a los comandos usados en una `shell` de `UNIX`. Aquí una breve lista:
 
 |Función|Descripción|
 |---|---|
@@ -2482,32 +2479,32 @@ En Julia, es posible usar funciones incluidas para manejar archivos y directorio
 |[readdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.readdir)|Devuelve los nombres en el directorio actual de trabajo u otro si se especifica. Similar a `ls`.|
 |[walkdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.walkdir)|Regresa un iterador que recorré el árbol de directorios del directorio actual de trabajo u otro si se especifica.|
 |[mkdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mkdir)|Crea un directorio nuevo en el directorio actual de trabajo o en otro si se especifica.|
-|[mkpath](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mkpath)|Crea todos los directorios necesarios para crear la ruta especifica.|
+|[mkpath](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mkpath)|Crea todos los directorios necesarios para crear una ruta especifica.|
 |[symlink](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.symlink)|Crea un link simbólico a *target* con nombre *link*.|
 |[readlink](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.readlink)|Regresa la localización del *target* de un link simbólico.|
-|[cdmod](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.chmod)|Cambia los permisos de una ruta especifica.|
+|[chmod](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.chmod)|Cambia los permisos de una ruta especifica.|
 |[chown](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.chown)|Cambia el propietario y grupo de una ruta especifica.|
-|[stat](https://docs.julialang.org/en/v1/base/file/#Base.stat)|Regresa la información de un archivo, como es tamaño, fecha de creación y modificación, permisos, etc.|
+|[stat](https://docs.julialang.org/en/v1/base/file/#Base.stat)|Regresa la información de un archivo, por ejemplo: tamaño, fecha de creación y modificación, permisos, etc.|
 |[filesize](https://docs.julialang.org/en/v1/base/file/#Base.filesize)|Lo mismo que stat(*archivo*).size|
 |[cp](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.cp)|Copia un directorio, archivo o link simbólico de un directorio origen a uno destino.|
-|[download](https://docs.julialang.org/en/v1/stdlib/Downloads/#Downloads.download)|Descarga un archivo de una URL dada y lo guarda en la salida ruta especifica. En caso que no se proporcione, se guarda en una ruta temporal.|
+|[download](https://docs.julialang.org/en/v1/stdlib/Downloads/#Downloads.download)|Descarga un archivo de una URL dada y lo guarda en la salida ruta especifica. En caso que no se proporcione, se guarda en una ruta temporal. Similar a `wget`.|
 |[mv](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mv)|Mueve un archivo, link o directorio, de un origen a un destino.|
-|[rm](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.rm)|Elimina un archivo, link o directorio especifico. Acepta los argumentos force y recursive, para forzar la eliminación o que sea recursiva.|
-|[touch](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.touch)|Actualiza la fecha de actualización de un archivo. En caso de no existir el archivo especifico, lo crea.|
-|[tempname](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.tempname)|Genera una ruta temporal especifica. Sólo regresa la ruta mas no la crea.|
-|[tempdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.tempdir)|Genera una ruta de directorio temporal. No la crea.|
-|[mktemp](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mktemp-Tuple{AbstractString})|Crea una ruta temporal junto con un archivo abierto tambien temporal. Después de su uso, desaparece.|
+|[rm](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.rm)|Elimina un archivo, link o directorio especifico. Acepta los argumentos `force` y `recursive`, para forzar la eliminación o que sea recursiva.|
+|[touch](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.touch)|Actualiza la fecha de *última actualización* de un archivo. En caso de no existir el archivo especifico, lo crea.|
+|[tempname](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.tempname)|Genera una ruta temporal especifica. Sólo regresa una la ruta pero no la crea.|
+|[tempdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.tempdir)|Genera una ruta de directorio temporal pero no la crea.|
+|[mktemp](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mktemp-Tuple{AbstractString})|Crea una ruta temporal junto con un archivo abierto temporal. Después de su uso, desaparece.|
 |[mktempdir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.mktempdir-Tuple{Function,%20AbstractString})|Crea un directorio temporal. Después de su uso, desaparece.|
 |[homedir](https://docs.julialang.org/en/v1/base/file/#Base.Filesystem.homedir)|Regresa la ruta del directorio *home* del usuario actual.|
 
 ### Ejecutar Instrucciones Shell
 
-Adicional a estas funciones que actuan como algunos comandos de `shell`, también se pueden ejecutar instrucciones de `shell` directamente en Julia, dentro de los acentos graves `, tal como en Perl o Ruby.
+Adicional a estas funciones que actúan como algunos comandos de `shell`, también se pueden ejecutar instrucciones de `shell` directamente en Julia. Estas deben ser escritas dentro de acentos graves `, tal como se hace en Perl o Ruby.
 
-Los acentos graves regresan un objeto `Cmd` que representan un objeto comando. Este objeto comando puede ser pasado a otros via pipes, o ejecutandolo con la función `run`. Julia no ejecuta el comando directamente a una shell, sino que lo analiza e interpola las variables o separa las palabras, para que sea ejecutado en un proceso secundario de Julia.
+Los acentos graves regresan un objeto `Cmd` que representan un ***objeto comando***. Este objeto comando puede ser pasado a otros via *pipes*, o ejecutándolo con la función `run`. Julia no ejecuta el comando directamente a una `shell` del sistema, sino que lo analiza e interpola las variables o separa las palabras, para que sea ejecutado en un proceso secundario de propio Julia. Por ejemplo:
 
 ```julia
-julia> micomando = `echo Hola Mundo`
+julia> micomando = `echo Hola Mundo`          # Instrucción shell
 `echo Hola Mundo`
 
 julia> typeof(micomando)
@@ -2533,7 +2530,7 @@ README.md
 script.jl
 ```
 
-Para ejecutar instrucciones entubados con pipes, se requiere usar la función `pipeline`:
+Para ejecutar instrucciones `shell` entubados con pipes `|`, se requiere usar la función `pipeline`:
 
 ```julia
 julia> run(pipeline(`echo hola`, `grep ho`));       # Equivalente a $ echo hola | grep ho
