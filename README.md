@@ -2553,39 +2553,45 @@ Para ver más información relacionada y avanzada, por favor consulte la siguien
 
 ### Tipos
 
-Los ***sistemas de tipos*** se han dividido tradicionalmente en dos campos muy diferentes: los sistemas de ***tipado estático***, en los que cada expresión del programa debe tener un tipo computable antes de la ejecución del programa; y los sistemas de ***tipado dinámico***, en los que no se sabe nada sobre los tipos hasta el momento de la ejecución, cuando los valores reales manipulados por el programa están disponibles. La ***orientación a objetos*** permite cierta flexibilidad en los lenguajes de tipado estático al permitir que el código se escriba sin que se conozcan los tipos precisos de los valores en ***tiempo de compilación***. La capacidad de escribir código que puede operar con diferentes tipos se llama ***polimorfismo***. Todo el código en los lenguajes clásicos ***dinámicamente tipados*** es polimórfico: sólo mediante la comprobación explícita de los tipos, o cuando los objetos no soportan operaciones en ***tiempo de ejecución***, se restringen los tipos de cualquier valor.
+Los ***sistemas de tipos*** se han dividido tradicionalmente en dos campos muy diferentes: los sistemas de ***tipado estático***, en los que cada expresión del programa debe tener un tipo computable antes de la ejecución del programa; y los sistemas de ***tipado dinámico***, en los que no se sabe nada sobre los tipos hasta el momento de la ejecución, cuando los valores reales manipulados por el programa están disponibles. 
 
-**El sistema de tipos de Julia es dinámico**, pero obtiene algunas de las ventajas de los sistemas de tipado estáticos al hacer posible indicar que ciertos valores son de tipos específicos. Esto puede ser de gran ayuda en la generación de código eficiente, pero es más significativo porque permite el envío de ***métodos*** dependiendo el tipo de argumentos de las funciones. El envío de métodos se explora en detalle en la sección de [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
+La ***orientación a objetos*** permite cierta flexibilidad en los lenguajes de tipado estático al permitir que el código se escriba sin que se conozcan los tipos precisos de los valores en ***tiempo de compilación***. 
 
-El comportamiento por defecto en Julia cuando se omiten los tipos es permitir que los valores sean de cualquier tipo. Por lo tanto, uno puede **escribir muchas funciones útiles en Julia sin usar explícitamente los tipos**. Sin embargo, cuando se necesita expresividad adicional, es fácil introducir gradualmente anotaciones de tipo explícitas en el código previamente "*no tipado*". Añadir anotaciones tiene tres propósitos principales:
+La capacidad de escribir código que puede operar con diferentes tipos se llama ***polimorfismo***. Todo el código en los lenguajes clásicos ***dinámicamente tipados*** es polimórfico: sólo mediante la comprobación explícita de los tipos, o cuando los objetos no soportan operaciones en ***tiempo de ejecución***, se restringen los tipos de cualquier valor.
 
-1. Aprovechar el poderoso mecanismo de despacho múltiple de Julia.
-2. Mejorar la legibilidad humana.
+**El sistema de tipos de Julia es dinámico** pero obtiene algunas de las ventajas de los *sistemas de tipado estáticos* al hacer posible indicar que valores son de tipos específicos. Esto puede ser de gran ayuda en la generación de código eficiente, pero es más significativo porque permite el ***despacho de métodos*** dependiendo el tipo de argumentos de las funciones. El ***despacho de métodos*** se explora en detalle en la sección [Métodos de funciones](#métodos-de-funciones-despacho-múltiple).
+
+El comportamiento por defecto en Julia cuando se omiten la ***declaración de tipos*** es permitir que los valores sean de cualquier tipo (`Any`). Por lo tanto, uno puede **escribir muchas funciones útiles en Julia sin usar explícitamente los tipos**. Sin embargo, cuando se necesita expresividad adicional, es fácil introducir gradualmente *anotaciones* de tipo explícitas en el código "*no tipado*". 
+
+Añadir anotaciones tiene tres propósitos principales:
+
+1. Aprovechar el poderoso mecánismo de ***despacho múltiple*** de Julia.
+2. Mejorar la legibilidad para el humano.
 3. Detectar errores de programación.
 
-Julia es un lenguaje: dinámico, nominativo y paramétrico.
+Julia es un lenguaje: **dinámico, nominativo y paramétrico**.
 
-Los ***tipos genéricos*** pueden ser parametrizados. Las relaciones jerárquicas entre los tipos se declaran explícitamente, en lugar de estar implícitas por una estructura compatible. Una característica particularmente distintiva del sistema de tipos de Julia es que los ***tipos concretos*** no pueden subtiparse entre sí: todos los tipos concretos son finales y sólo pueden tener ***tipos abstractos*** como sus supertipos. Aunque al principio esto puede parecer excesivamente restrictivo, tiene muchas consecuencias beneficiosas con pocos inconvenientes. Ser capaz de heredar el ***comportamiento*** es mucho más importante que ser capaz de heredar la ***estructura***, pero heredar ambos causa dificultades significativas en los lenguajes orientados a objetos tradicionales.
+Como detallaremos más adelante, los ***tipos genéricos*** pueden ser parametrizados. Las **relaciones jerárquicas** entre los tipos se declaran explícitamente, en lugar de estar implícitas por una estructura compatible. Una característica particularmente distintiva del sistema de tipos de Julia es que los ***tipos concretos*** no pueden *subtiparse* entre sí: todos los tipos concretos son finales y sólo pueden tener ***tipos abstractos*** como sus ***supertipos***. Aunque al principio esto puede parecer excesivamente restrictivo, tiene muchas consecuencias beneficiosas con pocos inconvenientes. Ser capaz de heredar el ***comportamiento*** es mucho más importante que ser capaz de heredar la ***estructura***, pero heredar ambos causa dificultades significativas en los ***lenguajes orientados a objetos*** tradicionales.
 
 Otros aspectos de alto nivel del sistema de tipos de Julia que deben ser mencionados por adelantado son:
 
-* No hay división entre valores *objeto* y *no objeto*: **todos los valores en Julia son verdaderos objetos** que tienen un tipo que pertenece a un único gráfico de tipos totalmente conectado, todos los nodos del cual son igualmente de primera clase como tipos.
+* No hay división entre valores *objeto* y *no objeto*: **todos los valores en Julia son objetos** que tienen un ***tipo*** que pertenece a un único grafo de tipos totalmente conectado y todos los nodos son igualmente de *tipos primera clase*. (Ver ***Imagen 1*** más adelante.)
 * No hay un concepto significativo de "*tipo en tiempo de compilación*": el único tipo que tiene un valor es su tipo real cuando el programa se está ejecutando. Esto se denomina ***tipo en tiempo de ejecución*** en los lenguajes orientados a objetos, donde la combinación de la compilación estática con el polimorfismo hace que esta distinción sea significativa.
-* **Sólo los valores, no las variables, tienen tipos**. Las variables son simplemente nombres vinculados a valores, aunque para simplificar podemos decir "*tipo de una variable*" como abreviatura de "*tipo del valor al que se refiere una variable*".
-* Tanto los ***tipos abstractos*** como los concretos pueden ser parametrizados por otros tipos. También pueden ser parametrizados por ***símbolos***, por valores de cualquier tipo para los que isbits devuelva true (esencialmente, cosas como números y bools que se almacenan como tipos C o structs sin punteros a otros objetos), y también por tuplas de los mismos. Los parámetros de tipo pueden ser omitidos cuando no necesitan ser referenciados o restringidos.
+* **Sólo los valores, no las variables, tienen tipos**. Las variables son simplemente nombres vinculados a valores, aunque para simplificar podemos decir "*tipo de una variable*" como abreviatura de *tipo del valor al que se refiere una variable*.
+* Tanto los ***tipos abstractos*** como los ***tipos concretos*** pueden ser parametrizados por otros tipos. También pueden ser parametrizados por ***símbolos***, por valores de cualquier tipo para los que `isbits` devuelva `true` (esencialmente, cosas como ***números*** y ***booleanos***), y también por ***tuplas*** de los mismos. Los ***parámetros de tipo*** pueden ser omitidos cuando no necesitan ser referenciados o restringidos.
 
-El sistema de tipos de Julia está diseñado para ser potente y expresivo, pero claro, intuitivo y discreto. Muchos programadores de Julia pueden no sentir **nunca** la necesidad de escribir código que utilice explícitamente tipos. Algunos tipos de programación, sin embargo, se vuelven más claros, más simples, más rápidos y más robustos con tipos declarados.
+El ***sistema de tipos*** de Julia está diseñado para ser potente y expresivo y a la vez intuitivo y discreto. Muchos programadores de Julia pueden **nunca** tener la necesidad de escribir código que utilice explícitamente tipos. Algunos estilos de programación, sin embargo, se vuelven más claros, más simples, más rápidos y más robustos con ***declaración de tipos***.
 
 ### Declaración de Tipos
 
-El operador `::` (*cuadripuntos*) se puede utilizar para adjuntar anotaciones de tipo a expresiones y variables en los programas. Hay dos razones principales para hacer esto:
+El operador `::` (*cuadripuntos*) se puede utilizar para adjuntar ***anotaciones de tipo*** a expresiones y variables en los programas. Hay dos razones principales para hacer esto:
 
-1. Declarar una afirmación (*typeassert*) para ayudar a confirmar que su programa funciona de la manera esperada.
+1. Declarar una afirmación (*typeassert*) para ayudar a confirmar que el programa funciona de manera esperada.
 2. Para proporcionar información de tipo adicional al compilador, que puede mejorar el rendimiento en algunos casos.
 
-Cuando se añade a una expresión el operador `::`, esta se lee como *es una instancia de*. Puede utilizarse en cualquier lugar para afirmar que el valor de la expresión de la izquierda es una instancia del tipo de la derecha. Cuando el tipo de la derecha es concreto, el valor de la izquierda debe tener ese tipo como implementación - recuerde que todos los tipos concretos son finales, por lo que ninguna implementación es un subtipo de otro. Cuando el tipo es abstracto, basta con que el valor sea implementado por un tipo concreto que sea un subtipo del tipo abstracto. Si la afirmación de tipo no es verdadera, se lanza una excepción, en caso contrario, se devuelve el valor de la izquierda.
+Cuando se añade el operador `::` a una expresión, esta se lee como **es una instancia de**. Puede utilizarse en cualquier lugar para afirmar que el valor de la expresión de *la izquierda es una instancia del tipo de la derecha*. Cuando el tipo de la derecha es ***concreto***, el valor de la izquierda debe tener ese tipo como objeto implementado del tipo. Cuando el tipo es ***abstracto***, basta con que el valor sea implementado por un ***tipo concreto*** **subtipo** del ***tipo abstracto***. Si la afirmación de tipo no es verdadera, se lanza una excepción, en caso contrario, se devuelve el valor de la izquierda.
 
-Esto permite adjuntar una aserción de tipo a cualquier expresión en el lugar.
+Esto permite adjuntar una ***aserción de tipo*** a cualquier expresión en el sitio:
 
 ```julia
 julia> (2 + 3)::Int                         # 2 + 3 es una instancia de Int
@@ -2596,7 +2602,7 @@ ERROR: TypeError: in typeassert, expected Float64, got a value of type Int64
 ...
 ```
 
-Cuando se añade a una variable en el **lado izquierdo de una *asignación***, o como parte de una ***declaración*** `local` (las *declaraciones de tipo* en variables globales no están soportadas), el operador `::` significa que la variable siempre tendrá el tipo especificado (como una declaración de tipo en un lenguaje de tipado estático como C o Fortran). Cada valor asignado a la variable se convertirá al tipo declarado utilizando `convert`:
+Cuando se añade a una variable en el **lado izquierdo de una *asignación***, o como parte de una ***declaración*** `local` (las ***declaraciones de tipo*** en variables globales no están soportadas), el operador `::` significa que la variable siempre tendrá el tipo especificado (como una ***declaración de tipo*** en un lenguaje de tipado estático como C o Fortran). Cada valor asignado a la variable se convertirá al tipo declarado utilizando `convert`:
 
 ```julia
 julia> begin
@@ -2609,7 +2615,7 @@ julia> begin
 
 Esta característica es útil para evitar los problemas de rendimiento que podrían ocurrir si una de las asignaciones a una variable cambiara su tipo inesperadamente.
 
-Las declaraciones de tipo también pueden ser adjuntadas a las definiciones de la funciones, la cual se asegurará de que el valor retornado sea del tipo especificado
+Las ***declaraciones de tipo*** también pueden ser adjuntadas a las definiciones de la funciones, la cual se asegurará de que el valor retornado sea del ***tipo*** especificado. Por ejemplo:
 
 ```julia
 julia> function suma(a, b)::Float64
@@ -2622,11 +2628,11 @@ julia> x = suma(2, 3); println("$x => ", typeof(x))
 
 ### Tipos Abstractos
 
-Los ***tipos abstractos*** no pueden ser instanciados. Sólo sirven  como nodos en el *grafo de tipos*, ***describiendo así conjuntos de tipos concretos relacionados***, es decir, aquellos ***tipos concretos*** que son sus *descendientes*. Los *tipos abstractos*, aunque no tengan instanciación, son la columna vertebral del *sistema de tipos* porque forman la jerarquía conceptual que hace que el sistema de tipos de Julia sea algo más que una colección de implementaciones de objetos.
+Los ***tipos abstractos*** no pueden ser instanciados. Sólo sirven como nodos en el *grafo de tipos*, ***describiendo así conjuntos de tipos concretos relacionados***, es decir, aquellos ***tipos concretos*** que son *descendientes* de los *abstractos*. Los *tipos abstractos*, aunque no tengan instanciación, son la columna vertebral del *sistema de tipos* porque forman la jerarquía conceptual que hace que el sistema de tipos de Julia sea algo más que una colección de implementaciones de objetos.
 
-En la sección [Tipos de Datos](#tipos-de-datos) se introdujeron una gran variedad de ***tipos concretos*** de valores numéricos: `Int8`, `UInt8`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Int128`, `UInt128`, `Float16`, `Float32` y `Float64`. Apesar de tener diferentes tamaños de representación, Int8, Int16, Int32, Int64 e Int128 tienen en común que son ***tipos enteros con signo***. Asimismo, UInt8, UInt16, UInt32, UInt64 y UInt128 son ***tipos enteros sin signo***, mientras que Float16, Float32 y Float64 se distinguen por ser ***tipos de punto flotante***.
+En la sección [Tipos de Datos](#tipos-de-datos) se presentaron una gran variedad de ***tipos concretos*** de valores numéricos: `Int8`, `UInt8`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Int128`, `UInt128`, `Float16`, `Float32` y `Float64`. Apesar de tener diferentes tamaños de representación, Int8, Int16, Int32, Int64 e Int128, tienen en común que son ***tipos enteros con signo***. Asimismo, UInt8, UInt16, UInt32, UInt64 y UInt128 son ***tipos enteros sin signo***, mientras que Float16, Float32 y Float64 se distinguen por ser ***tipos de punto flotante***.
 
-Es habitual que un fragmento de código tenga sentido sólo si sus argumentos son de algún tipo de entero, pero que no dependa realmente de qué ***tipo concreto*** de entero. Por ejemplo, el algoritmo del máximo común denominador funciona para todos los tipos de enteros, pero no funcionará para los números de punto flotante. Justamente, los ***tipos abstractos*** permiten la construcción de una *jerarquía de tipos*, proporcionando un contexto en el que los tipos concretos pueden encajar. Esto permite, programar fácilmente para cualquier tipo entero, sin restringir a un tipo específico de entero.
+Es habitual que un fragmento de código tenga sentido sólo si sus argumentos son de algún ***tipo de entero***, pero que no dependa realmente de qué ***tipo concreto*** de entero. Por ejemplo, el algoritmo del máximo común denominador funciona para todos los ***tipos de enteros***, pero no funcionará para los números de punto flotante. Justamente, los ***tipos abstractos*** permiten la construcción de una *jerarquía de tipos*, proporcionando un contexto en el que los tipos concretos pueden encajar. Esto permite, programar fácilmente para cualquier ***tipo entero***, sin restringir a un tipo específico de entero.
 
 Los tipos abstractos se declaran utilizando la palabra clave `abstract type`. La sintaxis general para declarar un tipo abstracto es:
 
@@ -2636,9 +2642,9 @@ julia> abstract type «name» end
 julia> abstract type «name» <: «supertype» end
 ```
 
-La palabra reservada `abstract type` introduce un nuevo *tipo abstracto*, con nombre *name*. Este nombre puede ir opcionalmente seguido de `<:` para heredar de un *tipo* ya existente, indicando que el nuevo *tipo abstracto* declarado es un ***subtipo*** de este *tipo padre*.
+La palabra reservada `abstract type` define un nuevo *tipo abstracto*, con nombre *name*. Este nombre puede ir opcionalmente seguido de `<:` para heredar de un *tipo* ya existente, indicando que el nuevo *tipo abstracto* declarado es un ***subtipo*** de este *tipo padre*.
 
-Cuando no se especifique un ***supertipo*** (*supertype*), por defecto será `Any` (un *tipo abstracto* predefinido del que **todos** los objetos son instancias y todos los tipos son subtipos de este). En la teoría de tipos, `Any` está en el vértice superior del gráfico de tipos (ver imagen). Julia también tiene un tipo abstracto predefinido *inferior*, en el fondo del gráfico de tipos, que se escribe como `Union{}`. Es exactamente lo contrario de `Any`: ningún objeto es una instancia de `Union{}` y **todos** los tipos son ***supertipos*** de `Union{}`.
+Cuando no se especifique un ***supertipo*** (*supertype*), por defecto será `Any` (un *tipo abstracto* predefinido del que **todos** los objetos son instancias y todos los ***tipos*** son ***subtipos*** de este). En la ***teoría de tipos***, `Any` está en el vértice superior del ***grafo de tipos*** (ver **Imagen 1**). Julia también tiene un ***tipo abstracto*** predefinido *inferior* en el fondo del ***grafo de tipos***, que se escribe como `Union{}`. Es exactamente lo contrario de `Any`: ningún objeto es una instancia de `Union{}` y **todos** los tipos son ***supertipos*** de `Union{}`.
 
 <div align=center>
     <img src="./type_tree.png"><br>
@@ -2657,7 +2663,7 @@ abstract type Signed   <: Integer end
 abstract type Unsigned <: Integer end
 ```
 
-El tipo `Number` es un tipo hijo directo de `Any`.En cambio, `Real` es hijo de `Real`. A su vez, `Real` tiene dos hijos (tiene más, pero aquí sólo se muestran dos): `Integer` y `AbstractFloat`, separando el mundo en representaciones de números enteros y representaciones de números reales. Las representaciones de números reales incluyen, por supuesto, son los tipos de ***punto flotante***, pero también incluyen otros tipos, como los ***racionales***. Por lo tanto, `AbstractFloat` es un subtipo propio de `Real`, que incluye sólo representaciones de números reales en punto flotante. Los enteros se subdividen a su vez en variedades con signo `Signed` y sin signo `Unsigned`.
+El tipo `Number` es un *tipo hijo* directo de `Any`.En cambio, `Real` es hijo de `Real`. A su vez, `Real` tiene dos hijos (tiene más, pero aquí sólo se muestran dos): `Integer` y `AbstractFloat`, separando el mundo en representaciones de números enteros y representaciones de números reales. Las representaciones de números reales incluyen, por supuesto, son los tipos de ***punto flotante***, pero también incluyen otros tipos, como los ***racionales***. Por lo tanto, `AbstractFloat` es un subtipo propio de `Real`, que incluye sólo representaciones de números reales en punto flotante. Los enteros se subdividen a su vez en variedades con signo `Signed` y sin signo `Unsigned`.
 
 El operador `<:` significa en general ***es un subtipo de*** y declara que el tipo de la derecha es un ***supertipo*** inmediato del nuevo tipo declarado. También puede usarse en expresiones como un operador de subtipo que devuelve verdadero cuando su operando izquierdo es un subtipo de su operando derecho:
 
@@ -2677,7 +2683,7 @@ julia>  function sumar(a, b)
         end
 ```
 
-Lo primero que hay que tener en cuenta es que las declaraciones de argumentos anteriores son equivalentes a `a::Any` y `b::Any`. Cuando se llama esta función, `sumar(2,5)`, el despachador elige el método más específico llamado a `sumar` que coincide con los argumentos dados (ver [Métodos de Funciones](#métodos-de-funciones-despacho-múltiple) para más información sobre el ***despacho múltiple***).
+Lo primero que hay que tener en cuenta es que las declaraciones de argumentos anteriores son equivalentes a `a::Any` y `b::Any`. Cuando se llama esta función, `sumar(2,5)`, el despachador elige el método más específico llamado `sumar` que coincide con los argumentos dados (ver [Métodos de Funciones](#métodos-de-funciones-despacho-múltiple) para más información sobre el ***despacho múltiple***).
 
 Asumiendo que no se encuentra ningún método más específico que el anterior, **Julia define y compila internamente** un método llamado `sumar` específicamente para dos argumentos `Int` basado en la función genérica dada anteriormente, es decir, define y compila implícitamente:
 
@@ -2689,9 +2695,9 @@ end
 
 y finalmente, **llama este método concreto**.
 
-Así, los ***tipos abstractos*** permite escribir funciones genéricas que luego pueden ser utilizadas como método por defecto por muchas combinaciones de tipos concretos. Gracias al envío múltiple, se tiene pleno control sobre que método utilizar por defecto o en específico.
+Así, los ***tipos abstractos*** permite escribir funciones genéricas que luego pueden ser utilizadas como método por defecto por muchas combinaciones de tipos concretos. Gracias al ***despacho múltiple***, se tiene pleno control sobre que método utilizar por defecto o en específico.
 
-Un punto importante a tener en cuenta es que no hay pérdida de rendimiento si se confía en una función cuyos argumentos son ***tipos abstractos***, porque se recompila para cada tupla de tipos concretos de argumentos con los que se invoca. Sin embargo, puede haber un problema de rendimiento en el caso de los argumentos de la función que son contenedores de ***tipos abstractos***.
+Un punto importante a tener en cuenta es que no hay pérdida de rendimiento si se confía en una función cuyos argumentos son ***tipos abstractos***, porque se recompila para cada tupla de tipos concretos de argumentos con los que se invoca. Sin embargo, puede haber un problema de rendimiento en el caso de los argumentos de la función sean contenedores de ***tipos abstractos***.
 
 ### Tipos primitivos
 
@@ -2731,13 +2737,15 @@ primitive type «name» <: «supertype» «bits» end
 
 El número de «bits» indica cuánto almacenamiento requiere el tipo y el «name» da un nombre al nuevo tipo. Un ***tipo primitivo*** puede declararse opcionalmente como ***subtipo*** de algún ***supertipo***. Si se omite un ***supertipo***, entonces el tipo tiene por defecto `Any` como su ***supertipo*** inmediato. La declaración de `Bool` arriba significa, por tanto, que un valor ***booleano*** toma ocho bits para ser almacenado, y tiene `Integer` como su ***supertipo*** inmediato. Actualmente, sólo se soportan los tamaños que son múltiplos de 8 bits y es probable que se produzcan errores en LLVM con tamaños distintos a los utilizados anteriormente. Por lo tanto, los valores ***booleanos***, aunque realmente necesitan un solo bit, no pueden ser declarados con un tamaño inferior a ocho bits.
 
-Los tipos `Bool`, `Int8` y `UInt8` tienen todos representaciones idénticas: son espacios de memoria de ocho bits. Sin embargo, como el sistema de tipos de Julia es **nominativo**, no son intercambiables a pesar de tener una estructura idéntica. Una diferencia fundamental entre ellos es que tienen diferentes ***supertipos***: El ***supertipo*** directo de `Bool` es `Integer`, el de `Int8` es `Signed`, y el de `UInt8` es `Unsigned`. Todas las demás diferencias entre `Bool`, `Int8` y `UInt8` son cuestiones de comportamiento, es decir, la forma en que las funciones están definidas para actuar cuando se les dan objetos de estos tipos como argumentos. Por eso es necesario un ***sistema de tipos nominativos***: si la estructura determinara el tipo, que a su vez dicta el comportamiento, entonces sería imposible hacer que `Bool` se comportara de forma diferente a `Int8` o `UInt8`.
+Los tipos `Bool`, `Int8` y `UInt8` tienen todos representaciones idénticas: son espacios de memoria de ocho bits. Sin embargo, como el sistema de tipos de Julia es **nominativo**, no son intercambiables a pesar de tener una estructura idéntica. Una diferencia fundamental entre ellos es que tienen diferentes ***supertipos***: El ***supertipo*** directo de `Bool` es `Integer`, el de `Int8` es `Signed`, y el de `UInt8` es `Unsigned`. Todas las demás diferencias entre `Bool`, `Int8` y `UInt8` son cuestiones de comportamiento, es decir, la forma en que las funciones están definidas para actuar cuando se les dan objetos de estos tipos como argumentos. Por eso es necesario un ***sistema de tipos nominativos***: si la estructura interna determinara el ***tipo***, que a su vez dicta el comportamiento, entonces sería imposible hacer que `Bool` se comportara de forma diferente a `Int8` o `UInt8`.
 
 ### Tipos compuestos: `Struct`
 
-Los ***tipos compuestos*** se denominan ***registros, structs u objetos*** en varios lenguajes. Un tipo compuesto es una colección de campos con nombre, una instancia de los cuales puede ser tratada como un único valor. En muchos lenguajes, los ***tipos compuestos*** son la única clase de tipo definible por el usuario, y son con mucho el tipo definido por el usuario más comúnmente utilizado en Julia.
+Los ***tipos compuestos*** se denominan ***registros, structs u objetos*** en varios lenguajes. Un tipo compuesto es una colección de campos con nombre, una instancia de los cuales puede ser tratada como un único valor. En muchos lenguajes, los ***tipos compuestos*** son la única clase de ***tipo*** definible por el usuario, y son con mucho el ***tipo*** definido por el usuario más comúnmente utilizado en Julia.
 
-En los principales lenguajes orientados a objetos, como C++, Java, Python y Ruby, los ***tipos compuestos*** también tienen funciones con nombre asociadas a ellos, y la combinación se llama **objeto**. En ***lenguajes orientados a objetos*** más puros, como Ruby o Smalltalk, todos los valores son objetos, sean o no compuestos. En lenguajes orientados a objetos menos puros, como C++ y Java, algunos valores, como los *enteros* y los de *punto flotante*, no son objetos, mientras que las instancias de tipos compuestos definidos por el usuario son verdaderos objetos con métodos asociados. En Julia, todos los valores son objetos, pero **las funciones no se agrupan con los objetos sobre los que operan**. Esto es necesario ya que Julia elige qué método de una función utilizar mediante el ***despacho múltiple***, lo que significa que los tipos de todos los argumentos de una función se consideran al seleccionar un método, en lugar de sólo el primero. Por lo tanto, sería inapropiado que las funciones *pertenecieran* sólo a su primer argumento. Organizar los métodos en objetos-función en lugar de tener bolsas de métodos con nombre *dentro* de cada objeto acaba siendo un aspecto muy beneficioso del diseño del lenguaje.
+En los principales *lenguajes orientados a objetos*, como C++, Java, Python y Ruby, los ***tipos compuestos*** también tienen funciones con nombre asociadas a ellos, y la combinación se llama **objeto**. En *lenguajes orientados a objetos* más puros, como Ruby o Smalltalk, todos los valores son objetos, sean o no compuestos. En *lenguajes orientados a objetos* menos puros, como C++ y Java, algunos valores, como los *enteros* y los de *punto flotante*, no son objetos, mientras que las instancias de ***tipos compuestos*** definidos por el usuario son verdaderos objetos con métodos asociados. 
+
+En Julia, todos los valores son objetos, pero **las funciones no se unen con los objetos sobre los que operan**. Esto es necesario ya que Julia elige qué ***método de función*** utilizar mediante el ***despacho múltiple***, lo que significa que los ***tipos*** de todos los argumentos de una función se consideran al seleccionar un método, en lugar de sólo el primero. Por lo tanto, sería inapropiado que las funciones les *pertenecieran* sólo a su primer argumento. Organizar los métodos en ***objetos-función*** en lugar de tener bolsas de métodos con nombre *dentro* de cada objeto acaba siendo un aspecto muy beneficioso del diseño del lenguaje.
 
 Los ***tipos compuestos*** se definen con la palabra clave `struct` seguida de un bloque de campos con nombre, opcionalmente declarando su tipo con el operador `::`, como sigue:
 
@@ -2751,7 +2759,7 @@ julia>  struct Objeto
 
 Los campos sin anotación de tipo tienen por defecto el valor `Any` y en consecuencia pueden contener cualquier tipo de valor.
 
-Los nuevos objetos de tipo `Objeto` se crean invocando al tipo `Objeto` como una función a los valores correspondientes de sus campos:
+Los nuevos objetos de tipo `Objeto` se crean invocando al tipo `Objeto` como una función con los valores correspondientes de sus campos:
 
 ```julia
 julia> obj = Objeto("Hola mundo.", 23, 1.5)
@@ -2761,15 +2769,15 @@ julia> typeof(obj)
 Objeto
 ```
 
-Cuando un ***tipo*** es aplicado como una *función* se llama ***constructor***. Se generan automáticamente dos constructores (llamados ***constructores por defecto***). Uno acepta cualquier tipo de argumentos y llama a `convert` para convertirlo a los ***tipos*** de los campos definidos; el otro acepta argumentos que coinciden exactamente con los ***tipos*** de los campos. La razón por la que se generan ambos es que así es más fácil añadir nuevas definiciones sin reemplazar inadvertidamente un ***constructor por defecto***.
+Cuando un ***tipo*** es aplicado como una *función* se llama ***constructor***. Se generan automáticamente dos constructores (llamados ***constructores por defecto***). Uno acepta cualquier tipo de argumentos y llama a función interna `convert` para convertirlos a los ***tipos*** de los campos definidos; el otro acepta argumentos que coinciden exactamente con los ***tipos*** de los campos. La razón por la que se generan ambos es que así es más fácil añadir nuevas definiciones sin reemplazar inadvertidamente un ***constructor por defecto***.
 
-Se puede consultar una lista de los nombres de campo del ***tipo*** usando la función `fieldnames`:
+Se puede consultar la lista de los ***nombres de los campos*** del ***tipo*** usando la función `fieldnames`:
 
 ```julia
 julia> fieldnames(Objeto)
 ```
 
-Se puede acceder a los valores de los campos de un objeto compuesto instanciado utilizando la notación punto tradicional:
+Se puede acceder a los valores de los campos de un objeto compuesto instanciado utilizando la ***notación punto*** tradicional:
 
 ```julia
 julia> obj.campo1
@@ -2782,9 +2790,9 @@ julia> obj.campo3
 1.5
 ```
 
-Los ***tipos compuestos*** declarados con `struct` son **inmutables**, no pueden ser modificados después de su construcción. uede parecer extraño al principio, pero tiene varias ventajas:
+Los ***tipos compuestos*** declarados con `struct` son **inmutables**, no pueden ser modificados después de su construcción. Puede parecer extraño al principio, pero tiene varias ventajas:
 
-* Es más eficiente. Algunos `struct`s pueden ser empaquetados eficientemente en arreglos, y en algunos casos el compilador es capaz de evitar la asignación de objetos inmutables por completo.
+* Es más eficiente. Algunos `struct` pueden ser empaquetados eficientemente en arreglos, y en algunos casos el compilador es capaz de evitar la asignación de objetos inmutables por completo.
 * No es posible violar los invariantes proporcionados por los ***constructores del tipo***.
 * El código que utiliza objetos inmutables puede ser más fácil de razonar.
 
@@ -2852,7 +2860,7 @@ julia> typeof(Int)
 DataType
 ```
 
-Un `DataType` puede ser abstracto o concreto. Si es concreto, tiene un tamaño especificado, una disposición de almacenamiento y (opcionalmente) nombres de campo. Un tipo primitivo es un tipo de datos con un tamaño distinto de cero, pero sin nombres de campo. Un tipo compuesto es un tipo de datos que tiene nombres de campo o está vacío (tamaño cero).
+Un `DataType` puede ser abstracto o concreto. Si es concreto, tiene un tamaño especificado, una disposición de almacenamiento y (opcionalmente) nombres de campo. Un `tipo primitivo` es un `DataType` con un tamaño distinto de cero, pero sin nombres de campo. Un `tipo compuesto` es un `DataType` que tiene nombres de campo o está vacío (tamaño cero).
 
 Cada valor concreto del sistema es una instancia de un `DataType`.
 
@@ -2872,6 +2880,7 @@ julia> "¡Hola!" :: EnteroString
 
 julia> 1.0 :: EnteroString
 ERROR: TypeError: in typeassert, expected Union{Int64, AbstractString}, got a value of type Float64
+[...]
 ```
 
 Los compiladores de muchos lenguajes tienen una construcción de unión interna para razonar sobre los tipos; Julia simplemente lo expone al programador. El compilador de Julia es capaz de generar código eficiente en presencia de tipos `Union` con un pequeño número de tipos, generando código especializado en ramas separadas para cada tipo posible.
@@ -2880,13 +2889,13 @@ Un caso particularmente útil de un tipo `Union` es `Union{T, Nothing}`, donde `
 
 ### Tipos paramétricos
 
-Una característica importante y poderosa del sistema de tipos de Julia es que es ***paramétrico***, es decir, **los tipos pueden tomar parámetros**, de modo que las declaraciones de tipos introducen en realidad toda una familia de nuevos tipos, uno para cada posible combinación de valores de los parámetros.
+Una característica importante y poderosa del sistema de tipos de Julia es que es ***paramétrico***, es decir, **los tipos pueden tomar parámetros**, de modo que las ***declaraciones de tipos*** definen en realidad toda una familia de nuevos ***tipos***, uno para cada posible combinación de valores de los parámetros.
 
-Todos los ***tipos declarados*** (la variedad `DataType`) pueden ser **parametrizados**, con la misma sintaxis en cada caso. Estos incluyen los tipos compuestos paramétricos, luego los tipos abstractos paramétricos, y finalmente los tipos primitivos paramétricos.
+Todos los ***tipos declarados*** (la variedad `DataType`) pueden ser **parametrizados**, con la misma sintaxis en cada caso. Estos incluyen los ***tipos compuestos paramétricos***, los ***tipos abstractos paramétricos*** y los ***tipos primitivos paramétricos***.
 
 #### Tipos compuestos paramétricos
 
-Los *parámetros del tipo* se declaran inmediatamente después del nombre del tipo, rodeados de llaves `{}`:
+Los *parámetros de tipo* se declaran inmediatamente después del nombre del ***tipo***, rodeados de llaves `{}`:
 
 ```julia
 julia> struct Punto{T}
@@ -2895,7 +2904,7 @@ julia> struct Punto{T}
        end
 ```
 
-Esta declaración define un nuevo ***tipo paramétrico***, `Punto{T}`, que contiene dos *campos o "coordenadas"* de tipo `T`, donde `T` puede ser cualquier tipo. Por ejemplo, `Punto{Float64}` es un ***tipo concreto*** equivalente a sustituir `T` por `Float64` en la definición de `Punto`. Así, la definición anterior declara en realidad un número ilimitado de tipos: `Punto{Float64}`, `Punto{AbstractString}`, `Punto{Int64}`, etc. Cada uno de ellos se convierte un tipo concreto utilizable:
+Esta declaración define un nuevo ***tipo paramétrico***, `Punto{T}`, que contiene dos *campos o "coordenadas"* de ***tipo*** `T`, donde `T` puede ser cualquier ***tipo***. Por ejemplo, `Punto{Float64}` es un ***tipo concreto*** equivalente a sustituir `T` por `Float64` en la definición de `Punto`. Así, la definición anterior declara en realidad un número ilimitado de tipos: `Punto{Float64}`, `Punto{AbstractString}`, `Punto{Int64}`, etc. Cada uno de ellos se convierte un ***tipo concreto*** utilizable:
 
 ```julia
 julia> Punto{Float64}
@@ -2907,7 +2916,7 @@ Punto{AbstractString}
 
 El tipo `Punto{Float64}` es un *Punto* con *coordenadas* tipo ***punto flotante de 64 bits***, mientras que el tipo `Punto{AbstractString}` es un *"punto"* cuyas *"coordenadas"* son objetos de tipo `String`.
 
-`Punto` también es un objeto de tipo válido que contiene como subtipo todas las instancias `Punto{Float64}`, `Punto{AbstractString}`, etc.:
+`Punto` también es un ***objeto de tipo*** válido que contiene como subtipo todas las instancias `Punto{Float64}`, `Punto{AbstractString}`, etc.:
 
 ```julia
 julia> Punto{Float64} <: Punto
@@ -2917,7 +2926,7 @@ julia> Punto{AbstractString} <: Punto
 true
 ```
 
-Pero otros tipos no son subtipos de `Punto`:
+Pero otros ***tipos*** no son subtipos de `Punto`:
 
 ```julia
 julia> Float64 <: Punto
@@ -2927,7 +2936,7 @@ julia> AbstractString <: Punto
 false
 ```
 
-Los ***tipos concretos*** de `Puntos` con diferentes valores de `T` nunca son subtipos entre sí:
+Los ***tipos concretos*** de `Puntos` con diferentes valores de `T` nunca son ***subtipos*** entre sí:
 
 ```julia
 julia> Punto{Float64} <: Punto{Int64}
@@ -2937,7 +2946,7 @@ julia> Punto{Float64} <: Punto{Real}
 false
 ```
 
-Este último punto es muy importante: aunque ```Float64 <: Real``` es verdadero, NO es verdad cuando tenemos ```Punto{Float64} <: Punto{Real}```. Esto último es por razones prácticas: mientras que cualquier instancia de `Punto{Float64}` puede ser conceptualmente parecida a una instancia de `Punto{Real}`, los dos tipos tienen diferentes representaciones en memoria:
+Este último punto es muy importante: aunque ```Float64 <: Real``` es verdadero, ***no es verdad*** cuando tenemos ```Punto{Float64} <: Punto{Real}```. Esto último es por razones prácticas: mientras que cualquier instancia de `Punto{Float64}` puede ser conceptualmente parecida a una instancia de `Punto{Real}`, los dos tipos tienen diferentes representaciones en memoria:
 
 * Una instancia de `Punto{Float64}` puede representarse de forma compacta y eficiente como un par inmediato de valores de 64 bits;
 * Una instancia de `Punto{Real}` debe poder contener cualquier par de instancias de `Real`. Dado que los objetos instanciados de `Real` pueden tener un tamaño y una estructura arbitraria, en la práctica `Punto{Real}` debe representarse como un par de punteros a objetos `Real` asignados individualmente.
@@ -2955,6 +2964,7 @@ julia>  p = Punto{Float64}(1.5, 2.5);
 
 julia>  norma(p)
 ERROR: MethodError: no method matching norma(::Punto{Float64})
+[...]
 ```
 
 Una forma correcta de definir un método que acepta todos los argumentos de tipo `Punto{T}` donde `T` es un ***subtipo*** de `Real` es:
@@ -2969,7 +2979,7 @@ julia>  norma(p)
 ```
 donde la sintaxis `norma(p::Punto{<:Real})` es equivalente a `norma(p::Punto{T} where T<:Real)` o `norma(p::Punto{T}) where T<:Real`.
 
-Existe dos constructores por defecto para instanciar objetos de tipo `Punto`: Uno al que se le especifica el tipo `T`, y el segundo donde se omite explicitamente `T` y del cual infiere el tipo `T` a partir de los valores que se les pasa como argumento, siempre y cuando no haya ambigüedad en los argumentos:
+Existe dos ***constructores*** por defecto para instanciar objetos de tipo `Punto`: Uno al que se le especifica el tipo `T`, y el segundo donde se omite explicitamente `T` y del cual infiere el tipo `T` a partir de los valores que se les pasa como argumento, siempre y cuando no haya ambigüedad en los argumentos:
 
 ```julia
 julia> p1 = Punto{Float64}(1.5, 2.5)              # Primera forma de construcción
@@ -2986,7 +2996,7 @@ Closest candidates are:
 
 #### Tipos abstractos paramétricos
 
-Las ***tipos abstractos paramétricos*** declaran una colección de ***tipos abstractos***, de forma muy parecida a lo antes visto:
+Las ***tipos abstractos paramétricos*** declaran una colección de ***tipos abstractos***, de forma muy parecida a lo visto:
 
 ```julia
 julia> abstract type Punto{T} end
@@ -3102,7 +3112,7 @@ Sólo tiene sentido tomar cocientes de valores enteros, por lo que el ***tipo de
 
 #### Tipos tupla
 
-Las ***tuplas*** son una abstracción de los **argumentos de una función**, sin la función. Los aspectos más destacados de los argumentos de una función son su orden y sus tipos. Por lo tanto, un ***tipo tupla*** es similar a un **tipo inmutable parametrizado** donde cada parámetro es el tipo de un campo. Por ejemplo, un ***tipo tupla*** de 2 elementos se asemeja al siguiente ***tipo inmutable***:
+Las ***tuplas*** son una abstracción de los **argumentos de una función** pero sin la función. Los aspectos más destacados de los argumentos de una función son su orden y sus ***tipos***. Por lo tanto, un ***tipo tupla*** es similar a un **tipo inmutable parametrizado** donde cada parámetro es el tipo de un campo. Por ejemplo, un ***tipo tupla*** de 2 elementos se asemeja al siguiente ***tipo inmutable***:
 
 ```julia
 struct Tupla2{A,B}
@@ -3117,7 +3127,7 @@ Sin embargo, hay tres diferencias principales:
 * Los ***tipos tupla*** son covariantes en sus parámetros, es decir, `Tuple{Int}` es un ***subtipo*** de `Tuple{Any}`. Por lo tanto, `Tuple{Any}` se considera un ***tipo abstracto***, y los ***tipos tupla*** sólo son ***concretos*** si sus parámetros lo son.
 * Las tuplas no tienen nombres de campo; sólo se accede a los campos por el índice.
 
-Los valores de las tuplas se escriben entre paréntesis y separados por comas. Cuando se construye una tupla, se genera un tipo de tupla apropiado según el caso:
+Los valores de las tuplas se escriben entre paréntesis y separados por comas. Cuando se construye una tupla, se genera un ***tipo de tupla*** apropiado según el caso:
 
 ```julia
 julia> typeof((1, "abc",2.5))
@@ -3164,7 +3174,7 @@ El valor especial `Vararg{T,N}`, cuando se utiliza como último parámetro de un
 
 #### Tipos tupla con nombre
 
-Las ***tuplas con nombre*** son instancias del tipo `NamedTuple`, que **tiene dos parámetros**: una ***tupla de símbolos*** con los nombres de los campos, y un ***tipo tupla*** con los tipos de cada campo.
+Las ***tuplas con nombre*** son instancias del tipo `NamedTuple`, que **tiene dos parámetros**: una ***tupla de símbolos*** con los *nombres de los campos*, y un ***tipo tupla*** con los *tipos de cada campo*.
 
 ```julia
 julia> typeof((parametro1=5, parametro2="hola"))
@@ -3194,7 +3204,7 @@ julia> NamedTuple{(:edad, :nombre)}((15, "Juan"))
 (edad = 1, nombre = "")
 ```
 
-Si se especifican los tipos de los campos, se convierten los argumentos. En caso contrario, se utilizan directamente los tipos de los argumentos.
+Si se especifican los ***tipos de los campos***, los argumentos se convierten. En caso contrario, se utilizan directamente los ***tipos de los argumentos***.
 
 #### Tipos primitivos paramétricos
 Los ***tipos primitivos*** también pueden ser declarados ***paramétricamente***. Por ejemplo, los punteros se representan como tipos primitivos paramétricos como sigue:
@@ -3260,7 +3270,7 @@ entonces `T` es un ***tipo singleton***.
 
 ### Operaciones sobre tipos
 
-Dado que los tipos en Julia son en sí mismos objetos, las funciones ordinarias pueden operar sobre ellos. Ya se han introducido algunas funciones especialmente útiles para trabajar o explorar tipos, como el operador `<:`, que indica si su operando izquierdo es un ***subtipo*** de su operando derecho.
+Dado que los ***tipos*** en Julia son en sí mismos objetos, las funciones ordinarias pueden operar sobre ellos. Ya se han introducido algunas funciones especialmente útiles para trabajar o explorar tipos, como el operador `<:`, que indica si su operando izquierdo es un ***subtipo*** de su operando derecho.
 
 La función `isa` comprueba si un objeto es de un ***tipo*** determinado y devuelve `true` o `false`:
 
