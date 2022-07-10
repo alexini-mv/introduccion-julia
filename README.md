@@ -3421,15 +3421,15 @@ Vale la pena señalar que es muy fácil utilizar mal los ***tipos paramétricos 
 
 ## Métodos de funciones: Despacho múltiple
 
-Recordemos que una función es un objeto que asigna a una tupla de argumentos un valor de retorno, o lanza una excepción si no se puede devolver un valor apropiado. Es común que la misma función se implemente de manera muy diferente para distintos tipos de argumentos. Por ejemplo, sumar dos ***enteros*** es muy diferente de sumar dos ***números de punto flotante***, ambos distintos de sumar un entero a un número de punto flotante. A pesar de sus diferencias de implementación, todas estas operaciones caen bajo el concepto general de *adición*. En consecuencia, en Julia, todos estos comportamientos pertenecen a un único objeto: la función `+`.
+Recordemos que una función es un objeto que asigna a una tupla de argumentos un valor de retorno, o lanza una excepción si no se puede devolver un valor apropiado. Es común que la misma función se implemente de manera muy diferente para distintos ***tipos de argumentos***. Por ejemplo, sumar dos ***enteros*** es muy diferente de sumar dos ***números de punto flotante***, ambos distintos de sumar un entero con un número de punto flotante. A pesar de sus diferencias de implementación, todas estas operaciones caen bajo el concepto general de *adición*. En consecuencia, en Julia, todos estos comportamientos pertenecen a un único objeto: la función `+`.
 
-Para facilitar el uso de muchas implementaciones diferentes del mismo concepto sin problemas, las funciones no necesitan ser definidas todas a la vez, sino que pueden ser definidas por partes proporcionando comportamientos específicos para ciertas combinaciones de ***tipos de argumentos***. La definición de un posible ***comportamiento particular*** de una función se denomina **método**. Hasta ahora, sólo se ha visto ejemplos de funciones definidas con un único método, aplicable a todos los tipos de argumentos. Sin embargo, las definiciones de los métodos pueden incluir los **tipos de los argumentos** además de su valor, y establecerse más de una única definición de método. Cuando una función se llama con una tupla particular de argumentos, se aplica el método más específico aplicable a esos argumentos. Así, el comportamiento global de una función es un mosaico de los comportamientos de sus diversas definiciones de métodos. Si el mosaico está bien diseñado, aunque las implementaciones de los métodos puedan ser muy diferentes, el comportamiento externo de la función parecerá fluido y coherente.
+Para facilitar el uso de muchas implementaciones diferentes del mismo concepto sin problemas, las funciones no necesitan ser definidas todas a la vez, sino que pueden ser definidas por partes proporcionando comportamientos específicos para ciertas combinaciones de ***tipos de argumentos***. La definición de un ***comportamiento particular*** posible de una función se denomina **método**. Hasta ahora, sólo se ha visto ejemplos de funciones definidas con un método único, aplicable a todos los tipos de argumentos. Sin embargo, las definiciones de los métodos pueden incluir los **tipos de los argumentos** además de su valor, y establecerse más de una única definición de método. Cuando una función se llama con una tupla particular de argumentos, se aplica el método más específico aplicable a esos argumentos. Así, el comportamiento global de una función es un mosaico de los comportamientos de sus diversas definiciones de métodos. Si el mosaico está bien diseñado, aunque las implementaciones de los métodos puedan ser muy diferentes, el comportamiento externo de la función parecerá fluido y coherente.
 
 La elección del método que se ejecuta cuando se invoca a una función se llama **despacho**. Julia permite que el proceso de ***despacho*** elija cuál de ***los métodos de función*** llamar basándose en el número de argumentos dados y sus ***tipos***. Esto es totalmente diferente a los lenguajes tradicionalmente ***Orientados a Objetos***, donde el ***despacho*** se produce basándose sólo en el primer argumento (el objeto), que a menudo tiene una sintaxis de argumento especial. El uso de todos los argumentos de una función para elegir qué método debe ser invocado, en lugar de sólo el primero, se conoce como **despacho múltiple**. El ***despacho múltiple*** es particularmente útil para el *código matemático*, donde no tiene mucho sentido considerar artificialmente que las operaciones *pertenecen* a un argumento más que a cualquiera de los otros argumentos: ¿la operación de suma en `x + y` pertenece a `x` más que a `y`? La implementación de un operador matemático depende generalmente de los tipos de todos sus argumentos. Sin embargo, incluso más allá de las operaciones matemáticas, el ***despacho múltiple*** acaba siendo un paradigma poderoso y conveniente para estructurar y organizar los programas.
 
 ### Definiendo métodos
 
-Hasta ahora, se ha definido sólo funciones con un único método, y con ***tipos de argumentos*** no restringidos. Tales funciones se comportan como lo harían en los lenguajes de tipado dinámico tradicionales. Sin embargo, todas las funciones y operadores estándar de Julia, como la mencionada función `+`, tienen muchos métodos que definen su comportamiento sobre varias combinaciones posibles de tipo de argumento.
+Hasta ahora, se ha definido sólo funciones con un único método, y con ***tipos de argumentos*** no restringidos. Tales funciones se comportan igual como lo harían en los lenguajes de ***tipado dinámico tradicionales***. Sin embargo, todas las funciones y operadores estándar de Julia, como la mencionada función `+`, tienen muchos métodos que definen su comportamiento sobre varias combinaciones posibles de tipo de argumento.
 
 Cuando se define una función, uno puede opcionalmente restringir los tipos de parámetros a los que es aplicable, usando el operador de tipo `::`,
 
@@ -3524,7 +3524,7 @@ julia> f
 f (generic function with 2 methods)
 ```
 
-Esta salida nos dice que `f` es un objeto función con dos métodos. Para averiguar cuáles son las especificaciones de cada método, se debe usar la función `methods`:
+Esta salida nos dice que `f` es un objeto función con dos métodos. Para averiguar cuáles son las especificaciones de cada ***método***, se debe usar la función `methods`:
 
 ```julia
 julia> methods(f)
@@ -3632,7 +3632,7 @@ julia> mismo_tipo("Hola", "adios")
 true
 ```
 
-Este estilo de definición del comportamiento de la función por despacho es bastante común en Julia. Los ***parámetros de tipo de método*** no están restringidos a ser usados sólo como ***tipos de argumentos***, pueden ser usados en cualquier lugar donde un valor estaría dentro de los argumentos o en el cuerpo de la función. Por ejemplo, el ***parámetro de tipo de método*** `T` se utiliza como el ***parámetro de tipo*** para ***tipo paramétrico*** `Vector{T}` en los argumentos del método:
+Este estilo de definición del comportamiento de la ***función por despacho*** es bastante común en Julia. Los ***parámetros de tipo de método*** no están restringidos a ser usados sólo como ***tipos de argumentos***, pueden ser usados en cualquier lugar donde un valor estaría dentro de los argumentos o en el cuerpo de la función. Por ejemplo, el ***parámetro de tipo de método*** `T` se utiliza como el ***parámetro de tipo*** para ***tipo paramétrico*** `Vector{T}` en los argumentos del método:
 
 ```julia
 julia> adjuntar(v::Vector{T}, y::T) where T = [v..., y]
@@ -3897,7 +3897,7 @@ julia>  f(x::Tuple{Float64, Vararg{Float64}}) = 2     # En este método requiere
 
 #### Ortogonalización del diseño
 
-Cuando se necesite despachar sobre dos o más argumentos, considera si una función *envolvente* podría hacer un diseño más simple. Por ejemplo, en lugar de escribir múltiples variantes:
+Cuando se necesite despachar sobre dos o más argumentos, considere si una función *envolvente* podría hacer un diseño más simple. Por ejemplo, en lugar de escribir múltiples variantes:
 
 ```julia
 julia>  f(x::A, y::A) =   # código
@@ -3935,7 +3935,7 @@ Esta estrategia tiene al menos una desventaja importante: en muchos casos, no es
 
 #### Contenedores abstractos y tipos de elementos
 
-En la medida de lo posible, se debe evitar definir métodos que despachen sobre tipos de elementos específicos de contenedores abstractos. Por ejemplo:
+En la medida de lo posible, se debe evitar definir métodos que despachen sobre ***tipos de elementos*** específicos de ***contenedores abstractos***. Por ejemplo:
 
 ```julia
 julia>  -(A::AbstractArray{T}, b::Date) where {T<:Date}
@@ -3999,7 +3999,7 @@ julia>  function mifiltro(A, kernel, ::NoRelleno)
 
 ## Constructores
 
-Los ***constructores*** son funciones que crean objetos nuevos. Específicamente, ***instancias*** de ***tipos compuestos***. En Julia, los objetos ***Tipo*** también sirven como ***funciones constructoras***: crean nuevas instancias de sí mismos cuando se aplican a una tupla de argumentos como lo hace una función. Por ejemplo:
+Los ***constructores*** son funciones que crean objetos nuevos, específicamente, ***instancias*** de ***tipos compuestos***. En Julia, los objetos ***Tipo*** también sirven como ***funciones constructoras***: crean nuevas instancias de sí mismas cuando se aplican a una tupla de argumentos como lo hace una función. Por ejemplo:
 
 ```julia
 julia>  struct Persona
@@ -4013,12 +4013,12 @@ Persona("Juan", "Juancho")
 julia>  obj.nombre
 "Juan"
 
-julia>  foo.apodo
+julia>  obj.apodo
 "Juancho"
 ```
 Para muchos tipos, formar nuevos objetos uniendo los valores de sus campos es todo lo que se necesita para crear instancias. Sin embargo, en algunos casos se requiere más funcionalidad al crear objetos compuestos. 
 
-A veces hay que aplicar invariantes, ya sea haciendo validaciones a los argumentos o transformándolos. Las estructuras de datos recursivas, especialmente las que pueden ser autorreferenciales, a menudo no pueden construirse limpiamente sin ser creadas primero en un estado incompleto y luego alteradas mediante programación para ser completadas, como un paso separado de la creación del objeto. 
+A veces hay que aplicar ***invariantes***, ya sea haciendo validaciones a los argumentos o transformándolos. Las estructuras de datos recursivas, especialmente las que pueden ser autorreferenciales, a menudo no pueden construirse limpiamente sin ser creadas primero en un estado incompleto y luego alteradas mediante programación para ser completadas, como un paso separado de la creación del objeto. 
 
 A veces, es simplemente conveniente ser capaz de construir objetos con menos o diferentes tipos de parámetros de los que tienen los campos. El sistema de Julia para la construcción de objetos aborda todos estos casos y más.
 
@@ -4042,7 +4042,7 @@ Persona
 julia> per2 = Persona()
 Persona("Fulanito", "Fulanito")
 ```
-Aquí el ***método constructor*** de cero argumentos llama al ***método constructor*** de un solo argumento, que a su vez llama al ***método constructor*** de dos argumentos proporcionado automáticamente. Los ***métodos constructores*** adicionales **declarados como métodos normales** como éste se llaman **métodos constructores externos**. Los ***métodos constructores externos*** sólo pueden crear una nueva instancia llamando a otro ***método constructor***, como el proporcionado automáticamente por defecto.
+Aquí el ***método constructor*** de cero argumentos llama al ***método constructor*** de un solo argumento, que a su vez llama al ***método constructor*** de dos argumentos proporcionado automáticamente. Los ***métodos constructores*** adicionales **declarados como métodos** comunes como éste se llaman **métodos constructores externos**. Los ***métodos constructores externos*** sólo pueden crear una nueva instancia llamando a otro ***método constructor***, como el proporcionado automáticamente por defecto.
 
 ### Métodos Constructores Internos
 
@@ -4068,7 +4068,7 @@ ParNumeros(1, 2)
 
 julia>  ParNumeros(5, 2)
 ERROR: los números no están ordenados
-...
+[...]
 ```
 
 Si el tipo se declarara como ***mutable***, se podría cambiar directamente los valores de los campos para violar la invariante. Por supuesto, *toquetear* el interior de un objeto innecesariamente es una mala práctica. Se puede definir ***métodos constructores externos*** adicionales en cualquier momento, pero una vez que se declara un ***tipo***, no hay manera de añadir más ***métodos constructores internos***. 
@@ -4097,7 +4097,7 @@ julia>  struct Objeto2
             Objeto2(x) = new(x)
         end
 ```
-Es una buena práctica incluir el menor número posible de ***métodos constructores internos***, procurando sólo declarar aquellos que tomen todos los argumentos explícitamente y que apliquen la c*omprobación de errores* y *transformaciones esenciales*. Los ***métodos constructores*** adicionales, que proporcionan valores por defecto o transformaciones auxiliares, deberían proporcionarse como ***constructores externos*** que invoquen a los ***constructores internos*** para hacer el trabajo pesado. Esta separación suele ser bastante natural.
+Es una buena práctica incluir el menor número posible de ***métodos constructores internos***, procurando sólo declarar aquellos que tomen todos los argumentos explícitamente y que apliquen la ***comprobación de errores*** y ***transformaciones esenciales***. Los ***métodos constructores*** adicionales, que proporcionan valores por defecto o transformaciones auxiliares, deberían proporcionarse como ***constructores externos*** que invoquen a los ***constructores internos*** para hacer el trabajo pesado. Esta separación suele ser bastante natural.
 
 ### Inicialización incompleta
 
@@ -4293,7 +4293,7 @@ Los archivos y los nombres de los archivos en principio no tienen relación con 
 
 La palabra reservada **`include`** se comporta como si el contenido del archivo origen fuera evaluado en el ***scope global*** del ***módulo*** que lo incluye.
 
-El estilo recomendado es no indentar el cuerpo del módulo, ya que eso llevaría típicamente a indentar archivos enteros. Además, es común utilizar ***UpperCamelCase*** para el nombre de los ***módulos*** (igual que los ***tipos***) y utilizar **la forma plural** si es aplicable, especialmente si el ***módulo*** contiene un identificador de nombre similar, para evitar conflicto de nombres. Por ejemplo:
+El estilo *recomendado* es no indentar el cuerpo del módulo, ya que eso llevaría típicamente a indentar archivos enteros (personalmente me parece una justificación muy tonta, en especial por la facilidad que dan los editores de texto actuales de indentar bloques de código completos). Además, es común utilizar ***UpperCamelCase*** para el nombre de los ***módulos*** (igual que los ***tipos***) y utilizar **la forma plural** si es aplicable, especialmente si el ***módulo*** contiene un identificador de nombre similar, para evitar conflicto de nombres. Por ejemplo:
 
 ```julia
 module Herramientas
@@ -4316,9 +4316,9 @@ julia> parentmodule(UnitRange)
 Base
 ```
 
-También se pueden referir estos nombres fuera de su ***módulo padre*** prefijándolos con su módulo, por ejemplo `Base.UnitRange`. Esto se denomina **nombre cualificado** (*qualified name*). El ***módulo padre*** puede ser accesible usando una ***cadena de submódulos*** como `Base.Math.sin`, donde `Base.Math` se llama la ***ruta del módulo***. Debido a las ambigüedades sintácticas, *cualificar* un nombre que sólo contiene símbolos, como un operador, requiere insertar dos puntos, por ejemplo, `Base.:+`. Un pequeño número de operadores requiere además paréntesis, por ejemplo, `Base.:(==)`.
+También se pueden referir estos nombres fuera de su ***módulo padre*** prefijándolos con su módulo, por ejemplo `Base.UnitRange`. Esto se denomina **nombre cualificado** (*qualified name*). El ***módulo padre*** puede ser accesible usando una ***cadena de submódulos*** como `Base.Math.sin`, donde `Base.Math` se llama la ***ruta del módulo***. Debido a las ambigüedades sintácticas, ***cualificar*** un nombre que sólo contiene símbolos, como un operador, requiere insertar dos puntos, por ejemplo, `Base.:+`. Un pequeño número de operadores requiere además paréntesis, por ejemplo, `Base.:(==)`.
 
-Si un nombre está *cualificado*, siempre será accesible, y en el caso de una ***función***, también se le pueden añadir métodos utilizando el ***nombre cualificado*** como ***nombre de la función***.
+Si un nombre está ***cualificado***, siempre será accesible, y en el caso de una ***función***, también se le pueden añadir métodos utilizando el ***nombre cualificado*** como ***nombre de la función***.
 
 Dentro de un módulo, un nombre de variable puede ser ***reservado*** sin asignarle un valor, declarándolo como `global x`. Esto previene conflictos de nombres para globales inicializados después del tiempo de carga. La sintaxis `M.x = y` no funciona para asignar una variable global en otro módulo; **la asignación global siempre es local del módulo**.
 
@@ -4341,7 +4341,7 @@ end
 ```
 Esto último es sólo una sugerencia de estilo. Un módulo podría tener múltiples declaraciones de exportación en lugares arbitrarios.
 
-En el código anterior, la ***lista de exportación*** sugiere a los usuarios que deben utilizar directamente los nombres `alimentar` y `PERRO`. Sin embargo, dado que los ***nombres cualificados*** siempre hacen que los identificadores *no exportados* sean accesibles, pero es sólo una opción para organizar el llamado a los objetos en los módulos. A diferencia de otros lenguajes, Julia no tiene facilidades para realmente ocultar las partes internas de los módulos.
+En el código anterior, la ***lista de exportación*** sugiere a los usuarios utilizar directamente los nombres `alimentar` y `PERRO`. Sin embargo, dado que los ***nombres cualificados*** siempre hacen que los identificadores **no exportados** sean accesibles, pero es sólo una opción para organizar el llamado a los objetos en los módulos. A diferencia de otros lenguajes, Julia no tiene facilidades para ocultar realmente las partes internas de los módulos.
 
 Además, algunos módulos no exportan nombres en absoluto. Esto generalmente se hace si usan palabras comunes, lo que fácilmente podría entrar en conflicto con las ***listas de exportación*** de otros módulos.
 
@@ -4368,7 +4368,7 @@ La instrucción para importar `using MiModulo1, MiModulo2` funcionará, pero cua
 WARNING: both MiModulo1 and MiModulo2 export "f"; uses of it in module Main must be qualified
 ERROR: LoadError: UndefVarError: f not defined
 ```
-Aquí, Julia no puede decidir a qué `f` se refiere (recuerde que la instrucción `using` importa los nombres directamente a su scope global), así que se tiene que elegir. Las siguientes soluciones son las comúnmente utilizadas:
+Aquí, Julia no puede decidir a qué `f` se refiere (recuerde que la instrucción `using` importa los nombres directamente a su *scope global*), así que se tiene que elegir. Las siguientes soluciones son las comúnmente utilizadas:
 
 1. Proceda mediante los ***nombres cualificados***, esto es, `MiModulo1.f` y `MiModulo2.f`. Esto hace que el contexto sea claro para el lector de su código, especialmente si el nombre `f` simplemente coincide por casualidad, pero tiene un significado diferente entre los diferentes paquetes o módulos. Por ejemplo, *grado* tiene varios usos en matemáticas, ciencias naturales y en la vida cotidiana, y estos significados deben mantenerse separados.
 
@@ -4407,7 +4407,7 @@ Hay tres módulos estándar importantes:
 
 ### Submódulos y rutas relativas
 
-Los ***módulos*** pueden contener ***submódulos*** anidando la misma sintaxis `module ... end`. Pueden utilizarse para introducir ***namespaces*** separados, lo que puede ser útil para organizar grupos de código complejos. Es importante tener en cuenta que cada módulo introduce su propio scope, por lo que los ***submódulos*** **no heredan** automáticamente los nombres de su *padre*.
+Los ***módulos*** pueden contener ***submódulos*** anidando la misma sintaxis `module ... end`. Pueden utilizarse para introducir ***namespaces*** separados, lo que puede ser útil para organizar grupos de código complejos. Es importante tener en cuenta que cada módulo introduce su ***propio scope***, por lo que los ***submódulos*** **no heredan** automáticamente los nombres de su *padre*.
 
 Se recomienda que los ***submódulos*** se refieran a otros módulos dentro del módulo padre que los encierra (incluyendo este último) utilizando ***cualificadores de módulo relativos*** en las sentencias `using` e `import`. 
 
