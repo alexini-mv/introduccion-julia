@@ -4700,7 +4700,18 @@ y = MiTipo(2)
 ```
 Ahora, `?x` mostrará *"Documentación para MiTipo con valor 1"*, mientras que `?y` mostrará *"Documentación para MiTipo con valor 2"*.
 ***
+## Temas pendientes
 
+* Agregar info sobre el modo `help>` y el modo `shell>`, en el REPL.
+* Guía de Estilo.
+* Scope.
+* Conversión y Promoción.
+* Creación y publicación de paquetes.
+* Macros y metaprogramación.
+* Concurrencia, paralelismo, multithreading.
+
+
+***
 ## Referencias
 
 * [Introduction to Computational Thinking](https://computationalthinking.mit.edu/Spring21/). Curso impartido por el MIT, versión del 2021.
